@@ -113,3 +113,6 @@ curl -X GET http://localhost:3001/api/nivelEstudio/1
 ```json
 { "idNivelEstudio": 1, "nombre": "Licenciatura" }
 ```
+
+
+Revisado por Jared

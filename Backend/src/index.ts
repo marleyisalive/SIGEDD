@@ -7,12 +7,14 @@ app.use(express.json());
 
 //configurar rutas para el acceso a personal
 import nivelEstudioRutas from "./routes/nivelEstudioRutas";
+import rol from "./routes/rolRutas"
 
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
 
 //activamos la ruta base
 app.use("/api/nivelEstudio", nivelEstudioRutas);
+app.use("/api/rol", rol)
 
 //prueba
 // app.get("/hola", (_req, res) => {
