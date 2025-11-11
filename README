@@ -1,0 +1,115 @@
+SIGEDD — Sistema Integral de Gestión del Estímulo del Desempeño Docente (Backend)
+
+Descripción breve
+
+- Propósito: orientar a los programadores del equipo para configurar su entorno y ejecutar el backend localmente de forma consistente, de modo que puedan probar y luego continuar con el mismo esquema al implementar cambios.
+
+- Stack principal: Node.js, Express 5, TypeScript, MySQL (vía XAMPP). Sin frontend en este repositorio por ahora.
+
+Estructura del repositorio
+
+- Backend/: código fuente del API en TypeScript.
+  - src/: código fuente
+    - index.ts: punto de entrada del servidor Express (puerto por defecto 3001)
+    - routes/nivelEstudioRutas.ts: rutas para entidad nivelEstudio
+    - services/nivelEstudioServices.ts: acceso a datos MySQL con mysql2/promise
+    - typesNivelEstudio.ts: tipos/Interfaces TS
+  - build/: salida compilada (JavaScript) al ejecutar tsc
+  - package.json: scripts y dependencias del backend
+  - tsconfig.json: configuración de TypeScript (outDir=build)
+
+Requisitos previos
+
+- Sistema operativo: Linux (probado). En otros SO, adapta los pasos de XAMPP.
+- Node.js: 18.x o superior recomendado (LTS).
+- npm: 9.x o superior recomendado.
+- XAMPP (MySQL y opcionalmente Apache). En Linux, suele instalarse en /opt/lampp.
+
+Instalación del backend
+
+1. Clonar el repositorio y entrar a la carpeta Backend
+
+```bash
+git clone <url-del-repo>
+cd SIGEDD/Backend
+```
+
+2. Instalar dependencias de Node (TypeScript y ts-node-dev ya están como devDependencies, no es necesario instalarlos globalmente)
+
+```bash
+npm install
+```
+
+3. (Opcional) Ver versiones instaladas
+
+```bash
+node -v
+npm -v
+npx tsc -v
+```
+
+Base de datos (XAMPP/MySQL)
+
+1. Iniciar XAMPP (Linux)
+
+```bash
+sudo /opt/lampp/lampp start       # inicia Apache y MySQL
+sudo /opt/lampp/lampp status      # verifica estado
+```
+
+2. Crear la base de datos y la(s) tabla(s) necesarias
+
+- Por defecto, el código usa:
+  - host: localhost
+  - usuario: administrador
+  - contraseña: admin123456
+  - base: SIGEDD
+- Crea el usuario (si no existe) y la base:
+
+Configuración de credenciales
+
+- Actualmente las credenciales están definidas en código en `Backend/src/services/nivelEstudioServices.ts` dentro de `createPool({ host, user, password, database })`.
+- Para el entorno local, asegúrate de que los valores coinciden con tu MySQL (XAMPP). Más adelante se recomienda migrar a variables de entorno (.env) para no versionar contraseñas.
+
+Ejecución
+
+- Desarrollo (recarga en caliente con ts-node-dev):
+
+```bash
+cd Backend
+npm run dev
+```
+
+    - El servidor inicia en http://localhost:3001 (por defecto definido en `src/index.ts`).
+
+- Producción (compilar y ejecutar build):
+
+```bash
+cd Backend
+npm run tsc            # compila TypeScript a ./build
+node build/index.js    # inicia el servidor compilado
+```
+
+    - Sugerencia: puedes añadir un script "start" en package.json para `node build/index.js` si lo prefieres.
+
+Endpoints de la API (nivelEstudio)
+Base URL: `http://localhost:3001/api/nivelEstudio`
+
+- GET `/` — Obtiene todos los niveles de estudio
+
+```bash
+curl -X GET http://localhost:3001/api/nivelEstudio/
+```
+
+- GET `/:id` — Obtiene un nivel de estudio por id
+
+```bash
+curl -X GET http://localhost:3001/api/nivelEstudio/1
+```
+
+- POST `/` — Inserta un nuevo nivel de estudio
+  Body JSON:
+
+```json
+{ "idNivelEstudio": 1, "nombre": "Licenciatura" }
+```
