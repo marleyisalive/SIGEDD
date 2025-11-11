@@ -1,6 +1,7 @@
 // se maneja en base a promesas
 import { nivelEstudio } from "../typesNivelEstudio";
 import { createPool } from "mysql2/promise";
+import { nivelEstudioSchema } from "../schema/nivelEstudioSchema";
 
 const conexion = createPool({
   host: "localhost",
@@ -35,6 +36,10 @@ export const encuentraNivelEstudioPorId = async (id: number) => {
 
 export const agregarNivelEstudio = async (nuevo: nivelEstudio) => {
   try {
+    const validacion = nivelEstudioSchema.safeParse(nuevo);
+    if (!validacion.success) {
+      return { error: validacion.error };
+    }
     const [results] = await conexion.query(
       "INSERT INTO nivelEstudio (idNivelEstudio, nombre) VALUES (?, ?)",
       [nuevo.idNivelEstudio, nuevo.nombre]
