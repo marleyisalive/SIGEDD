@@ -7,15 +7,18 @@ app.use(express.json());
 
 //configurar rutas para el acceso a personal
 import nivelEstudioRutas from "./routes/nivelEstudioRutas";
-import rol from "./routes/rolRutas"
+import rol from "./routes/rolRutas";
+import tipoDocumentoRutas from "./routes/tipoDocumentoRutas";
+import documentoRutas from "./routes/documentoRutas"
 
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
 
 //activamos la ruta base
 app.use("/api/nivelEstudio", nivelEstudioRutas);
-app.use("/api/rol", rol)
-
+app.use("/api/rol", rol);
+app.use("/api/tipoDocumento",tipoDocumentoRutas);
+app.use("/api/documento", documentoRutas)
 //prueba
 // app.get("/hola", (_req, res) => {
 //   let fecha = new Date().toLocaleDateString();
