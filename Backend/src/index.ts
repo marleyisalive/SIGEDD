@@ -12,6 +12,11 @@ import AulaRutas from "./routes/AulaRutas"
 import CarreraRutas from "./routes/CarreraRutas"
 import plaza from "./routes/plazaRutas"
 
+// =========== TUS RUTAS A INTEGRAR ===========
+import docenteRutas from "./routes/docenteRutas"; // Asegúrate que el path sea correcto
+import docenteActividadRutas from "./routes/docenteactividadRutas"; // Asegúrate que el path sea correcto
+// ============================================
+
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
 
@@ -21,13 +26,16 @@ app.use("/api/rol", rol);
 app.use("/api/Aula", AulaRutas);
 app.use("/api/Carrera", CarreraRutas);
 app.use("/api/plaza", plaza);
+app.use("/api/docente", docenteRutas);
+app.use("/api/docenteactividad", docenteActividadRutas);
+
 
 //prueba
 // app.get("/hola", (_req, res) => {
-//   let fecha = new Date().toLocaleDateString();
-//   res.send("mundo con la fecha " + fecha + " con typescript");
+//   let fecha = new Date().toLocaleDateString();
+//   res.send("mundo con la fecha " + fecha + " con typescript");
 // });
 //Encendemos el servidor
 app.listen(Puerto, () => {
-  console.log(`Servidor encendido en el puerto ${Puerto}`);
+  console.log(`Servidor encendido en el puerto ${Puerto}`);
 });
