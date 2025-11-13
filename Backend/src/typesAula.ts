@@ -1,4 +1,4 @@
-export interface Aula {
+export interface aula {
   idAula: number;
   nombre: string;
 }

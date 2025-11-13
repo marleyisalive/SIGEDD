@@ -1,28 +1,28 @@
 import express, { Request, Response } from "express";
-import * as CarreraServices from "../services/CarreraServices";
+import * as carreraServices from "../services/carrera";
 //activamos las rutas
 const router = express.Router();
 
-//http://localhost:3001/api/Carrera/ <---- obtener todas las carreras
+//http://localhost:3001/api/carrera/ <---- obtener todas las carreras
 router.get("/", async (_req: Request, res: Response) => {
-  let Carrera = await CarreraServices.obtieneCarrera();
+  let Carrera = await carreraServices.obtieneCarrera();
   res.send(Carrera);
 });
 
-//http://localhost:3001/api/Carrera/1 <---- busqueda por el id de la carrera
+//http://localhost:3001/api/carrera/1 <---- busqueda por el id de la carrera
 router.get("/:id", async (req: Request, res: Response) => {
-  let Carrera = await CarreraServices.encuentraCarreraPorId(
+  let Carrera = await carreraServices.encuentraCarreraPorId(
     Number(req.params.id)
   );
   res.send(Carrera);
 });
 
-//http://localhost:3001/api/Carrera/ insertar una nueva carrera
+//http://localhost:3001/api/carrera/ insertar una nueva carrera
 router.post("/", async (req: Request, res: Response) => {
   try {
     const { idCarrera, nombreCarrera, acreditada, nivel } = req.body; // desestructuring
     //enviamos un objeto con los datos al servicio
-    const nuevo = await CarreraServices.agregarCarrera({
+    const nuevo = await carreraServices.agregarCarrera({
       idCarrera,
       nombreCarrera,
       acreditada,
@@ -35,11 +35,11 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-//http://localhost:3001/api/Carrera/ <---- editar una carrera
+//http://localhost:3001/api/carrera/ <---- editar una carrera
 router.put("/", async (req: Request, res: Response) => {
   try {
     const { idCarrera, nombreCarrera, acreditada, nivel } = req.body;
-    const modificado = await CarreraServices.actualizarCarrera({
+    const modificado = await carreraServices.actualizarCarrera({
       idCarrera,
       nombreCarrera,
       acreditada,
@@ -48,9 +48,7 @@ router.put("/", async (req: Request, res: Response) => {
     res.send(modificado);
   } catch (err) {
     console.error("error al actualizar la carrera", err);
-    res
-      .status(400)
-      .send({ error: "No se pudo actualizar la carrera" });
+    res.status(400).send({ error: "No se pudo actualizar la carrera" });
   }
 });
 
@@ -58,9 +56,7 @@ router.put("/", async (req: Request, res: Response) => {
 router.delete("/", async (req: Request, res: Response) => {
   try {
     const { idCarrera } = req.body;
-    const eliminado = await CarreraServices.eliminarCarrera(
-      idCarrera
-    );
+    const eliminado = await carreraServices.eliminarCarrera(idCarrera);
     res.send(eliminado);
   } catch (err) {
     console.error("error al eliminar la carrera", err);
