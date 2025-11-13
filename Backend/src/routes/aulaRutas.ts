@@ -1,28 +1,26 @@
 import express, { Request, Response } from "express";
-import * as AulaServices from "../services/AulaServices";
+import * as aulaServices from "../services/aulaServices";
 //activamos las rutas
 const router = express.Router();
 
-//http://localhost:3001/api/nivelEstudio/ <---- obtener todas las aulas
+//http://localhost:3001/api/aula/ <---- obtener todas las aulas
 router.get("/", async (_req: Request, res: Response) => {
-  let Aula = await AulaServices.obtieneAula();
-  res.send(Aula);
+  let aula = await aulaServices.obtieneAula();
+  res.send(aula);
 });
 
-//http://localhost:3001/api/Aula/1 <---- busqueda por el id del aula
+//http://localhost:3001/api/aula/1 <---- busqueda por el id del aula
 router.get("/:id", async (req: Request, res: Response) => {
-  let Aula = await AulaServices.encuentraAulaPorId(
-    Number(req.params.id)
-  );
+  let Aula = await aulaServices.encuentraAulaPorId(Number(req.params.id));
   res.send(Aula);
 });
 
-//http://localhost:3001/api/Aula/ insertar una nueva aula
+//http://localhost:3001/api/aula/ insertar una nueva aula
 router.post("/", async (req: Request, res: Response) => {
   try {
     const { idAula, nombre } = req.body; // desestructuring
     //enviamos un objeto con los datos al servicio
-    const nuevo = await AulaServices.agregarAula({
+    const nuevo = await aulaServices.agregarAula({
       idAula,
       nombre,
     });
@@ -37,16 +35,14 @@ router.post("/", async (req: Request, res: Response) => {
 router.put("/", async (req: Request, res: Response) => {
   try {
     const { idAula, nombre } = req.body;
-    const modificado = await AulaServices.actualizarAula({
+    const modificado = await aulaServices.actualizarAula({
       idAula,
       nombre,
     });
     res.send(modificado);
   } catch (err) {
     console.error("error al actualizar el aula", err);
-    res
-      .status(400)
-      .send({ error: "No se pudo actualizar el aula" });
+    res.status(400).send({ error: "No se pudo actualizar el aula" });
   }
 });
 
@@ -54,9 +50,7 @@ router.put("/", async (req: Request, res: Response) => {
 router.delete("/", async (req: Request, res: Response) => {
   try {
     const { idAula } = req.body;
-    const eliminado = await AulaServices.eliminarAula(
-      idAula
-    );
+    const eliminado = await aulaServices.eliminarAula(idAula);
     res.send(eliminado);
   } catch (err) {
     console.error("error al eliminar el aula", err);

@@ -1,5 +1,5 @@
 // se maneja en base a promesas
-import { Carrera } from "../typesCarrera";
+import { carrera } from "../typesCarrera";
 import { createPool } from "mysql2/promise";
 
 const conexion = createPool({
@@ -11,7 +11,7 @@ const conexion = createPool({
 
 export const obtieneCarrera = async () => {
   try {
-    const [results] = await conexion.query("SELECT * FROM Carrera");
+    const [results] = await conexion.query("SELECT * FROM carrera");
     return results;
   } catch (err) {
     console.error("error al obtener las carreras: ", err);
@@ -23,7 +23,7 @@ export const encuentraCarreraPorId = async (id: number) => {
   try {
     // el segundo parámetro debe ser un array con los valores para la consulta
     const [results] = await conexion.query(
-      "SELECT * FROM Carrera WHERE idCarrera = ?",
+      "SELECT * FROM carrera WHERE idCarrera = ?",
       id
     );
     return results;
@@ -33,10 +33,10 @@ export const encuentraCarreraPorId = async (id: number) => {
   }
 };
 
-export const agregarCarrera = async (nuevo: Carrera) => {
+export const agregarCarrera = async (nuevo: carrera) => {
   try {
     const [results] = await conexion.query(
-      "INSERT INTO Carrera (idCarrera, nombreCarrera, acreditada, nivel) VALUES (?, ?, ?, ?)",
+      "INSERT INTO carrera (idCarrera, nombreCarrera, acreditada, nivel) VALUES (?, ?, ?, ?)",
       [nuevo.idCarrera, nuevo.nombreCarrera, nuevo.acreditada, nuevo.nivel]
     );
     return results;
@@ -46,11 +46,16 @@ export const agregarCarrera = async (nuevo: Carrera) => {
   }
 };
 
-export const actualizarCarrera = async (modificado: Carrera) => {
+export const actualizarCarrera = async (modificado: carrera) => {
   try {
     const [results] = await conexion.query(
-      "UPDATE Carrera SET nombreCarrera = ?, acreditada = ?, nivel = ? WHERE idCarrera = ?",
-      [modificado.nombreCarrera, modificado.acreditada, modificado.nivel, modificado.idCarrera]
+      "UPDATE carrera SET nombreCarrera = ?, acreditada = ?, nivel = ? WHERE idCarrera = ?",
+      [
+        modificado.nombreCarrera,
+        modificado.acreditada,
+        modificado.nivel,
+        modificado.idCarrera,
+      ]
     );
     return results;
   } catch (err) {
@@ -62,7 +67,7 @@ export const actualizarCarrera = async (modificado: Carrera) => {
 export const eliminarCarrera = async (idCarrera: number) => {
   try {
     const [results] = await conexion.query(
-      "DELETE FROM Carrera WHERE idCarrera = ?",
+      "DELETE FROM carrera WHERE idCarrera = ?",
       [idCarrera]
     );
     return results;
