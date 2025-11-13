@@ -1,6 +1,6 @@
 export interface aula {
   idAula: number;
-  nombre: string;
+  nombreAula: string;
 }
 
 ///export type nivelEstudioNuevo = Omit<Aula, "idAula">;

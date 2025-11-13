@@ -18,11 +18,11 @@ router.get("/:id", async (req: Request, res: Response) => {
 //http://localhost:3001/api/aula/ insertar una nueva aula
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { idAula, nombre } = req.body; // desestructuring
+    const { idAula, nombreAula } = req.body; // desestructuring
     //enviamos un objeto con los datos al servicio
     const nuevo = await aulaServices.agregarAula({
       idAula,
-      nombre,
+      nombreAula,
     });
     res.send(nuevo);
   } catch (err) {
@@ -34,10 +34,10 @@ router.post("/", async (req: Request, res: Response) => {
 //http://localhost:3001/api/Aula/ <---- editar un aula
 router.put("/", async (req: Request, res: Response) => {
   try {
-    const { idAula, nombre } = req.body;
+    const { idAula, nombreAula } = req.body;
     const modificado = await aulaServices.actualizarAula({
       idAula,
-      nombre,
+      nombreAula,
     });
     res.send(modificado);
   } catch (err) {

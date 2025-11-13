@@ -11,8 +11,9 @@ import rol from "./routes/rolRutas";
 import aulaRutas from "./routes/aulaRutas";
 import carreraRutas from "./routes/carreraRutas";
 import plaza from "./routes/plazaRutas";
-import tipoDocumentoRutas from "./routes/tipoDocumentoRutas";
-import documentoRutas from "./routes/documentoRutas";
+import documento from "./routes/documentoRutas"
+import tipoDocumento from "./routes/tipoDocumentoRutas"
+
 
 // =========== TUS RUTAS A INTEGRAR ===========
 import docenteRutas from "./routes/docenteRutas"; // Asegúrate que el path sea correcto
@@ -30,6 +31,8 @@ app.use("/api/carrera", carreraRutas);
 app.use("/api/plaza", plaza);
 app.use("/api/docente", docenteRutas);
 app.use("/api/docenteactividad", docenteActividadRutas);
+app.use("/api/tipoDocumento", tipoDocumento)
+app.use("/api/documento", documento);
 
 
 //prueba

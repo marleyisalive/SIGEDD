@@ -36,8 +36,8 @@ export const encuentraAulaPorId = async (id: number) => {
 export const agregarAula = async (nuevo: aula) => {
   try {
     const [results] = await conexion.query(
-      "INSERT INTO aula (idAula, nombre) VALUES (?, ?)",
-      [nuevo.idAula, nuevo.nombre]
+      "INSERT INTO aula (idAula, nombreAula) VALUES (?, ?)",
+      [nuevo.idAula, nuevo.nombreAula]
     );
     return results;
   } catch (err) {
@@ -49,8 +49,8 @@ export const agregarAula = async (nuevo: aula) => {
 export const actualizarAula = async (modificado: aula) => {
   try {
     const [results] = await conexion.query(
-      "UPDATE aula SET nombre = ? WHERE idAula = ?",
-      [modificado.nombre, modificado.idAula]
+      "UPDATE aula SET nombreAula = ? WHERE idAula = ?",
+      [modificado.nombreAula, modificado.idAula]
     );
     return results;
   } catch (err) {
