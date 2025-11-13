@@ -5,14 +5,14 @@ const app = express();
 //Todo lo que regresa al usuario es tipo json
 app.use(express.json());
 
-//configurar rutas para el acceso a personal
-import nivelEstudioRutas from "./routes/nivelEstudioRutas"
-import rol from "./routes/rolRutas"
-import AulaRutas from "./routes/AulaRutas"
-import CarreraRutas from "./routes/CarreraRutas"
-import plaza from "./routes/plazaRutas"
-import tipoDocumentoRutas from "./routes/tipoDocumentoRutas"
-import documentoRutas from "./routes/documentoRutas"
+//configurar rutas para el acceso
+import nivelEstudioRutas from "./routes/nivelEstudioRutas";
+import rol from "./routes/rolRutas";
+import aulaRutas from "./routes/aulaRutas";
+import carreraRutas from "./routes/carreraRutas";
+import plaza from "./routes/plazaRutas";
+import tipoDocumentoRutas from "./routes/tipoDocumentoRutas";
+import documentoRutas from "./routes/documentoRutas";
 
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
@@ -20,8 +20,8 @@ const Puerto = 3001;
 //activamos la ruta base
 app.use("/api/nivelEstudio", nivelEstudioRutas);
 app.use("/api/rol", rol);
-app.use("/api/Aula", AulaRutas);
-app.use("/api/Carrera", CarreraRutas);
+app.use("/api/aula", aulaRutas);
+app.use("/api/carrera", carreraRutas);
 app.use("/api/plaza", plaza);
 app.use("/api/tipoDocumento", tipoDocumentoRutas);
 app.use("/api/documento", documentoRutas);

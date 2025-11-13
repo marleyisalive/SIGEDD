@@ -1,4 +1,4 @@
-export interface Carrera {
+export interface carrera {
   idCarrera: number;
   nombreCarrera: string;
   acreditada: number;

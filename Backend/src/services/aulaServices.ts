@@ -1,5 +1,5 @@
 // se maneja en base a promesas
-import { Aula } from "../typesAula";
+import { aula } from "../typesAula";
 import { createPool } from "mysql2/promise";
 
 const conexion = createPool({
@@ -11,7 +11,7 @@ const conexion = createPool({
 
 export const obtieneAula = async () => {
   try {
-    const [results] = await conexion.query("SELECT * FROM Aula");
+    const [results] = await conexion.query("SELECT * FROM aula");
     return results;
   } catch (err) {
     console.error("error al obtener las aulas: ", err);
@@ -23,7 +23,7 @@ export const encuentraAulaPorId = async (id: number) => {
   try {
     // el segundo parámetro debe ser un array con los valores para la consulta
     const [results] = await conexion.query(
-      "SELECT * FROM Aula WHERE idAula = ?",
+      "SELECT * FROM aula WHERE idAula = ?",
       id
     );
     return results;
@@ -33,10 +33,10 @@ export const encuentraAulaPorId = async (id: number) => {
   }
 };
 
-export const agregarAula = async (nuevo: Aula) => {
+export const agregarAula = async (nuevo: aula) => {
   try {
     const [results] = await conexion.query(
-      "INSERT INTO Aula (idAula, nombre) VALUES (?, ?)",
+      "INSERT INTO aula (idAula, nombre) VALUES (?, ?)",
       [nuevo.idAula, nuevo.nombre]
     );
     return results;
@@ -46,10 +46,10 @@ export const agregarAula = async (nuevo: Aula) => {
   }
 };
 
-export const actualizarAula = async (modificado: Aula) => {
+export const actualizarAula = async (modificado: aula) => {
   try {
     const [results] = await conexion.query(
-      "UPDATE Aula SET nombre = ? WHERE idAula = ?",
+      "UPDATE aula SET nombre = ? WHERE idAula = ?",
       [modificado.nombre, modificado.idAula]
     );
     return results;
@@ -62,7 +62,7 @@ export const actualizarAula = async (modificado: Aula) => {
 export const eliminarAula = async (idAula: number) => {
   try {
     const [results] = await conexion.query(
-      "DELETE FROM Aula WHERE idAula = ?",
+      "DELETE FROM aula WHERE idAula = ?",
       [idAula]
     );
     return results;
