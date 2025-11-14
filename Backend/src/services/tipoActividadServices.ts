@@ -1,4 +1,4 @@
-import { TipoActividad } from "../TypesTipoActividad";
+import { TipoActividad } from "../typesTipoActividad";
 import { createPool } from "mysql2/promise";
 
 const conexion = createPool({
@@ -32,7 +32,6 @@ export const encuentraTipoActividadPorId = async (id: number) => {
   }
 };
 
-
 export const agregarTipoActividad = async (nuevo: TipoActividad) => {
   try {
     const [results] = await conexion.query(
@@ -50,7 +49,7 @@ export const actualizarTipoActividad = async (modificado: TipoActividad) => {
   try {
     const [results] = await conexion.query(
       "UPDATE TipoActividad SET nombre = ?, descripcion = ? WHERE IdTipoActividad = ?",
-      [modificado.nombre,modificado.descripcion, modificado.idTipoActividad]
+      [modificado.nombre, modificado.descripcion, modificado.idTipoActividad]
     );
     return results;
   } catch (err) {
@@ -69,8 +68,5 @@ export const eliminarTipoActividad = async (IdTipoActividad: number) => {
   } catch (err) {
     console.error("error al eliminar el tipo de actividad: ", err);
     return { error: "No se pudo eliminar el tipo de actividad" };
-
   }
 };
-
-

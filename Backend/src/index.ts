@@ -7,30 +7,32 @@ app.use(express.json());
 
 //configurar rutas para el acceso
 import nivelEstudioRutas from "./routes/nivelEstudioRutas";
-import rol from "./routes/rolRutas";
+import rolRutas from "./routes/rolRutas";
 import aulaRutas from "./routes/aulaRutas";
 import carreraRutas from "./routes/carreraRutas";
-import plaza from "./routes/plazaRutas";
+import plazaRutas from "./routes/plazaRutas";
 import tipoDocumentoRutas from "./routes/tipoDocumentoRutas";
 import documentoRutas from "./routes/documentoRutas";
-
-// =========== TUS RUTAS A INTEGRAR ===========
+import tipoActividadRutas from "./routes/tipoActividadRutas";
 import docenteRutas from "./routes/docenteRutas"; // Asegúrate que el path sea correcto
 import docenteActividadRutas from "./routes/docenteactividadRutas"; // Asegúrate que el path sea correcto
-// ============================================
+import departamentoRutas from "./routes/departamentoRutas";
 
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
 
 //activamos la ruta base
 app.use("/api/nivelEstudio", nivelEstudioRutas);
-app.use("/api/rol", rol);
+app.use("/api/rol", rolRutas);
 app.use("/api/aula", aulaRutas);
 app.use("/api/carrera", carreraRutas);
-app.use("/api/plaza", plaza);
+app.use("/api/plaza", plazaRutas);
 app.use("/api/docente", docenteRutas);
 app.use("/api/docenteactividad", docenteActividadRutas);
-
+app.use("/api/tipoDocumento", tipoDocumentoRutas);
+app.use("/api/documento", documentoRutas);
+app.use("/api/tipoActividad", tipoActividadRutas);
+app.use("/api/departamento", departamentoRutas);
 
 //prueba
 // app.get("/hola", (_req, res) => {
@@ -39,5 +41,5 @@ app.use("/api/docenteactividad", docenteActividadRutas);
 // });
 //Encendemos el servidor
 app.listen(Puerto, () => {
-  console.log(`Servidor encendido en el puerto ${Puerto}`);
+  console.log(`Servidor encendido en el puerto ${Puerto}`);
 });
