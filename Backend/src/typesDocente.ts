@@ -9,4 +9,4 @@ export interface Docente {
   folioEdd: number;
 }
 
-export type NuevoDocente = Omit<Docente, "idDocente">;
+//export type NuevoDocente = Omit<Docente, "idDocente">;
