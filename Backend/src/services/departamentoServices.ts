@@ -10,7 +10,7 @@ const conexion = createPool({
 
 export const obtieneDepartamento = async () => {
   try {
-    const [results] = await conexion.query("SELECT * FROM Departamento");
+    const [results] = await conexion.query("SELECT * FROM departamento");
     return results;
   } catch (err) {
     console.error("error al obtener los departamentos: ", err);
@@ -32,12 +32,15 @@ export const encuentraDepartamentoPorId = async (id: number) => {
   }
 };
 
-
 export const agregarDepartamento = async (nuevo: Departamento) => {
   try {
     const [results] = await conexion.query(
       "INSERT INTO departamento (idDepartamento, nombreDepartamento, encargadoDepartamento) VALUES (?, ?, ?)",
-      [nuevo.idDepartamento, nuevo.nombreDepartamento, nuevo.encargadoDepartamento]
+      [
+        nuevo.idDepartamento,
+        nuevo.nombreDepartamento,
+        nuevo.encargadoDepartamento,
+      ]
     );
     return results;
   } catch (err) {
@@ -50,7 +53,11 @@ export const actualizarDepartamento = async (modificado: Departamento) => {
   try {
     const [results] = await conexion.query(
       "UPDATE departamento SET nombreDepartamento = ?, encargadoDepartamento = ? WHERE IdDepartamento = ?",
-      [modificado.nombreDepartamento,modificado.encargadoDepartamento, modificado.idDepartamento]
+      [
+        modificado.nombreDepartamento,
+        modificado.encargadoDepartamento,
+        modificado.idDepartamento,
+      ]
     );
     return results;
   } catch (err) {
@@ -69,6 +76,5 @@ export const eliminarDepartamento = async (idDepartamento: number) => {
   } catch (err) {
     console.error("error al eliminar el departamento: ", err);
     return { error: "No se pudo eliminar el departamento" };
-
   }
 };
