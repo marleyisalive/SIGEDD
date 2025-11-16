@@ -1,91 +1,46 @@
 <template>
-  <nav class="sidebar bg-light">
-    <div class="sidebar-content">
-      <h6 class="sidebar-heading">Panel de administración</h6>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fija">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
 
-      <a class="sidebar-link" href="#">
-        <i class="fas fa-tachometer-alt me-2"></i>
-        Panel principal
-      </a>
+      <button 
+        class="navbar-toggler" 
+        type="button" 
+        data-bs-toggle="collapse" 
+        data-bs-target="#navbarNav" 
+        aria-controls="navbarNav" 
+        aria-expanded="false" 
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-      <h6 class="sidebar-heading mt-4">Modulos</h6>
-
-      <a class="sidebar-link" href="#">
-        <i class="fas fa-columns me-2"></i>
-        Layouts
-      </a>
-
-      <a class="sidebar-link" href="#">
-        <i class="fas fa-cog me-2"></i>
-        Configuración
-      </a>
-
-      <a class="sidebar-link" href="#">
-        <i class="fas fa-users me-2"></i>
-        Usuarios
-      </a>
-
-      <a class="sidebar-link" href="#">
-        <i class="fas fa-file-alt me-2"></i>
-        Reportes
-      </a>
-    </div>
-
-    <div class="sidebar-footer">
-      <small class="text-muted">Logged in as:</small><br />
-      Start Bootstrap
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/inicio">Inicio</RouterLink>
+          </li>
+        </ul>
+      </div>
     </div>
   </nav>
 </template>
 
 <script setup lang="ts">
-// No necesitas lógica para un sidebar estático.
-// Aquí puedes agregar props o eventos si luego lo haces dinámico.
+import { RouterLink } from 'vue-router';
 </script>
 
 <style scoped>
-.sidebar {
-  width: 250px;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  padding: 1rem 0;
-  overflow-y: auto;
-  border-right: 1px solid #ddd;
-}
+  .navbar-fija {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2000; /* encima de todo */
+  }
 
-.sidebar-content {
-  padding: 0 1rem;
-}
-
-.sidebar-heading {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  color: #6c757d;
-  margin-bottom: 0.5rem;
-}
-
-.sidebar-link {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.25rem;
-  color: #333;
-  text-decoration: none;
-  border-radius: 0.25rem;
-}
-
-.sidebar-link:hover {
-  background-color: #e9ecef;
-}
-
-.sidebar-footer {
-  margin-top: auto;
-  padding: 1rem;
-  font-size: 0.85rem;
-  text-align: center;
-  border-top: 1px solid #ddd;
-  color: #555;
-}
+  /* Para evitar que el contenido quede escondido detrás del navbar */
+  :global(body) {
+    padding-top: 56px; /* Altura del navbar estándar */
+  }
 </style>

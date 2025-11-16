@@ -1,3 +1,4 @@
+import InicioVue from "@/modulos/principal/vistas/InicioVue.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -8,6 +9,11 @@ const router = createRouter({
     //   name: 'home',
     //   component: HomeView,
     // },
+    {
+       path: '/inicio',
+       name: 'inicio',
+       component: InicioVue,
+     },
   ],
 });
 
