@@ -12,17 +12,10 @@
       en el programa EDD.
     </p>
 
-    <button class="btn btn-light px-4 mt-3 fw-bold">
-      INICIAR
-    </button>
+    <button class="btn btn-light px-4 mt-3 fw-bold">INICIAR</button>
   </main>
-
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts"></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>

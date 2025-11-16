@@ -1,4 +1,4 @@
-import { Departamento } from "../typesDepartamentos";
+import { Departamento } from "../types/typesDepartamentos";
 import { createPool } from "mysql2/promise";
 
 const conexion = createPool({

@@ -1,5 +1,5 @@
 // se maneja en base a promesas
-import { aula } from "../typesAula";
+import { aula } from "../types/typesAula";
 import { createPool } from "mysql2/promise";
 
 const conexion = createPool({

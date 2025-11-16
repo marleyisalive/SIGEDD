@@ -1,5 +1,5 @@
 // se maneja en base a promesas
-import { documento } from "../typesDocumento";
+import { documento } from "../types/typesDocumento";
 import { createPool } from "mysql2/promise";
 
 const conexion = createPool({
@@ -37,7 +37,8 @@ export const agregarDocumento = async (nuevo: documento) => {
   try {
     const [results] = await conexion.query(
       "INSERT INTO documento (idDocumento, idTipoDocumento, idDocente, idActividadInstitucional, idGrupo, nombreArchivo, rutaArchivo, lugar, fecha, hora, validador)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [nuevo.idDocumento,
+      [
+        nuevo.idDocumento,
         nuevo.idTipoDocumento,
         nuevo.idDocente,
         nuevo.idActividadInstitucional ?? null,
@@ -47,7 +48,8 @@ export const agregarDocumento = async (nuevo: documento) => {
         nuevo.lugar,
         nuevo.fecha ?? null,
         nuevo.hora ?? null,
-        nuevo.validador,]
+        nuevo.validador,
+      ]
     );
     return results;
   } catch (err) {
@@ -60,7 +62,8 @@ export const actualizarDocumento = async (modificado: documento) => {
   try {
     const [results] = await conexion.query(
       "UPDATE documento SET idTipoDocumento = ?, idDocente = ?, idActividadInstitucional = ?, idGrupo = ?, nombreArchivo = ?, rutaArchivo = ?, lugar = ?, fecha = ?, hora = ?, validador = ? WHERE idDocumento = ?",
-      [modificado.idTipoDocumento,
+      [
+        modificado.idTipoDocumento,
         modificado.idDocente,
         modificado.idActividadInstitucional ?? null,
         modificado.idGrupo ?? null,
@@ -70,7 +73,8 @@ export const actualizarDocumento = async (modificado: documento) => {
         modificado.fecha ?? null,
         modificado.hora ?? null,
         modificado.validador,
-        modificado.idDocumento,]
+        modificado.idDocumento,
+      ]
     );
     return results;
   } catch (err) {

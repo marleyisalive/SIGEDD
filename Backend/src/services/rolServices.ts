@@ -1,5 +1,5 @@
 // se maneja en base a promesas
-import { rol } from "../typesRol";
+import { rol } from "../types/typesRol";
 import { createPool } from "mysql2/promise";
 
 const conexion = createPool({
@@ -61,10 +61,9 @@ export const actualizarRol = async (modificado: rol) => {
 
 export const eliminarRol = async (idRol: number) => {
   try {
-    const [results] = await conexion.query(
-      "DELETE FROM rol WHERE idRol = ?",
-      [idRol]
-    );
+    const [results] = await conexion.query("DELETE FROM rol WHERE idRol = ?", [
+      idRol,
+    ]);
     return results;
   } catch (err) {
     console.error("error al eliminar el rol: ", err);
