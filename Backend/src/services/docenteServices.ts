@@ -1,5 +1,5 @@
 // Importaciones necesarias
-import { Docente, NuevoDocente } from "../typesDocente"; // Asegúrate de que la ruta sea correcta
+import { Docente, NuevoDocente } from "../types/typesDocente"; // Asegúrate de que la ruta sea correcta
 import { createPool } from "mysql2/promise";
 //import { crearDocenteSchema, actualizarDocenteSchema } from "../schemas/docenteSchema"; // Asumiendo que esta es la ruta
 
@@ -10,8 +10,8 @@ const conexion = createPool({
   password: "admin123456",
   database: "SIGEDD",
   waitForConnections: true, // Esperar si todas las conexiones están en uso
-  connectionLimit: 10,     // Número máximo de conexiones en el pool
-  queueLimit: 0            // Número ilimitado de peticiones en cola
+  connectionLimit: 10, // Número máximo de conexiones en el pool
+  queueLimit: 0, // Número ilimitado de peticiones en cola
 });
 
 /**
@@ -72,13 +72,16 @@ export const agregarDocente = async (nuevoDocente: NuevoDocente) => {
   }
 };
 
-
-export const actualizarDocente = async (idDocente: number, docenteModificado: Partial<Docente>) => {
+export const actualizarDocente = async (
+  idDocente: number,
+  docenteModificado: Partial<Docente>
+) => {
   try {
     const fields: string[] = [];
     const values: any[] = [];
     for (const key in docenteModificado) {
-      if (docenteModificado.hasOwnProperty(key) && key !== 'idDocente') { // Evitar actualizar el propio ID
+      if (docenteModificado.hasOwnProperty(key) && key !== "idDocente") {
+        // Evitar actualizar el propio ID
         fields.push(`${key} = ?`);
         values.push((docenteModificado as any)[key]);
       }

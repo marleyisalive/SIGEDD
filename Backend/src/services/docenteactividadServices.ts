@@ -1,5 +1,8 @@
 // Importaciones necesarias
-import { docenteactividad, NuevaDocenteActividad } from "../typesDocenteActividad"; // Asegúrate de que la ruta sea correcta
+import {
+  docenteactividad,
+  NuevaDocenteActividad,
+} from "../types/typesDocenteActividad"; // Asegúrate de que la ruta sea correcta
 import { createPool } from "mysql2/promise";
 
 // Reutiliza la configuración de la conexión (idealmente esto debería estar en un archivo de configuración compartido)
@@ -10,7 +13,7 @@ const conexion = createPool({
   database: "SIGEDD",
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 
 /**
@@ -24,7 +27,9 @@ export const obtenerTodasDocenteActividad = async () => {
     return results;
   } catch (err) {
     console.error("Error al obtener las relaciones docente-actividad:", err);
-    return { error: "No se pudieron obtener las relaciones docente-actividad." };
+    return {
+      error: "No se pudieron obtener las relaciones docente-actividad.",
+    };
   }
 };
 
@@ -46,7 +51,10 @@ export const encontrarDocenteActividadPorPK = async (
     // query devuelve un array, si encuentra algo, el objeto estará en la primera posición
     return results; // Retorna el objeto o null si no lo encuentra
   } catch (err) {
-    console.error(`Error al obtener la relación docente-actividad con DocenteID ${idDocente} y ActividadID ${idActividadInstitucional}:`, err);
+    console.error(
+      `Error al obtener la relación docente-actividad con DocenteID ${idDocente} y ActividadID ${idActividadInstitucional}:`,
+      err
+    );
     return { error: "No se pudo obtener la relación docente-actividad." };
   }
 };
@@ -56,7 +64,9 @@ export const encontrarDocenteActividadPorPK = async (
  * @param nuevaDocenteActividad Los datos de la nueva relación.
  * @returns El resultado de la inserción o un objeto de error.
  */
-export const agregarDocenteActividad = async (nuevaDocenteActividad: NuevaDocenteActividad) => {
+export const agregarDocenteActividad = async (
+  nuevaDocenteActividad: NuevaDocenteActividad
+) => {
   try {
     const [results] = await conexion.query(
       "INSERT INTO docenteActividad (idDocente, idActividadInstitucional, rol, periodo) VALUES (?, ?, ?, ?)",
@@ -65,18 +75,29 @@ export const agregarDocenteActividad = async (nuevaDocenteActividad: NuevaDocent
         nuevaDocenteActividad.idActividadInstitucional,
         // Si rol o periodo son opcionales y vienen como undefined, MySQL espera NULL.
         // Convertimos undefined a null explícitamente.
-        nuevaDocenteActividad.rol === undefined ? null : nuevaDocenteActividad.rol,
-        nuevaDocenteActividad.periodo === undefined ? null : nuevaDocenteActividad.periodo
+        nuevaDocenteActividad.rol === undefined
+          ? null
+          : nuevaDocenteActividad.rol,
+        nuevaDocenteActividad.periodo === undefined
+          ? null
+          : nuevaDocenteActividad.periodo,
       ]
     );
     return results;
-  } catch (err: any) { // Usamos 'any' para acceder a 'err.code' de forma segura
+  } catch (err: any) {
+    // Usamos 'any' para acceder a 'err.code' de forma segura
     console.error("Error al agregar la relación docente-actividad:", err);
-    if (err.code === 'ER_NO_REFERENCED_ROW_2') {
-      return { error: "No se pudo agregar la relación. Verifique los IDs de Docente o Actividad Institucional." };
+    if (err.code === "ER_NO_REFERENCED_ROW_2") {
+      return {
+        error:
+          "No se pudo agregar la relación. Verifique los IDs de Docente o Actividad Institucional.",
+      };
     }
-    if (err.code === 'ER_DUP_ENTRY') {
-        return { error: "Ya existe una entrada para este docente y actividad. (Violación de clave primaria)" };
+    if (err.code === "ER_DUP_ENTRY") {
+      return {
+        error:
+          "Ya existe una entrada para este docente y actividad. (Violación de clave primaria)",
+      };
     }
     return { error: "No se pudo agregar la relación docente-actividad." };
   }
@@ -90,33 +111,52 @@ export const actualizarDocenteActividad = async (
   try {
     const fields: string[] = [];
     const values: any[] = [];
-    
+
     // Solo permitimos actualizar 'rol' y 'periodo', y convertimos undefined a null
     if (docenteActividadModificada.rol !== undefined) {
       fields.push("rol = ?");
-      values.push(docenteActividadModificada.rol === undefined ? null : docenteActividadModificada.rol);
+      values.push(
+        docenteActividadModificada.rol === undefined
+          ? null
+          : docenteActividadModificada.rol
+      );
     }
     if (docenteActividadModificada.periodo !== undefined) {
       fields.push("periodo = ?");
-      values.push(docenteActividadModificada.periodo === undefined ? null : docenteActividadModificada.periodo);
+      values.push(
+        docenteActividadModificada.periodo === undefined
+          ? null
+          : docenteActividadModificada.periodo
+      );
     }
 
     if (fields.length === 0) {
-      return { warning: "No se proporcionaron datos válidos para actualizar (solo 'rol' y 'periodo' son actualizables)." };
+      return {
+        warning:
+          "No se proporcionaron datos válidos para actualizar (solo 'rol' y 'periodo' son actualizables).",
+      };
     }
 
     // Los IDs de la PK compuesta van al final para la cláusula WHERE
-    values.push(idDocente, idActividadInstitucional); 
+    values.push(idDocente, idActividadInstitucional);
 
     const [results] = await conexion.query(
-      `UPDATE docenteActividad SET ${fields.join(", ")} WHERE idDocente = ? AND idActividadInstitucional = ?`,
+      `UPDATE docenteActividad SET ${fields.join(
+        ", "
+      )} WHERE idDocente = ? AND idActividadInstitucional = ?`,
       values
     );
     return results;
   } catch (err: any) {
-    console.error(`Error al actualizar la relación docente-actividad con DocenteID ${idDocente} y ActividadID ${idActividadInstitucional}:`, err);
-    if (err.code === 'ER_NO_REFERENCED_ROW_2') {
-      return { error: "No se pudo actualizar la relación. Verifique los IDs de Docente o Actividad Institucional." };
+    console.error(
+      `Error al actualizar la relación docente-actividad con DocenteID ${idDocente} y ActividadID ${idActividadInstitucional}:`,
+      err
+    );
+    if (err.code === "ER_NO_REFERENCED_ROW_2") {
+      return {
+        error:
+          "No se pudo actualizar la relación. Verifique los IDs de Docente o Actividad Institucional.",
+      };
     }
     return { error: "No se pudo actualizar la relación docente-actividad." };
   }
@@ -133,7 +173,10 @@ export const eliminarDocenteActividad = async (
     );
     return results;
   } catch (err: any) {
-    console.error(`Error al eliminar la relación docente-actividad con DocenteID ${idDocente} y ActividadID ${idActividadInstitucional}:`, err);
+    console.error(
+      `Error al eliminar la relación docente-actividad con DocenteID ${idDocente} y ActividadID ${idActividadInstitucional}:`,
+      err
+    );
     return { error: "No se pudo eliminar la relación docente-actividad." };
   }
 };

@@ -1,5 +1,5 @@
 // se maneja en base a promesas
-import { tipoDocumento } from "../typesTipoDocumento";
+import { tipoDocumento } from "../types/typesTipoDocumento";
 import { createPool } from "mysql2/promise";
 
 const conexion = createPool({

@@ -17,6 +17,7 @@ import tipoActividadRutas from "./routes/tipoActividadRutas";
 import docenteRutas from "./routes/docenteRutas"; // Asegúrate que el path sea correcto
 import docenteActividadRutas from "./routes/docenteactividadRutas"; // Asegúrate que el path sea correcto
 import departamentoRutas from "./routes/departamentoRutas";
+import usuarioRutas from "./routes/usuarioRutas";
 
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
@@ -33,6 +34,7 @@ app.use("/api/tipoDocumento", tipoDocumentoRutas);
 app.use("/api/documento", documentoRutas);
 app.use("/api/tipoActividad", tipoActividadRutas);
 app.use("/api/departamento", departamentoRutas);
+app.use("/api/usuario", usuarioRutas);
 
 //prueba
 // app.get("/hola", (_req, res) => {

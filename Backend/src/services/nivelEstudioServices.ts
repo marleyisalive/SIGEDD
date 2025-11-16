@@ -1,5 +1,5 @@
 // se maneja en base a promesas
-import { nivelEstudio } from "../typesNivelEstudio";
+import { nivelEstudio } from "../types/typesNivelEstudio";
 import { createPool } from "mysql2/promise";
 import { nivelEstudioSchema } from "../schema/nivelEstudioSchema";
 
