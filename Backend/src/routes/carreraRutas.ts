@@ -14,7 +14,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   let Carrera = await carreraServices.encuentraCarreraPorId(
     Number(req.params.id)
   );
-  res.send(Carrera);
+  res.send(Carrera); //
 });
 
 //http://localhost:3001/api/carrera/ insertar una nueva carrera
