@@ -36,8 +36,8 @@ export const encuentraTipoDocumentoPorId = async (id: number) => {
 export const agregarTipoDocumento = async (nuevo: tipoDocumento) => {
   try {
     const [results] = await conexion.query(
-      "INSERT INTO tipoDocumento (idTipoDocumento, nombre, descripcion) VALUES (?, ?, ?)",
-      [nuevo.idTipoDocumento, nuevo.nombre, nuevo.descripcion]
+      "INSERT INTO tipoDocumento (idTipoDocumento, nombre, descripcion,plantillaJSON,activo) VALUES (?, ?, ?, ?, ?)",
+      [nuevo.idTipoDocumento, nuevo.nombre, nuevo.descripcion, nuevo.plantillaJSON, nuevo.activo]
     );
     return results;
   } catch (err) {
@@ -49,8 +49,8 @@ export const agregarTipoDocumento = async (nuevo: tipoDocumento) => {
 export const actualizarTipoDocumento = async (modificado: tipoDocumento) => {
   try {
     const [results] = await conexion.query(
-      "UPDATE tipoDocumento SET nombre = ?, descripcion = ? WHERE idTipoDocumento = ?",
-      [modificado.nombre, modificado.descripcion, modificado.idTipoDocumento]
+      "UPDATE tipoDocumento SET nombre = ?, descripcion = ?, plantillaJSON = ?, activo = ? WHERE idTipoDocumento = ?",
+      [modificado.nombre, modificado.descripcion,modificado.plantillaJSON,modificado.activo,modificado.idTipoDocumento]
     );
     return results;
   } catch (err) {

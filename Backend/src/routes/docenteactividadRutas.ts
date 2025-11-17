@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import * as docenteActividadServices from "../services/docenteactividadServices"; // Importa tu servicio
 import {
-  docenteactividad,
+  //docenteactividad,
   NuevaDocenteActividad,
 } from "../types/typesDocenteActividad"; // Importa tus tipos
 
@@ -54,18 +54,16 @@ router.post("/", async (req: Request, res: Response) => {
 router.put("/", async (req: Request, res: Response) => {
   try {
     // La PK compuesta (idDocente, idActividadInstitucional) debe venir en el body
-    const {
-      idDocente,
+    const {idDocenteActividad, idActividadInstitucional,idDocente,datosCapturados,fechaRegistro,validadoPor,fechaValidacion}= req.body;
+    const modificado = await docenteActividadServices.actualizarDocenteActividad({
+      idDocenteActividad,
       idActividadInstitucional,
-      ...datosParaModificar
-    }: docenteactividad = req.body;
-
-    const modificado =
-      await docenteActividadServices.actualizarDocenteActividad(
-        idDocente,
-        idActividadInstitucional,
-        datosParaModificar // Contiene 'rol' y/o 'periodo'
-      );
+      idDocente,
+      datosCapturados,
+      fechaRegistro,
+      validadoPor,
+      fechaValidacion,
+    });
     res.send(modificado);
   } catch (err) {
     console.error("Error al actualizar la relación docente-actividad", err);
