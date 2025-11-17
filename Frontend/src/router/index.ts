@@ -1,4 +1,7 @@
 import InicioVue from "@/modulos/principal/vistas/InicioVue.vue";
+import LoginVue from "@/modulos/principal/vistas/LoginVue.vue";
+import OlvidarContraseñaVue from "@/modulos/principal/vistas/OlvidarContraseñaVue.vue";
+import RestablecerContraseñaVue from "@/modulos/principal/vistas/RestablecerContraseñaVue.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
@@ -13,6 +16,21 @@ const router = createRouter({
        path: '/inicio',
        name: 'inicio',
        component: InicioVue,
+     },
+      {
+       path: '/Login',
+       name: 'Login',
+       component: LoginVue,
+     },
+     {
+       path: '/OlvidarContraseña',
+       name: 'OlvidarContraseña',
+       component: OlvidarContraseñaVue,
+     },
+       {
+       path: '/RestablecerContraseña',
+       name: 'Restablecer Contraseña',
+       component: RestablecerContraseñaVue,
      },
   ],
 });

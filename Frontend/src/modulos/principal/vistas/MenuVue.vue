@@ -20,6 +20,15 @@
           <li class="nav-item margin">
             <RouterLink class="nav-link item" to="/inicio">Inicio</RouterLink>
           </li>
+           <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/Login">Login</RouterLink>
+          </li>
+            <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/OlvidarContraseña">Olvidar Contraseña</RouterLink>
+          </li>
+             <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/RestablecerContraseña">Restablecer Contraseña</RouterLink>
+          </li>
         </ul>
       </div>
     </div>
