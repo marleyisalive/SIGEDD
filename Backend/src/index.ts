@@ -19,6 +19,7 @@ import docenteActividadRutas from "./routes/docenteactividadRutas"; // Asegúrat
 import departamentoRutas from "./routes/departamentoRutas";
 import usuarioRutas from "./routes/usuarioRutas";
 import grupoRutas from "./routes/grupoRutas";
+import materiaRutas from "./routes/materiaRutas";
 
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
@@ -37,6 +38,7 @@ app.use("/api/tipoActividad", tipoActividadRutas);
 app.use("/api/departamento", departamentoRutas);
 app.use("/api/usuario", usuarioRutas);
 app.use("/api/grupo", grupoRutas);
+app.use("/api/materia", materiaRutas);
 
 //prueba
 // app.get("/hola", (_req, res) => {
