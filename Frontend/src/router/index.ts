@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
+import LoginVue from "@/modulos/principal/vistas/LoginVue.vue";
+import OlvidarContraseñaVue from "@/modulos/principal/vistas/OlvidarContraseñaVue.vue";
+import RestablecerContraseñaVue from "@/modulos/principal/vistas/RestablecerContraseñaVue.vue";
 import AdministrativoValidarVue from "@/modulos/principal/vistas/AdministrativoValidarVue.vue";
 import DocentesGenerarVue from "@/modulos/principal/vistas/DocentesGenerarVue.vue";
 import InicioVue from "@/modulos/principal/vistas/InicioVue.vue";
@@ -45,8 +48,21 @@ const router = createRouter({
        name: 'administrativovalidardocentedocumento',
        component: AdministrativoValidarDocenteDocumentoVue,
      },
-     
-     
+      {
+       path: '/Login',
+       name: 'Login',
+       component: LoginVue,
+     },
+     {
+       path: '/OlvidarContraseña',
+       name: 'OlvidarContraseña',
+       component: OlvidarContraseñaVue,
+     },
+       {
+       path: '/RestablecerContraseña',
+       name: 'Restablecer Contraseña',
+       component: RestablecerContraseñaVue,
+     },
   ],
 });
 
