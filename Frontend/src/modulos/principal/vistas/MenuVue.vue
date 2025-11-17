@@ -20,6 +20,21 @@
           <li class="nav-item margin">
             <RouterLink class="nav-link item" to="/inicio">Inicio</RouterLink>
           </li>
+          <li>
+            <RouterLink class="nav-link item" to="/docentesgenerar">Docentes-Generar</RouterLink>
+          </li>
+          <li>
+            <RouterLink class="nav-link item" to="/docenteselegir">Docentes-Elegir</RouterLink>
+          </li>
+          <li>
+            <RouterLink class="nav-link item" to="/administrativovalidar">Administrativo-Validar</RouterLink>
+          </li>
+          <li>
+            <RouterLink class="nav-link item" to="/administrativovalidardocente">Administrativo-Validar-Docente</RouterLink>
+          </li>
+          <li>
+            <RouterLink class="nav-link item" to="/administrativovalidardocentedocumento">Admin-Validar-Docente-Docto.</RouterLink>
+          </li>
         </ul>
       </div>
     </div>

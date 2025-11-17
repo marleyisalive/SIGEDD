@@ -2,7 +2,7 @@
   <header class="triangulo-superior"></header>
 
   <main class="contenido-centro text-center">
-    <img src="src/assets/Logo SIGEDD.png" alt="SIGEDD" class="logo mb-4 w-25" />
+    <!------<img src="src/assets/Logo SIGEDD.png" alt="SIGEDD" class="logo mb-4 w-25" />---->
 
     <p class="lead fw-normal">
       ¡Olvida la guerra de papeles! <br />
