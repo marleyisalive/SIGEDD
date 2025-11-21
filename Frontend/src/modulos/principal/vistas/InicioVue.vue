@@ -7,6 +7,7 @@
           <img src="../../../assets/sigedd-icono.png" class="IconoSigedd" alt="SIGEDD">
 
 
+
       <!-- TEXTO -->
       <p class="main-texto">
         ¡Olvida la guerra de papeles! <br />

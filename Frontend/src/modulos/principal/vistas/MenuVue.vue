@@ -20,13 +20,28 @@
           <li class="nav-item margin">
             <RouterLink class="nav-link item" to="/inicio">Inicio</RouterLink>
           </li>
-           <li class="nav-item margin">
+          <li class="nav-item">
+            <RouterLink class="nav-link item" to="/docentesgenerar">Docentes-Generar</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link item" to="/docenteselegir">Docentes-Elegir</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link item" to="/administrativovalidar">Administrativo-Validar</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link item" to="/administrativovalidardocente">Administrativo-Validar-Docente</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link item" to="/administrativovalidardocentedocumento">Admin-Validar-Docente-Docto.</RouterLink>
+          </li>
+          <li class="nav-item margin">
             <RouterLink class="nav-link item" to="/Login">Login</RouterLink>
           </li>
-            <li class="nav-item margin">
+          <li class="nav-item margin">
             <RouterLink class="nav-link item" to="/OlvidarContraseña">Olvidar Contraseña</RouterLink>
           </li>
-             <li class="nav-item margin">
+          <li class="nav-item margin">
             <RouterLink class="nav-link item" to="/RestablecerContraseña">Restablecer Contraseña</RouterLink>
           </li>
           <li class="nav-item margin">
