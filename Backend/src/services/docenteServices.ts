@@ -54,10 +54,10 @@ export const encontrarDocentePorId = async (idDocente: number) => {
 export const agregarDocente = async (nuevoDocente: NuevoDocente) => {
   try {
     const [results] = await conexion.query(
-      "INSERT INTO docente (idUsuario, rfc, idNivelEstudio, idDepartamento, idPlaza, estatusExclusividad, folioEdd) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO docente (idUsuario, filiacion, idNivelEstudio, idDepartamento, idPlaza, estatusExclusividad, folioEdd) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
         nuevoDocente.idUsuario,
-        nuevoDocente.rfc,
+        nuevoDocente.filiacion,
         nuevoDocente.idNivelEstudio,
         nuevoDocente.idDepartamento,
         nuevoDocente.idPlaza,
@@ -72,36 +72,28 @@ export const agregarDocente = async (nuevoDocente: NuevoDocente) => {
   }
 };
 
-export const actualizarDocente = async (
-  idDocente: number,
-  docenteModificado: Partial<Docente>
-) => {
+export const actualizarDocente = async (modificado: Docente) => {
   try {
-    const fields: string[] = [];
-    const values: any[] = [];
-    for (const key in docenteModificado) {
-      if (docenteModificado.hasOwnProperty(key) && key !== "idDocente") {
-        // Evitar actualizar el propio ID
-        fields.push(`${key} = ?`);
-        values.push((docenteModificado as any)[key]);
-      }
-    }
-
-    if (fields.length === 0) {
-      return { warning: "No se proporcionaron datos para actualizar." };
-    }
-
-    values.push(idDocente); // El ID para la cláusula WHERE
     const [results] = await conexion.query(
-      `UPDATE docente SET ${fields.join(", ")} WHERE idDocente = ?`,
-      values
+      "UPDATE documento SET idDocente = ?, idUsuario = ?, filiacion = ?, idNivelEstudio = ?, idDepartamento = ?, idPlaza = ?, estatusExclusividad = ?, folioEdd = ? WHERE idDocente = ?",
+      [
+        modificado.idDocente,
+        modificado.idUsuario,
+        modificado.filiacion,
+        modificado.idNivelEstudio,
+        modificado.idDepartamento,
+        modificado.idPlaza,
+        modificado.estatusExclusividad,
+        modificado.folioEdd
+      ]
     );
     return results;
   } catch (err) {
-    console.error(`Error al actualizar el docente con ID ${idDocente}:`, err);
-    return { error: "No se pudo actualizar el docente." };
+    console.error("error al actualizar el docente: ", err);
+    return { error: "No se pudo actualizar el docente" };
   }
 };
+
 export const eliminarDocente = async (idDocente: number) => {
   try {
     const [results] = await conexion.query(

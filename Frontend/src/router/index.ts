@@ -58,11 +58,28 @@ const router = createRouter({
        name: 'OlvidarContraseña',
        component: OlvidarContraseñaVue,
      },
-       {
+     {
        path: '/RestablecerContraseña',
        name: 'Restablecer Contraseña',
        component: RestablecerContraseñaVue,
-     },
+      },
+      {
+      path: '/DocentesP',
+      name: 'Docentes Principal',
+      component: DocentesPVue,
+    },
+    {
+      path: '/DocumentosL',
+      name: 'Documentos Listos',
+      component: DocumentosLVue,
+    },
+    {
+      path: '/AdministrativoP',
+      name: 'Administrativo Principal',
+      component: AdministrativoPVue,
+    },
+    
+      
   ],
 });
 

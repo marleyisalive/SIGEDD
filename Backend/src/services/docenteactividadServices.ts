@@ -69,18 +69,15 @@ export const agregarDocenteActividad = async (
 ) => {
   try {
     const [results] = await conexion.query(
-      "INSERT INTO docenteActividad (idDocente, idActividadInstitucional, rol, periodo) VALUES (?, ?, ?, ?)",
+      "INSERT INTO docenteActividad (idDocenteActividad,idActividadInstitucional, idDocente, datosCapturados, fechaRegistro, validadoPor, fechaValidacion) VALUES (?, ?, ?, ?, ?, ?)",
       [
-        nuevaDocenteActividad.idDocente,
+        nuevaDocenteActividad.idDocenteActividad,
         nuevaDocenteActividad.idActividadInstitucional,
-        // Si rol o periodo son opcionales y vienen como undefined, MySQL espera NULL.
-        // Convertimos undefined a null explícitamente.
-        nuevaDocenteActividad.rol === undefined
-          ? null
-          : nuevaDocenteActividad.rol,
-        nuevaDocenteActividad.periodo === undefined
-          ? null
-          : nuevaDocenteActividad.periodo,
+        nuevaDocenteActividad.idDocente,
+        nuevaDocenteActividad.datosCapturados,
+        nuevaDocenteActividad.fechaRegistro,
+        nuevaDocenteActividad.validadoPor,
+        nuevaDocenteActividad.fechaValidacion
       ]
     );
     return results;
@@ -103,62 +100,24 @@ export const agregarDocenteActividad = async (
   }
 };
 
-export const actualizarDocenteActividad = async (
-  idDocente: number,
-  idActividadInstitucional: number,
-  docenteActividadModificada: Partial<docenteactividad>
-) => {
+export const actualizarDocenteActividad = async (modificado:docenteactividad) => {
   try {
-    const fields: string[] = [];
-    const values: any[] = [];
-
-    // Solo permitimos actualizar 'rol' y 'periodo', y convertimos undefined a null
-    if (docenteActividadModificada.rol !== undefined) {
-      fields.push("rol = ?");
-      values.push(
-        docenteActividadModificada.rol === undefined
-          ? null
-          : docenteActividadModificada.rol
-      );
-    }
-    if (docenteActividadModificada.periodo !== undefined) {
-      fields.push("periodo = ?");
-      values.push(
-        docenteActividadModificada.periodo === undefined
-          ? null
-          : docenteActividadModificada.periodo
-      );
-    }
-
-    if (fields.length === 0) {
-      return {
-        warning:
-          "No se proporcionaron datos válidos para actualizar (solo 'rol' y 'periodo' son actualizables).",
-      };
-    }
-
-    // Los IDs de la PK compuesta van al final para la cláusula WHERE
-    values.push(idDocente, idActividadInstitucional);
-
     const [results] = await conexion.query(
-      `UPDATE docenteActividad SET ${fields.join(
-        ", "
-      )} WHERE idDocente = ? AND idActividadInstitucional = ?`,
-      values
+      "UPDATE documento SET idDocenteActividad = ?, datosCapturados = ?, fechaRegistro = ?, validadoPor = ?, fechaValidacion = ? WHERE idActividadInstitucional = ?, idDocente = ? ",
+      [
+        modificado.idDocenteActividad,
+        modificado.datosCapturados,
+        modificado.fechaRegistro,
+        modificado.validadoPor,
+        modificado.fechaValidacion,
+        modificado.idActividadInstitucional,
+        modificado.idDocente
+      ]
     );
     return results;
-  } catch (err: any) {
-    console.error(
-      `Error al actualizar la relación docente-actividad con DocenteID ${idDocente} y ActividadID ${idActividadInstitucional}:`,
-      err
-    );
-    if (err.code === "ER_NO_REFERENCED_ROW_2") {
-      return {
-        error:
-          "No se pudo actualizar la relación. Verifique los IDs de Docente o Actividad Institucional.",
-      };
-    }
-    return { error: "No se pudo actualizar la relación docente-actividad." };
+  } catch (err) {
+    console.error("error al actualizar el documento: ", err);
+    return { error: "No se pudo actualizar el documento" };
   }
 };
 

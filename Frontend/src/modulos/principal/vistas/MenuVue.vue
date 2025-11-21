@@ -44,6 +44,15 @@
           <li class="nav-item margin">
             <RouterLink class="nav-link item" to="/RestablecerContraseña">Restablecer Contraseña</RouterLink>
           </li>
+          <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/DocentesP">Docentes Principal</RouterLink>
+          </li>
+           <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/DocumentosL">Documentos Listos</RouterLink>
+          </li>
+            <li class="nav-item margin">
+              <RouterLink class="nav-link item" to="/AdministrativoP">Administrativo Principal</RouterLink>
+            </li>
         </ul>
       </div>
     </div>

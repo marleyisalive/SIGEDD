@@ -20,12 +20,14 @@ router.get("/:id", async (req: Request, res: Response) => {
 //http://localhost:3001/api/tipoDocumento/ insertar un nuevo tipo de documento
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { idTipoDocumento, nombre, descripcion} = req.body; // desestructuring
+    const { idTipoDocumento, nombre, descripcion,plantillaJSON,activo} = req.body; // desestructuring
     //enviamos un objeto con los datos al servicio
     const nuevo = await tipoDocumentoServices.agregarTipoDocumento({
       idTipoDocumento,
       nombre,
       descripcion,
+      plantillaJSON,
+      activo
     });
     res.send(nuevo);
   } catch (err) {
@@ -37,11 +39,13 @@ router.post("/", async (req: Request, res: Response) => {
 //http://localhost:3001/api/tipoDocumento/ <---- editar un tipo documento
 router.put("/", async (req: Request, res: Response) => {
   try {
-    const { idTipoDocumento, nombre, descripcion } = req.body;
+    const { idTipoDocumento, nombre, descripcion , plantillaJSON, activo } = req.body;
     const modificado = await tipoDocumentoServices.actualizarTipoDocumento({
       idTipoDocumento,
       nombre,
       descripcion,
+      plantillaJSON,
+      activo
     });
     res.send(modificado);
   } catch (err) {
