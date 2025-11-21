@@ -20,10 +20,10 @@ router.get("/:id", async (req: Request, res: Response) => {
 //http://localhost:3001/api/documento/ insertar un nuevo documento
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { idDocumento, idTipoDocumento, idDocente,idActividadInstitucional,idGrupo,nombreArchivo,rutaArchivo,lugar,fecha,hora,validador} = req.body; // desestructuring
+    const { idDocumento, idDocenteActividad,fechaGeneracion,urlArchivo,version} = req.body; // desestructuring
     //enviamos un objeto con los datos al servicio
     const nuevo = await documentoServices.agregarDocumento({
-      idDocumento, idTipoDocumento, idDocente,idActividadInstitucional,idGrupo,nombreArchivo,rutaArchivo,lugar,fecha,hora,validador
+      idDocumento, idDocenteActividad, fechaGeneracion, urlArchivo, version
     });
     res.send(nuevo);
   } catch (err) {
@@ -35,9 +35,9 @@ router.post("/", async (req: Request, res: Response) => {
 //http://localhost:3001/api/documento/ <---- editar un documento
 router.put("/", async (req: Request, res: Response) => {
   try {
-    const { idDocumento, idTipoDocumento, idDocente,idActividadInstitucional,idGrupo,nombreArchivo,rutaArchivo,lugar,fecha,hora,validador } = req.body;
+    const { idDocumento, idDocenteActividad,fechaGeneracion,urlArchivo,version} = req.body;
     const modificado = await documentoServices.actualizarDocumento({
-      idDocumento, idTipoDocumento, idDocente,idActividadInstitucional,idGrupo,nombreArchivo,rutaArchivo,lugar,fecha,hora,validador,
+      idDocumento, idDocenteActividad, fechaGeneracion, urlArchivo, version
     });
     res.send(modificado);
   } catch (err) {

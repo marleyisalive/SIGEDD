@@ -1,10 +1,11 @@
 export interface docenteactividad {
-  idDocente: number;
+  idDocenteActividad: number;
   idActividadInstitucional: number;
-  rol?: string;         // Puede ser NULL
-  periodo?: string;     
-  fechaRegistro?: Date; 
+  idDocente: number;
+  datosCapturados: Record<string, any>;  // JSON
+  fechaRegistro?: Date | null;
+  validadoPor?: number | null;
+  fechaValidacion?: Date | null;
 }
-
 
 export type NuevaDocenteActividad = docenteactividad;

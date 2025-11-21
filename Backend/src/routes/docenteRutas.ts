@@ -41,14 +41,19 @@ router.post("/", async (req: Request, res: Response) => {
 // PUT http://localhost:3001/api/docentes
 router.put("/", async (req: Request, res: Response) => {
   try {
-    // Tu servicio 'actualizarDocente' espera el ID y los datos por separado,
-    // así que lo adaptamos al estilo de tu compañero (que envía todo en el body)
-    const { idDocente, ...datosParaModificar }: Docente = req.body;
+    // En otras rutas se envía un único objeto al servicio; hacemos lo mismo aquí
+    const { idDocente, idUsuario, filiacion, idNivelEstudio, idDepartamento, idPlaza, estatusExclusividad, folioEdd } = req.body;
 
-    const modificado = await docenteServices.actualizarDocente(
-      idDocente, // El ID
-      datosParaModificar // El resto de los campos (Partial<Docente>)
-    );
+    const modificado = await docenteServices.actualizarDocente({
+      idDocente,
+      idUsuario,
+      filiacion,
+      idNivelEstudio,
+      idDepartamento,
+      idPlaza,
+      estatusExclusividad,
+      folioEdd,
+    });
     res.send(modificado);
   } catch (err) {
     console.error("Error al actualizar el docente", err);
