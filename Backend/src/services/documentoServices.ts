@@ -36,19 +36,13 @@ export const encuentraDocumentoPorId = async (id: number) => {
 export const agregarDocumento = async (nuevo: documento) => {
   try {
     const [results] = await conexion.query(
-      "INSERT INTO documento (idDocumento, idTipoDocumento, idDocente, idActividadInstitucional, idGrupo, nombreArchivo, rutaArchivo, lugar, fecha, hora, validador)VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO documento (idDocumento, idDocenteActividad, fechaGeneracion, urlArchivo, version ) VALUES (?, ?, ?, ?, ?)",
       [
         nuevo.idDocumento,
-        nuevo.idTipoDocumento,
-        nuevo.idDocente,
-        nuevo.idActividadInstitucional ?? null,
-        nuevo.idGrupo ?? null,
-        nuevo.nombreArchivo,
-        nuevo.rutaArchivo,
-        nuevo.lugar,
-        nuevo.fecha ?? null,
-        nuevo.hora ?? null,
-        nuevo.validador,
+        nuevo.idDocenteActividad,
+        nuevo.fechaGeneracion,
+        nuevo.urlArchivo,
+        nuevo.version
       ]
     );
     return results;
@@ -61,19 +55,13 @@ export const agregarDocumento = async (nuevo: documento) => {
 export const actualizarDocumento = async (modificado: documento) => {
   try {
     const [results] = await conexion.query(
-      "UPDATE documento SET idTipoDocumento = ?, idDocente = ?, idActividadInstitucional = ?, idGrupo = ?, nombreArchivo = ?, rutaArchivo = ?, lugar = ?, fecha = ?, hora = ?, validador = ? WHERE idDocumento = ?",
+      "UPDATE documento SET idDocenteActividad = ?, fechaGeneracion = ?, urlArchivo = ?, version = ? WHERE idDocumento = ?",
       [
-        modificado.idTipoDocumento,
-        modificado.idDocente,
-        modificado.idActividadInstitucional ?? null,
-        modificado.idGrupo ?? null,
-        modificado.nombreArchivo,
-        modificado.rutaArchivo,
-        modificado.lugar,
-        modificado.fecha ?? null,
-        modificado.hora ?? null,
-        modificado.validador,
-        modificado.idDocumento,
+        modificado.idDocenteActividad,
+        modificado.fechaGeneracion,
+        modificado.urlArchivo,
+        modificado.version,
+        modificado.idDocumento
       ]
     );
     return results;
@@ -86,7 +74,7 @@ export const actualizarDocumento = async (modificado: documento) => {
 export const eliminarDocumento = async (idDocumento: number) => {
   try {
     const [results] = await conexion.query(
-      "DELETE FROM documento WHERE documento = ?",
+      "DELETE FROM documento WHERE idDocumento = ?",
       [idDocumento]
     );
     return results;
