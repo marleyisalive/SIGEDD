@@ -1,0 +1,219 @@
+CREATE DATABASE IF NOT EXISTS `SIGEDD` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `SIGEDD`;
+
+-- =====================================================
+-- Tabla: actividadInstitucional
+-- =====================================================
+CREATE TABLE `actividadInstitucional` (
+  `idActividadInstitucional` int(11) NOT NULL,
+  `idTipoActividad` int(11) NOT NULL,
+  `idCarrera` int(11) DEFAULT NULL,
+  `nombre` varchar(200) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `periodo` varchar(50) DEFAULT NULL,
+  `fechaInicio` date DEFAULT NULL,
+  `fechaFin` date DEFAULT NULL,
+  `metadatos` text DEFAULT NULL,
+  PRIMARY KEY (`idActividadInstitucional`),
+  KEY `idTipoActividad` (`idTipoActividad`),
+  KEY `idCarrera` (`idCarrera`),
+  CONSTRAINT `actividadInstitucional_ibfk_1` FOREIGN KEY (`idTipoActividad`) REFERENCES `tipoActividad` (`idTipoActividad`),
+  CONSTRAINT `actividadInstitucional_ibfk_2` FOREIGN KEY (`idCarrera`) REFERENCES `carrera` (`idCarrera`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: aula
+-- =====================================================
+CREATE TABLE `aula` (
+  `idAula` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  PRIMARY KEY (`idAula`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: carrera
+-- =====================================================
+CREATE TABLE `carrera` (
+  `idCarrera` int(11) NOT NULL,
+  `nombreCarrera` varchar(50) NOT NULL,
+  `acreditada` tinyint(1) NOT NULL,
+  `nivel` varchar(20) NOT NULL,
+  PRIMARY KEY (`idCarrera`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: departamento
+-- =====================================================
+CREATE TABLE `departamento` (
+  `idDepartamento` int(11) NOT NULL,
+  `nombreDepartamento` varchar(50) NOT NULL,
+  `encargadoDepartamento` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idDepartamento`),
+  KEY `encargadoDepartamento` (`encargadoDepartamento`),
+  CONSTRAINT `departamento_ibfk_1` FOREIGN KEY (`encargadoDepartamento`) REFERENCES `usuario` (`idUsuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: docente
+-- =====================================================
+CREATE TABLE `docente` (
+  `idDocente` int(11) NOT NULL,
+  `idUsuario` int(11) NOT NULL,
+  `rfc` char(13) NOT NULL,
+  `idNivelEstudio` int(11) NOT NULL,
+  `idDepartamento` int(11) NOT NULL,
+  `idPlaza` int(11) NOT NULL,
+  `estatusExclusividad` tinyint(1) NOT NULL DEFAULT 0,
+  `folioEdd` int(11) NOT NULL,
+  PRIMARY KEY (`idDocente`),
+  KEY `idUsuario` (`idUsuario`),
+  KEY `idNivelEstudio` (`idNivelEstudio`),
+  KEY `idDepartamento` (`idDepartamento`),
+  KEY `idPlaza` (`idPlaza`),
+  CONSTRAINT `docente_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`),
+  CONSTRAINT `docente_ibfk_2` FOREIGN KEY (`idNivelEstudio`) REFERENCES `nivelEstudio` (`idNivelEstudio`),
+  CONSTRAINT `docente_ibfk_3` FOREIGN KEY (`idDepartamento`) REFERENCES `departamento` (`idDepartamento`),
+  CONSTRAINT `docente_ibfk_4` FOREIGN KEY (`idPlaza`) REFERENCES `plaza` (`idPlaza`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: docenteActividad
+-- =====================================================
+CREATE TABLE `docenteActividad` (
+  `idDocente` int(11) NOT NULL,
+  `idActividadInstitucional` int(11) NOT NULL,
+  `rol` varchar(50) DEFAULT NULL,
+  `periodo` varchar(50) DEFAULT NULL,
+  `fechaRegistro` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`idDocente`,`idActividadInstitucional`),
+  KEY `idActividadInstitucional` (`idActividadInstitucional`),
+  CONSTRAINT `docenteActividad_ibfk_1` FOREIGN KEY (`idDocente`) REFERENCES `docente` (`idDocente`),
+  CONSTRAINT `docenteActividad_ibfk_2` FOREIGN KEY (`idActividadInstitucional`) REFERENCES `actividadInstitucional` (`idActividadInstitucional`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: documento
+-- =====================================================
+CREATE TABLE `documento` (
+  `idDocumento` int(11) NOT NULL,
+  `idTipoDocumento` int(11) NOT NULL,
+  `idDocente` int(11) NOT NULL,
+  `idActividadInstitucional` int(11) DEFAULT NULL,
+  `idGrupo` int(11) DEFAULT NULL,
+  `nombreArchivo` varchar(200) DEFAULT NULL,
+  `rutaArchivo` varchar(300) DEFAULT NULL,
+  `lugar` varchar(100) DEFAULT NULL,
+  `fecha` date DEFAULT curdate(),
+  `hora` time DEFAULT curtime(),
+  `validador` int(11) NOT NULL,
+  PRIMARY KEY (`idDocumento`),
+  KEY `idTipoDocumento` (`idTipoDocumento`),
+  KEY `idDocente` (`idDocente`),
+  KEY `idActividadInstitucional` (`idActividadInstitucional`),
+  KEY `idGrupo` (`idGrupo`),
+  KEY `validador` (`validador`),
+  CONSTRAINT `documento_ibfk_1` FOREIGN KEY (`idTipoDocumento`) REFERENCES `tipoDocumento` (`idTipoDocumento`),
+  CONSTRAINT `documento_ibfk_2` FOREIGN KEY (`idDocente`) REFERENCES `docente` (`idDocente`),
+  CONSTRAINT `documento_ibfk_3` FOREIGN KEY (`idActividadInstitucional`) REFERENCES `actividadInstitucional` (`idActividadInstitucional`),
+  CONSTRAINT `documento_ibfk_4` FOREIGN KEY (`idGrupo`) REFERENCES `grupo` (`idGrupo`),
+  CONSTRAINT `documento_ibfk_5` FOREIGN KEY (`validador`) REFERENCES `usuario` (`idUsuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: grupo
+-- =====================================================
+CREATE TABLE `grupo` (
+  `idGrupo` int(11) NOT NULL,
+  `idDocente` int(11) NOT NULL,
+  `idMateria` int(11) NOT NULL,
+  `idAula` int(11) NOT NULL,
+  `periodo` varchar(50) DEFAULT NULL,
+  `horario` varchar(50) NOT NULL,
+  `numeroAlumnos` int(11) NOT NULL,
+  PRIMARY KEY (`idGrupo`),
+  KEY `idDocente` (`idDocente`),
+  KEY `idMateria` (`idMateria`),
+  KEY `idAula` (`idAula`),
+  CONSTRAINT `grupo_ibfk_1` FOREIGN KEY (`idDocente`) REFERENCES `docente` (`idDocente`),
+  CONSTRAINT `grupo_ibfk_2` FOREIGN KEY (`idMateria`) REFERENCES `materia` (`idMateria`),
+  CONSTRAINT `grupo_ibfk_3` FOREIGN KEY (`idAula`) REFERENCES `aula` (`idAula`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: materia
+-- =====================================================
+CREATE TABLE `materia` (
+  `idMateria` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `idDepartamento` int(11) NOT NULL,
+  `creditos` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idMateria`),
+  KEY `idDepartamento` (`idDepartamento`),
+  CONSTRAINT `materia_ibfk_1` FOREIGN KEY (`idDepartamento`) REFERENCES `departamento` (`idDepartamento`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: nivelEstudio
+-- =====================================================
+CREATE TABLE `nivelEstudio` (
+  `idNivelEstudio` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  PRIMARY KEY (`idNivelEstudio`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: plaza
+-- =====================================================
+CREATE TABLE `plaza` (
+  `idPlaza` int(11) NOT NULL,
+  `descripcion` varchar(50) NOT NULL,
+  PRIMARY KEY (`idPlaza`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: rol
+-- =====================================================
+CREATE TABLE `rol` (
+  `idRol` int(11) NOT NULL,
+  `descripcion` varchar(50) NOT NULL,
+  PRIMARY KEY (`idRol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: tipoActividad
+-- =====================================================
+CREATE TABLE `tipoActividad` (
+  `idTipoActividad` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `descripcion` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`idTipoActividad`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: tipoDocumento
+-- =====================================================
+CREATE TABLE `tipoDocumento` (
+  `idTipoDocumento` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `descripcion` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`idTipoDocumento`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- Tabla: usuario
+-- =====================================================
+CREATE TABLE `usuario` (
+  `idUsuario` int(11) NOT NULL,
+  `nombreUsuario` varchar(50) NOT NULL,
+  `apePatUsuario` varchar(50) DEFAULT NULL,
+  `apeMatUsuario` varchar(50) DEFAULT NULL,
+  `telefono` char(10) DEFAULT NULL,
+  `correoUsuario` varchar(50) NOT NULL,
+  `contrasenaUsuario` varchar(100) NOT NULL,
+  `estatus` tinyint(1) NOT NULL DEFAULT 1,
+  `idRol` int(11) NOT NULL,
+  PRIMARY KEY (`idUsuario`),
+  KEY `idRol` (`idRol`),
+  CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`idRol`) REFERENCES `rol` (`idRol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+

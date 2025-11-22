@@ -1,0 +1,390 @@
+CREATE TABLE tipodocumento (
+  idTipoDocumento int NOT NULL,
+  nombre varchar(150) NOT NULL,
+  descripcion text,
+  plantillaJSON json NOT NULL,
+  PRIMARY KEY (idTipoDocumento)
+);
+
+CREATE TABLE nivelEstudio (
+  idNivelEstudio int NOT NULL,
+  nombre varchar(50) NOT NULL,
+  PRIMARY KEY (idNivelEstudio)
+);
+
+CREATE TABLE plaza (
+  idPlaza int NOT NULL,
+  descripcion varchar(50) NOT NULL,
+  PRIMARY KEY (idPlaza)
+);
+
+CREATE TABLE rol (
+  idRol int NOT NULL,
+  descripcion varchar(50) NOT NULL,
+  PRIMARY KEY (idRol)
+);
+
+CREATE TABLE aula (
+  idAula int NOT NULL,
+  nombre varchar(50) NOT NULL,
+  PRIMARY KEY (idAula)
+);
+
+CREATE TABLE usuario (
+  idUsuario int NOT NULL,
+  nombreUsuario varchar(50) NOT NULL,
+  apePatUsuario varchar(50),
+  apeMatUsuario varchar(50),
+  telefono char(10),
+  correoUsuario varchar(100) NOT NULL,
+  contrasenaUsuario varchar(150) NOT NULL,
+  estatus tinyint NOT NULL DEFAULT 1,
+  idRol int NOT NULL,
+  PRIMARY KEY (idUsuario),
+  UNIQUE (correoUsuario),
+  FOREIGN KEY (idRol) REFERENCES rol(idRol)
+);
+
+CREATE TABLE departamento (
+  idDepartamento int NOT NULL,
+  nombreDepartamento varchar(100) NOT NULL,
+  encargadoDepartamento int,
+  PRIMARY KEY (idDepartamento),
+  FOREIGN KEY (encargadoDepartamento) REFERENCES usuario(idUsuario)
+);
+
+CREATE TABLE actividadInstitucional (
+  idActividadInstitucional int NOT NULL,
+  idTipoDocumento int NOT NULL,
+  nombre varchar(200) NOT NULL,
+  descripcion text,
+  periodo varchar(50),
+  fechaInicio date,
+  fechaFin date,
+  PRIMARY KEY (idActividadInstitucional),
+  FOREIGN KEY (idTipoDocumento) REFERENCES tipodocumento(idTipoDocumento)
+);
+
+CREATE TABLE carrera(
+    idCarrera int NOT NULL,
+    nombre varchar(100) NOT NULL,
+    acreditado tinyint DEFAULT 0,
+    PRIMARY KEY (idCarrera)
+)
+
+CREATE TABLE docente (
+  idDocente int NOT NULL,
+  idUsuario int NOT NULL,
+  filiacion char(18) NOT NULL,
+  idNivelEstudio int NOT NULL,
+  idDepartamento int NOT NULL,
+  idPlaza int NOT NULL,
+  estatusExclusividad tinyint DEFAULT 0,
+  folioEdd char(8),
+  PRIMARY KEY (idDocente),
+  FOREIGN KEY (idUsuario) REFERENCES usuario(idUsuario),
+  FOREIGN KEY (idNivelEstudio) REFERENCES nivelEstudio(idNivelEstudio),
+  FOREIGN KEY (idDepartamento) REFERENCES departamento(idDepartamento),
+  FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera),
+  FOREIGN KEY (idPlaza) REFERENCES plaza(idPlaza)
+);
+
+CREATE TABLE materia (
+  idMateria int NOT NULL,
+  nombre varchar(150) NOT NULL,
+  idDepartamento int NOT NULL,
+  creditos int,
+  PRIMARY KEY (idMateria),
+  FOREIGN KEY (idDepartamento) REFERENCES departamento(idDepartamento)
+);
+
+CREATE TABLE docenteactividad (
+  idDocenteActividad int NOT NULL,
+  idActividadInstitucional int NOT NULL,
+  idDocente int NOT NULL,
+  datosCapturados json NOT NULL,
+  fechaRegistro datetime DEFAULT current_timestamp(),
+  validadoPor int,
+  fechaValidacion datetime,
+  PRIMARY KEY (idDocenteActividad),
+  FOREIGN KEY (idActividadInstitucional) REFERENCES actividadInstitucional(idActividadInstitucional),
+  FOREIGN KEY (idDocente) REFERENCES docente(idDocente),
+  FOREIGN KEY (validadoPor) REFERENCES usuario(idUsuario)
+);
+
+CREATE TABLE documento (
+  idDocumento int NOT NULL,
+  idDocenteActividad int NOT NULL,
+  fechaGeneracion datetime DEFAULT current_timestamp(),
+  urlArchivo varchar(500) NOT NULL,
+  version int DEFAULT 1,
+  PRIMARY KEY (idDocumento),
+  FOREIGN KEY (idDocenteActividad) REFERENCES docenteactividad(idDocenteActividad)
+);
+
+CREATE TABLE grupo (
+  idGrupo int NOT NULL,
+  idDocente int NOT NULL,
+  idMateria int NOT NULL,
+  idAula int NOT NULL,
+  periodo varchar(50),
+  horario varchar(50) NOT NULL,
+  numeroAlumnos int NOT NULL,
+  PRIMARY KEY (idGrupo),
+  FOREIGN KEY (idDocente) REFERENCES docente(idDocente),
+  FOREIGN KEY (idMateria) REFERENCES materia(idMateria),
+  FOREIGN KEY (idAula) REFERENCES aula(idAula)
+)
+
+--inserciones para nivel de estudio
+INSERT INTO nivelEstudio (idNivelEstudio, nombre) VALUES
+(1, 'Técnico Superior'), 
+(2, 'Licenciatura'),      
+(3, 'Especialización'),   
+(4, 'Maestría'),        
+(5, 'Doctorado');        
+
+
+--inserciones para roles
+INSERT INTO rol (idRol, descripcion) VALUES
+(1, 'Administrador del sistema'),
+(2, 'Docente'),
+(3, 'Jefe de Departamento'),
+(5, 'Director de Instituto');    
+
+
+
+--inserciones para usuarios
+INSERT INTO usuario (idUsuario, nombreUsuario, apePatUsuario, apeMatUsuario, telefono, correoUsuario, contrasenaUsuario, estatus, idRol) VALUES
+(1, 'Felipe', 'Muñiz', 'Ramos', '6671234501', 'felipe_muniz@itculiacan.edu.mx', 'Felipe123', 1, 2),
+(2, 'Fernando', 'Gámez', 'Román', '6671234502', 'fernando_gamez@itculiacan.edu.mx', 'Fernando123', 1, 2),
+(3, 'Fidel', 'Uriarte', 'Monzón', '6671234503', 'fidel_uriarte@itculiacan.edu.mx', 'Fidel123', 1, 2),
+(4, 'Martha', 'Valenzuela', 'Tirado', '6671234504', 'martha_valenzuela@itculiacan.edu.mx', 'Martha123', 1, 2),
+(5, 'Martín', 'Félix', '', '6671234505', 'martin_felix@itculiacan.edu.mx', 'Martín123', 1, 2),
+(6, 'Martín', 'Nevárez', 'Rivas', '6671234506', 'martinevarez@itculiacan.edu.mx', 'Martín123', 1, 2),
+(7, 'Mirna', 'Quevedo', 'Camacho', '6671234507', 'mirna_quevedo@itculiacan.edu.mx', 'Mirna123', 1, 2),
+(8, 'Víctor', 'Bátiz', 'Beltrán', '6671234508', 'Vbatiz@itculiacan.edu.mx', 'Víctor123', 1, 2),
+(9, 'Wendy', 'Astorga', 'Pacheco', '6671234509', 'wendy_astorga@itculiacan.edu.mx', 'Wendy123', 1, 2),
+(10, 'Aldo', 'Uriarte', 'Portillo', '6671234510', 'auriarte@itculiacan.edu.mx', 'Aldo123', 1, 2),
+(11, 'Alejandra', 'García', 'Sandoval', '6671234511', 'alejandra.garcia@itculiacan.edu.mx', 'Alejandra123', 0, 2),
+(12, 'Noel', 'García', 'Inzunza', '6671234512', 'noel_garcia@itculiacan.edu.mx', 'Noel123', 1, 2),
+(13, 'Nora', 'Cancela', 'García', '6671234513', 'cancela.garcia@itculiacan.edu.mx', 'Nora123', 1, 2),
+(14, 'Norma', 'Godoy', 'Castro', '6671234514', 'rebecagodoy@itculiacan.edu.mx', 'Norma123', 1, 2),
+(15, 'Norman', 'Esparza', 'Soto', '6671234515', 'SalvadorElenes@itculiacan.edu.mx', 'Norman123', 1, 2),
+(16, 'Pedro', 'Villa', 'Casas', '6671234516', 'pevica@itculiacan.edu.mx', 'Pedro123', 1, 2),
+(17, 'Ramón', 'Zatarain', 'Cabada', '6671234517', 'rzatarain@itculiacan.edu.mx', 'Ramón123', 1, 2),
+(18, 'Ricardo', 'García', 'Osuna', '6671234518', 'ricardo_garcia@itculiacan.edu.mx', 'Ricardo123', 1, 2),
+(19, 'Ricardo', 'Quintero', 'Meza', '6671234519', 'rquintero@itculiacan.edu.mx', 'Ricardo123', 1, 2),
+(20, 'Gualberto', 'Leyva', 'Gutiérrez', '6671234520', 'gualberto_leyva@itculiacan.edu.mx', 'Gualberto123', 1, 2),
+(21, 'Héctor', 'Rodríguez', 'Rángel', '6671234521', 'hrodriguez@itculiacan.edu.mx', 'Héctor123', 1, 2),
+(22, 'Marco', 'Rodríguez', 'Avilés', '6671234522', 'ramarco@itculiacan.edu.mx', 'Marco123', 1, 2),
+(23, 'María', 'Martínez', 'Amaya', '6671234523', 'aracely_martinez@itculiacan.edu.mx', 'María123', 0, 2),
+(24, 'María', 'González', 'Álvarez', '6671234524', 'rgonzalez@itculiacan.edu.mx', 'María123', 1, 2),
+(25, 'María', 'Cárdenas', 'Mosqueda', '6671234525', 'mecmosqueda@itculiacan.edu.mx', 'María123', 1, 2),
+(26, 'Joaquín', 'Salazar', 'Araujo', '6671234526', 'idyjrsg@itculiacan.edu.mx', 'Joaquín123', 1, 2),
+(27, 'Jorge', 'Moya', 'Palazuelos', '6671234527', 'jmoya@itculiacan.edu.mx', 'Jorge123', 1, 2),
+(28, 'Jorge', 'Leal', 'Rendón', '6671234528', 'Jorge_leal@itculiacan.edu.mx', 'Jorge123', 1, 2),
+(29, 'Carlos', 'Sandoval', 'Castellanos', '6671234529', 'carlos_sandoval@itculiacan.edu.mx', 'Carlos123', 1, 2),
+(30, 'César', 'Sánchez', 'Beltrán', '6671234530', 'cesar_sanchez@itculiacan.edu.mx', 'César123', 1, 2),
+(31, 'Jesslie', 'Rodríguez', 'Rodríguez', '6671234531', 'Jesslie_rodriguez@itculiacan.edu.mx', 'Jesslie123', 1, 2),
+(32, 'Gabriel', 'López', 'Escárrega', '6671234532', 'glopez@itculiacan.edu.mx', 'Gabriel123', 1, 2),
+(33, 'Francisca', 'Piña', 'Zazueta', '6671234533', 'francis.pina@itculiacan.edu.mx', 'Francisca123', 1, 2);
+
+--inserciones para plazas
+INSERT INTO plaza (idPlaza, descripcion) VALUES
+(381700, 'Tiempo completo'),
+(381800, 'Medio tiempo'),
+(381900, 'Horas parciales'),
+(382000, 'Asignatura aislada');
+
+--inserciones para aula
+INSERT INTO aula (idAula, nombre) VALUES
+(1, 'EA01'),
+(2, 'EA02'),
+(3, 'EA03'),
+(4, 'EA04'),
+(5, 'EA05'),
+(6, 'EB01'),
+(7, 'EB02'),
+(8, 'EB03'),
+(9, 'EB04'),
+(10, 'EB05');
+(11, 'EC01'),
+(12, 'EC02'),
+(13, 'EC03'),
+(14, 'EC04'),
+(15, 'EC05');
+(16, 'CCPW'),
+(17, 'CCDM'),
+(18, 'CCLR'),
+(19, 'CC01'),
+(20, 'CC02');
+(21, 'CC03'),
+(22, 'CC04'),
+(23, 'CC05');
+
+--inserciones para departamentos
+INSERT INTO departamento (idDepartamento, nombreDepartamento, encargadoDepartamento) VALUES
+(1, 'Dirección del Plantel', 33),
+(2, 'Subdirección Académica', 1),
+(3, 'Departamento de Desarrollo Académico', 2),
+(4, 'Departamento de Servicios Escolares', 3),
+(5, 'Departamento de Recursos Humanos', 4),
+(6, 'Departamento de Gestión Tecnológica y Vinculación', 5),
+(7, 'Departamento Académico (Genérico)', 6),
+(8, 'Departamento de Ciencias Básicas', 7);
+(10, 'Departamento de Ingeniería Eléctrica', 8),
+(11, 'Departamento de Ingeniería Electrónica', 9),
+(12, 'Departamento de Ingeniería Industrial y de Sistemas', 10),
+(13, 'Departamento de Ingeniería Mecánica', 11),
+(14, 'Departamento de Ingeniería Química', 12);
+(15, 'Departamento de mecatronica', 13);
+(16, 'Departamento de Sistemas Computacionales y tecnologias de la informacion', 6);
+(18, 'Departamento de mecatronica', 15);
+(19, 'Departamento centro de informacion', 16);
+(20, 'Subdirección academica', 18);
+
+--inserciones para materias
+INSERT INTO materia (idMateria, nombre, idDepartamento, creditos) VALUES
+(1, 'Cálculo Diferencial', 8, 5),    
+(2, 'Fundamentos de Programación', 16, 5), 
+(3, 'Taller de Ética', 8, 4),           
+(4, 'Matemáticas Discretas', 8, 5),     
+(5, 'Taller de Administración', 8, 4),  
+(6, 'Fundamentos de Investigación', 8, 4), 
+(7, 'Cálculo Integral', 8, 5),        
+(8, 'Programación Orientada a Objetos', 16, 5), 
+(9, 'Contabilidad Financiera', 8, 4),  
+(10, 'Álgebra Lineal', 8, 5),           
+(11, 'Probabilidad y Estadística', 8, 5), 
+(12, 'Química', 8, 4),                 
+(13, 'Cálculo Vectorial', 8, 5),       
+(14, 'Estructura de Datos', 16, 5),     
+(15, 'Investigación de Operaciones', 8, 5), 
+(16, 'Desarrollo Sustentable', 8, 4),  
+(17, 'Física General', 8, 5),         
+(18, 'Cultura Empresarial', 8, 4),     
+(19, 'Ecuaciones Diferenciales', 8, 5), 
+(20, 'Métodos Numéricos', 16, 5),      
+(21, 'Tópicos Avanzados de Programación', 16, 5),
+(22, 'Fundamentos de Base de Datos', 16, 5), 
+(23, 'Simulación', 16, 5),             
+(24, 'Principios Eléctricos y Aplicaciones Digitales', 10, 5), 
+(25, 'Graficación', 16, 5),             
+(26, 'Fundamentos de Telecomunicaciones', 16, 5), 
+(27, 'Sistemas Operativos', 16, 5),     
+(28, 'Taller de Base de Datos', 16, 5), 
+(29, 'Fundamentos de Ingeniería de Software', 16, 5), 
+(30, 'Arquitectura de Computadoras', 16, 5), 
+(31, 'Lenguajes y Autómatas I', 16, 5), 
+(32, 'Redes de Computadoras', 16, 5),    
+(33, 'Taller de Sistemas Operativos', 16, 5), 
+(34, 'Administración de Base de Datos', 16, 5), 
+(35, 'Ingeniería de Software', 16, 5),   
+(36, 'Lenguajes de Interfaz', 16, 5),     
+(37, 'Lenguajes y autómatas II', 16, 5),
+(38, 'Conmutación y Enrutamiento en Redes de Datos', 16, 5), 
+(39, 'Taller de Investigación I', 8, 4),  
+(40, 'Sistemas Programables', 16, 5),    
+(41, 'Gestión de Proyectos de Software', 16, 5), 
+(42, 'Administración de Redes', 16, 5),  
+(43, 'Taller de Investigación II', 8, 4), 
+(44, 'Programación Web', 16, 5),         
+(45, 'Programación Lógica y Funcional', 16, 5), 
+(46, 'Inteligencia Artificial', 16, 5),
+
+
+
+-- Docentes de Sistemas Computacionales y T.I. (ID 16)
+INSERT INTO docente (idDocente, idUsuario, filiacion, idNivelEstudio, idDepartamento, idPlaza, estatusExclusividad, folioEdd) VALUES
+
+(1, 1, 'MURF500101H99C001', 5, 16, 381700, 1, '2025ISC1'), 
+(2, 2, 'GARO550202H99C002', 4, 16, 381700, 1, '2025ISC2'), 
+(3, 3, 'URMO600303H99C003', 5, 16, 381700, 1, null),
+(4, 4, 'VATI650404H99C004', 4, 16, 381700, 1, null),
+(5, 5, 'FEMA700505H99C005', 2, 16, 381800, 0, '2025ISC5'),
+(6, 6, 'NERI750606H99C006', 5, 16, 381700, 0, '2025ISC6'),
+(7, 7, 'QUCA800707H99C007', 4, 16, 381700, 1, null), 
+(10, 10, 'URPO851010H99C010', 5, 16, 381700, 1, '2025ISC10'), 
+(12, 12, 'GAIN901212H99C012', 4, 16, 381700, 0, '2025ISC11'), 
+(13, 13, 'CAGA951313H99C013', 5, 16, 381700, 1, '2025ISC12'), 
+(14, 14, 'GOCA901414H99C014', 5, 16, 381700, 1, null), 
+(15, 15, 'ESSO951515H99C015', 4, 16, 381700, 0, '2025ISC14'), 
+(16, 16, 'VICA001616H99C016', 5, 16, 381700, 1, '2025ISC15'), 
+(17, 17, 'ZACA051717H99C017', 4, 16, 381700, 1, '2025ISC16'),
+(18, 18, 'GAOS101818H99C018', 5, 16, 381700, 1, '2025ISC17'), 
+(19, 19, 'QUIM151919H99C019', 4, 16, 381700, 1, '2025ISC18'), 
+(20, 20, 'LEGU202020H99C020', 5, 16, 381700, 1, '2025ISC19'), 
+(21, 21, 'ROAR252121H99C021', 4, 16, 381700, 1, null), 
+(22, 8, 'BABE500808H99C008', 5, 8, 381700, 1, '2025CB1'),
+(23, 9, 'ASPA550909H99C009', 4, 8, 381700, 1, '2025CB2'); 
+
+
+
+
+INSERT INTO grupo (idGrupo, idDocente, idMateria, idAula, periodo, horario, numeroAlumnos) VALUES
+(1, 1, 2, 1, 'ENE-JUN 2024', '10:00 - 11:00', 45), 
+(2, 1, 22, 6, 'ENE-JUN 2024', '11:00 - 12:00', 40),  
+(3, 1, 2, 1, 'AGO-DIC 2024', '10:00 - 11:00', 45), 
+(4, 1, 22, 6, 'AGO-DIC 2024', '11:00 - 12:00', 40), 
+(5, 1, 44, 16, 'ENE-JUN 2024', '09:00 - 10:00', 38), 
+(6, 14, 35, 1, 'AGO-DIC 2024', '14:00 - 15:00', 35),  
+(7, 14, 30, 7, 'AGO-DIC 2024', '15:00 - 16:00', 30),   
+(8, 14, 29, 1, 'AGO-DIC 2024', '14:00 - 15:00', 42),  
+(9, 5, 1, 11, 'AGO-DIC 2024', '07:00 - 08:00', 50),  
+(10, 5, 10, 12, 'AGO-DIC 2024', '08:00 - 09:00', 48),  
+(11, 5, 17, 11, 'ENE-JUN 2024', '07:00 - 08:00', 45), 
+(12, 7, 21, 19, 'AGO-DIC 2024', '17:00 - 18:00', 32),  
+(13, 7, 34, 19, 'ENE-JUN 2024', '17:00 - 18:00', 35), 
+(14, 16, 32, 22, 'AGO-DIC 2024', '12:00 - 13:00', 30), 
+(15, 16, 38, 22, 'ENE-JUN 2024', '12:00 - 13:00', 31),
+(16, 9, 8, 2, 'AGO-DIC 2024', '16:00 - 17:00', 41),
+(17, 8, 14, 8, 'AGO-DIC 2024', '13:00 - 14:00', 33),
+(18, 9, 32, 17, 'AGO-DIC 2024', '17:00 - 18:00', 36),
+(19, 9, 27, 20, 'AGO-DIC 2024', '11:00 - 12:00', 39),
+(20, 9, 7, 13, 'AGO-DIC 2024', '10:00 - 11:00', 52),
+(21, 9, 46, 16, 'AGO-DIC 2024', '18:00 - 19:00', 28),
+(22, 9, 25, 23, 'AGO-DIC 2024', '09:00 - 10:00', 40),
+(23, 8, 31, 14, 'AGO-DIC 2024', '16:00 - 17:00', 34),
+(24, 3, 24, 10, 'AGO-DIC 2024', '15:00 - 16:00', 48),
+(25, 5, 11, 9, 'AGO-DIC 2024', '07:00 - 08:00', 55),
+(26, 11, 42, 18, 'AGO-DIC 2024', '14:00 - 15:00', 30);
+
+
+
+-- 1.1.5: Acción Tutorial (Basado en 1.1.5.1.jpg)
+INSERT INTO tipodocumento (idTipoDocumento, nombre, descripcion, plantillaJSON) VALUES
+(10, 'Constancia Cumplimiento PIT', 'Documento que avala la acción tutorial, incluyendo número de tutorados y evaluación de impacto (1.1.5).', 
+'{"campos": ["totalTutorados", "idJefeDDA", "idSubdirectorAcademico","carrera"]}'
+);
+
+-- 1.1.6: Programa Educativo Acreditado (Basado en 1.1.6b.jpg)
+INSERT INTO tipodocumento (idTipoDocumento, nombre, descripcion, plantillaJSON) VALUES
+(20, 'Constancia Acreditación PE', 'Documento que avala que el PE está acreditado, con vigencia y registro (1.1.6).', 
+'{"campos": ["organismoAcreditador", "fechaInicioVigencia", "fechaFinVigencia", "numRegistro"]}'
+);
+
+-- 1.1.7: Créditos Complementarios (Basado en 1.1.7.jpg)
+INSERT INTO tipodocumento (idTipoDocumento, nombre, descripcion, plantillaJSON) VALUES
+(30, 'Constancia Actividad Complementaria', 'Avala el cumplimiento como monitor de crédito complementario (1.1.7).', 
+'{"campos": ["numOficio", "dictamen", "totalAlumnosAtendidos", "alumnosObtuvieronCredito", "idJefeDepartamento", "idSubdirectorAcademico"]}'
+);
+
+-- 1.2.1.1: Recurso Educativo Digital (Basado en 1.2.1.1a.jpg y 1.2.1.1b.jpg)
+INSERT INTO tipodocumento (idTipoDocumento, nombre, descripcion, plantillaJSON) VALUES
+(40, 'Constancia Recurso Educativo Digital', 'Avala la elaboración de un RED aprobado por academia (1.2.1.1).', 
+'{"campos": [ "asignatura", "idPresidenteAcademia", "idJefeDepto","idJefeDDA"]}'
+);
+
+-- 1.2.1.3: Estrategias Didácticas Innovadoras (Basado en 1.2.1.3.jpg, 1.2.1.3a.jpg y 1.2.1.3b.jpg)
+INSERT INTO tipodocumento (idTipoDocumento, nombre, descripcion, plantillaJSON) VALUES
+(60, 'Constancia Estrategia Innovadora', 'Avala la implementación de estrategias didácticas innovadoras en aula por asignatura (1.2.1.3).', 
+'{"campos": ["asignaturaImplementada", "estrategiaUtilizada", "productoObtenido", "idPresidenteAcademia", "idJefeDepto"]}'
+);
+
+-- 1.3.1.1: Asesoría Titulación Licenciatura (Basado en 1.3.1.1.jpg y 1.3.1.1b.jpg)
+INSERT INTO tipodocumento (idTipoDocumento, nombre, descripcion, plantillaJSON) VALUES
+(90, 'Constancia Exención Examen Profesional', 'Avala la participación como Presidente de Jurado en titulación (1.3.1.1).', 
+'{"campos": ["nombreEstudiante", "numControl", "carrera", "opcionTitulacion", "fechaActa", "idSecretario", "idVocal", "idPresidente"]}'
+);
+
