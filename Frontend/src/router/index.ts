@@ -8,6 +8,10 @@ import InicioVue from "@/modulos/principal/vistas/InicioVue.vue";
 import AdministrativoValidarDocenteVue from "@/modulos/principal/vistas/AdministrativoValidarDocenteVue.vue";
 import DocentesElegirVue from "@/modulos/principal/vistas/DocentesElegirVue.vue";
 import AdministrativoValidarDocenteDocumentoVue from "@/modulos/principal/vistas/AdministrativoValidarDocenteDocumentoVue.vue";
+import DocentesPVue from "@/modulos/principal/vistas/DocentesPVue.vue";
+import DocumentosLVue from "@/modulos/principal/vistas/DocumentosLVue.vue";
+import AdministrativoPVue from "@/modulos/principal/vistas/AdministrativoPVue.vue";
+
 
 
 const router = createRouter({
@@ -79,7 +83,6 @@ const router = createRouter({
       component: AdministrativoPVue,
     },
     
-      
   ],
 });
 

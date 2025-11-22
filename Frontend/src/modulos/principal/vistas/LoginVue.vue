@@ -3,7 +3,6 @@
 
     <div class="login-card">
       <img src="../../../assets/sigedd-logo.png" class="logo" alt="SIGEDD">
-      <img src="../../../assets/sigedd-icono.png" class="IconoSigedd" alt="SIGEDD">
 
       <h2 class="titulo">Iniciar Sesión</h2>
 
@@ -26,96 +25,89 @@
 
 
    </div>
-    </template>
+</template>
 
-  <script>
+<script>
   export default {
   name: "LoginView",
   };
-  </script>
+</script>
 
-  <style scoped>
+<style scoped>
+  /* Contenedor principal sin scroll */
   .login-container {
-  position: relative; 
-  width: 100%;
-  height: 100vh;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden; /* 🔥 evita el scroll */
 
-  background: linear-gradient(
-    to bottom,
-    #0f3b77 55%,  /* azul fuerte sigedd arriba */
-    #d7ecff 55%   /* azul claro sigedd abajo */
-  );
+    background: linear-gradient(
+      to bottom,
+      #0f3b77 55%, 
+      #d7ecff 55%
+    );
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.login-card {
-  width: 420px;
-  background: white;
-  padding: 35px 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
-  text-align: center;
-
-  position: relative; 
-  top: 0;             
-}
-
-/* LOGO PRINCIPAL */
-.logo {
-  width: 300px;
-  margin-bottom: -30px;
-}
-
-/* TITULO "Iniciar Sesión" */
-  .titulo {
-  margin-bottom: 25px;
-  color: #0f3b77;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* 🔥 da margen para que no pegue el card */
   }
 
-/* ESTILO DE LOS CAMPOS */
+  /* Card más pequeña */
+  .login-card {
+    width: 360px; /* 🔥 antes 420px */
+    background: white;
+    padding: 28px 32px; /* 🔥 más compacto */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    text-align: center;
+  }
+
+  /* Logo más pequeño */
+  .logo {
+    width: 240px; /* 🔥 antes 300px */
+    margin-bottom: -20px;
+  }
+
+  /* Título */
+  .titulo {
+    margin-bottom: 20px;
+    color: #0f3b77;
+  }
+
+  /* Inputs */
   .form-group {
-  text-align: left;
-  margin-bottom: 18px;
-  color: #0f3b77;
+    text-align: left;
+    margin-bottom: 16px;
+    color: #0f3b77;
   }
 
   input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  background: #f4f5f7;
-  border-radius: 4px;
-  border: none;
+    width: 100%;
+    padding: 9px;
+    margin-top: 5px;
+    background: #f4f5f7;
+    border-radius: 4px;
+    border: none;
   }
 
-/* BOTÓN AZUL */
+  /* Botón */
   .btn-iniciar {
-  width: 100%;
-  background: #0f3b77;
-  padding: 10px;
-  border-radius: 4px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
+    width: 100%;
+    background: #0f3b77;
+    padding: 10px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 8px;
   }
 
-/* ENLACE DE RECUPERAR CONTRASEÑA */
+  /* Olvidé mi contraseña */
   .olvide {
-  display: block;
-  margin-top: 15px;
-  font-size: 0.9em;
-  color: #0f3b77;
-  cursor: pointer;
-  }
-
-  .IconoSigedd {
-   position: absolute;
-  bottom: -200px; /* abajo */
-  right: -450px;  /* derecha */
-  width: 150px;  /* tamaño */
+    display: block;
+    margin-top: 14px;
+    font-size: 0.9em;
+    color: #0f3b77;
+    cursor: pointer;
   }
 </style>
