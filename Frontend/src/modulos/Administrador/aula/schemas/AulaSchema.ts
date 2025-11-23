@@ -10,6 +10,10 @@ export const AulaSchema = toTypedSchema(
     nombre: zod
       .string({ message: "Requerido" })
       .min(1, "El nombre del aula es obligatorio")
-      .max(100, "El nombre del aula no puede exceder los 100 caracteres"),
+      .max(100, "El nombre del aula no puede exceder los 100 caracteres")
+      .regex(
+        /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
+        "El nombre solo puede contener letras y espacios"
+      ),
   })
 );

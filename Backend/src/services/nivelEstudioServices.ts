@@ -1,7 +1,6 @@
 // se maneja en base a promesas
 import { nivelEstudio } from "../types/typesNivelEstudio";
 import { createPool } from "mysql2/promise";
-import { nivelEstudioSchema } from "../schema/nivelEstudioSchema";
 
 const conexion = createPool({
   host: "localhost",
@@ -35,20 +34,11 @@ export const encuentraNivelEstudioPorId = async (id: number) => {
 };
 
 export const agregarNivelEstudio = async (nuevo: nivelEstudio) => {
-  try {
-    const validacion = nivelEstudioSchema.safeParse(nuevo);
-    if (!validacion.success) {
-      return { error: validacion.error };
-    }
-    const [results] = await conexion.query(
-      "INSERT INTO nivelEstudio (idNivelEstudio, nombre) VALUES (?, ?)",
-      [nuevo.idNivelEstudio, nuevo.nombre]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al agregar el nivel de estudio: ", err);
-    return { error: "No se pudo agregar el nivel de estudio" };
-  }
+  const [results] = await conexion.query(
+    "INSERT INTO nivelEstudio (idNivelEstudio, nombre) VALUES (?, ?)",
+    [nuevo.idNivelEstudio, nuevo.nombre]
+  );
+  return results;
 };
 
 export const actualizarNivelEstudio = async (modificado: nivelEstudio) => {
@@ -65,14 +55,9 @@ export const actualizarNivelEstudio = async (modificado: nivelEstudio) => {
 };
 
 export const eliminarNivelEstudio = async (idNivelEstudio: number) => {
-  try {
-    const [results] = await conexion.query(
-      "DELETE FROM nivelEstudio WHERE idNivelEstudio = ?",
-      [idNivelEstudio]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al eliminar el nivel de estudio: ", err);
-    return { error: "No se pudo eliminar el nivel de estudio" };
-  }
+  const [results] = await conexion.query(
+    "DELETE FROM nivelEstudio WHERE idNivelEstudio = ?",
+    [idNivelEstudio]
+  );
+  return results;
 };
