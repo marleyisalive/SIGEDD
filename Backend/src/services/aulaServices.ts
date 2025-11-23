@@ -34,16 +34,11 @@ export const encuentraAulaPorId = async (id: number) => {
 };
 
 export const agregarAula = async (nuevo: aula) => {
-  try {
-    const [results] = await conexion.query(
-      "INSERT INTO aula (idAula, nombre) VALUES (?, ?)",
-      [nuevo.idAula, nuevo.nombre]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al agregar el aula: ", err);
-    return { error: "No se pudo agregar el aula" };
-  }
+  const [results] = await conexion.query(
+    "INSERT INTO aula (idAula, nombre) VALUES (?, ?)",
+    [nuevo.idAula, nuevo.nombre]
+  );
+  return results;
 };
 
 export const actualizarAula = async (modificado: aula) => {
@@ -60,14 +55,8 @@ export const actualizarAula = async (modificado: aula) => {
 };
 
 export const eliminarAula = async (idAula: number) => {
-  try {
-    const [results] = await conexion.query(
-      "DELETE FROM aula WHERE idAula = ?",
-      [idAula]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al eliminar el aula: ", err);
-    return { error: "No se pudo eliminar el aula" };
-  }
+  const [results] = await conexion.query("DELETE FROM aula WHERE idAula = ?", [
+    idAula,
+  ]);
+  return results;
 };

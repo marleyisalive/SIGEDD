@@ -11,78 +11,98 @@ import AdministrativoValidarDocenteDocumentoVue from "@/modulos/principal/vistas
 import DocentesPVue from "@/modulos/principal/vistas/DocentesPVue.vue";
 import DocumentosLVue from "@/modulos/principal/vistas/DocumentosLVue.vue";
 import AdministrativoPVue from "@/modulos/principal/vistas/AdministrativoPVue.vue";
-
-
+import AulaVue from "@/modulos/Administrador/aula/vistas/AulaVue.vue";
+import AulaAgregarVue from "@/modulos/Administrador/aula/vistas/AulaAgregarVue.vue";
+import AulaEditarVue from "@/modulos/Administrador/aula/vistas/AulaEditarVue.vue";
+import AulaBorrarVue from "@/modulos/Administrador/aula/vistas/AulaBorrarVue.vue";
 
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'home',
-    //   component: HomeView,
-    // },
     {
-       path: '/inicio',
-       name: 'inicio',
-       component: InicioVue,
-     },
-     {
-       path: '/docentesgenerar',
-       name: 'docentesgenerar',
-       component: DocentesGenerarVue,
-     },
-     {
-       path: '/docenteselegir',
-       name: 'docenteselegir',
-       component: DocentesElegirVue,
-     },
-     {
-       path: '/administrativovalidar',
-       name: 'administrativovalidar',
-       component: AdministrativoValidarVue,
-     },
-     {
-       path: '/administrativovalidardocente',
-       name: 'administrativovalidardocente',
-       component: AdministrativoValidarDocenteVue,
-     },
-     {
-       path: '/administrativovalidardocentedocumento',
-       name: 'administrativovalidardocentedocumento',
-       component: AdministrativoValidarDocenteDocumentoVue,
-     },
-      {
-       path: '/Login',
-       name: 'Login',
-       component: LoginVue,
-     },
-     {
-       path: '/OlvidarContraseña',
-       name: 'OlvidarContraseña',
-       component: OlvidarContraseñaVue,
-     },
-     {
-       path: '/RestablecerContraseña',
-       name: 'Restablecer Contraseña',
-       component: RestablecerContraseñaVue,
-      },
-      {
-      path: '/DocentesP',
-      name: 'Docentes Principal',
+      path: "/",
+      redirect: "/inicio",
+    },
+    {
+      path: "/inicio",
+      name: "inicio",
+      component: InicioVue,
+    },
+    {
+      path: "/docentesgenerar",
+      name: "docentesgenerar",
+      component: DocentesGenerarVue,
+    },
+    {
+      path: "/docenteselegir",
+      name: "docenteselegir",
+      component: DocentesElegirVue,
+    },
+    {
+      path: "/administrativovalidar",
+      name: "administrativovalidar",
+      component: AdministrativoValidarVue,
+    },
+    {
+      path: "/administrativovalidardocente",
+      name: "administrativovalidardocente",
+      component: AdministrativoValidarDocenteVue,
+    },
+    {
+      path: "/administrativovalidardocentedocumento",
+      name: "administrativovalidardocentedocumento",
+      component: AdministrativoValidarDocenteDocumentoVue,
+    },
+    {
+      path: "/Login",
+      name: "Login",
+      component: LoginVue,
+    },
+    {
+      path: "/OlvidarContraseña",
+      name: "OlvidarContraseña",
+      component: OlvidarContraseñaVue,
+    },
+    {
+      path: "/RestablecerContraseña",
+      name: "Restablecer Contraseña",
+      component: RestablecerContraseñaVue,
+    },
+    {
+      path: "/DocentesP",
+      name: "Docentes Principal",
       component: DocentesPVue,
     },
     {
-      path: '/DocumentosL',
-      name: 'Documentos Listos',
+      path: "/DocumentosL",
+      name: "Documentos Listos",
       component: DocumentosLVue,
     },
     {
-      path: '/AdministrativoP',
-      name: 'Administrativo Principal',
+      path: "/AdministrativoP",
+      name: "Administrativo Principal",
       component: AdministrativoPVue,
     },
-    
+    {
+      path: "/aula",
+      name: "aula",
+      component: AulaVue,
+    },
+    {
+      path: "/aula/agregar",
+      name: "aulaagregar",
+      component: AulaAgregarVue,
+    },
+    {
+      path: "/aula/:idAula/editar",
+      name: "aulaeditar",
+      component: AulaEditarVue,
+    },
+    {
+      path: "/aula/:idAula/borrar",
+      name: "aulaborrar",
+      component: AulaBorrarVue,
+    },
   ],
 });
 

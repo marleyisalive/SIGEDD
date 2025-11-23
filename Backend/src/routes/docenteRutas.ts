@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import * as docenteServices from "../services/docenteServices"; // Importa tu servicio de docente
-import { Docente, NuevoDocente } from "../types/typesDocente"; // Importa tus tipos
+import { NuevoDocente } from "../types/typesDocente"; // Importa tus tipos
 
 // Activamos las rutas
 const router = express.Router();
@@ -42,7 +42,16 @@ router.post("/", async (req: Request, res: Response) => {
 router.put("/", async (req: Request, res: Response) => {
   try {
     // En otras rutas se envía un único objeto al servicio; hacemos lo mismo aquí
-    const { idDocente, idUsuario, filiacion, idNivelEstudio, idDepartamento, idPlaza, estatusExclusividad, folioEdd } = req.body;
+    const {
+      idDocente,
+      idUsuario,
+      filiacion,
+      idNivelEstudio,
+      idDepartamento,
+      idPlaza,
+      estatusExclusividad,
+      folioEdd,
+    } = req.body;
 
     const modificado = await docenteServices.actualizarDocente({
       idDocente,
