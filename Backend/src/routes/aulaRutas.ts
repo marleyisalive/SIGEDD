@@ -25,9 +25,18 @@ router.post("/", async (req: Request, res: Response) => {
       nombre,
     });
     res.send(nuevo);
-  } catch (err) {
+  } catch (err: any) {
     console.error("error al agregar el aula: ", err);
-    res.status(400).send({ error: "No se pudo agregar el aula" });
+
+    // Verificar si es un error de entrada duplicada
+    if (err.code === "ER_DUP_ENTRY" || err.errno === 1062) {
+      res.status(400).send({
+        error:
+          "El ID del aula ya existe. Por favor, use un ID diferente (Duplicate entry)",
+      });
+    } else {
+      res.status(400).send({ error: "No se pudo agregar el aula" });
+    }
   }
 });
 
@@ -46,15 +55,24 @@ router.put("/", async (req: Request, res: Response) => {
   }
 });
 
-//http://localhost:3001/api/nivelEstudio/ <---- eliminar un aula
+//http://localhost:3001/api/aula/ <---- eliminar un aula
 router.delete("/", async (req: Request, res: Response) => {
   try {
     const { idAula } = req.body;
     const eliminado = await aulaServices.eliminarAula(idAula);
     res.send(eliminado);
-  } catch (err) {
+  } catch (err: any) {
     console.error("error al eliminar el aula", err);
-    res.status(400).send({ error: "No se pudo eliminar el aula" });
+
+    // Verificar si es un error de clave foránea
+    if (err.code === "ER_ROW_IS_REFERENCED_2" || err.errno === 1451) {
+      res.status(400).send({
+        error:
+          "No se puede eliminar el aula porque tiene registros asociados (foreign key constraint)",
+      });
+    } else {
+      res.status(400).send({ error: "No se pudo eliminar el aula" });
+    }
   }
 });
 

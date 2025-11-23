@@ -1,9 +1,11 @@
 import express from "express";
+import cors from "cors";
 
 //creamos la aplicacion de express y llamamos a su constructor
 const app = express();
 //Todo lo que regresa al usuario es tipo json
 app.use(express.json());
+app.use(cors());
 
 //configurar rutas para el acceso
 import nivelEstudioRutas from "./routes/nivelEstudioRutas";
@@ -13,7 +15,7 @@ import plazaRutas from "./routes/plazaRutas";
 import tipoDocumentoRutas from "./routes/tipoDocumentoRutas";
 import documentoRutas from "./routes/documentoRutas";
 import docenteRutas from "./routes/docenteRutas"; // Asegúrate que el path sea correcto
-import docenteActividadRutas from "./routes/docenteactividadRutas"; // Asegúrate que el path sea correcto
+//import docenteActividadRutas from "./routes/docenteactividadRutas"; // Asegúrate que el path sea correcto
 import departamentoRutas from "./routes/departamentoRutas";
 import usuarioRutas from "./routes/usuarioRutas";
 import grupoRutas from "./routes/grupoRutas";
@@ -29,7 +31,7 @@ app.use("/api/rol", rolRutas);
 app.use("/api/aula", aulaRutas);
 app.use("/api/plaza", plazaRutas);
 app.use("/api/docente", docenteRutas);
-app.use("/api/docenteactividad", docenteActividadRutas);
+//app.use("/api/docenteactividad", docenteActividadRutas);
 app.use("/api/tipoDocumento", tipoDocumentoRutas);
 app.use("/api/documento", documentoRutas);
 app.use("/api/departamento", departamentoRutas);
