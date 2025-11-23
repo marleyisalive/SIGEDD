@@ -91,6 +91,9 @@
               >Departamento</RouterLink
             >
           </li>
+          <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/materia">Materia</RouterLink>
+          </li>
         </ul>
       </div>
     </div>
