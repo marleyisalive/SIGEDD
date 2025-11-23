@@ -19,6 +19,14 @@ import NivelEstudioVue from "@/modulos/Administrador/nivelEstudio/vistas/NivelEs
 import NivelEstudioAgregarVue from "@/modulos/Administrador/nivelEstudio/vistas/NivelEstudioAgregarVue.vue";
 import NivelEstudioEditarVue from "@/modulos/Administrador/nivelEstudio/vistas/NivelEstudioEditarVue.vue";
 import NivelEstudioBorrarVue from "@/modulos/Administrador/nivelEstudio/vistas/NivelEstudioBorrarVue.vue";
+import CarreraVue from "@/modulos/Administrador/carrera/vistas/CarreraVue.vue";
+import CarreraAgregarVue from "@/modulos/Administrador/carrera/vistas/CarreraAgregarVue.vue";
+import CarreraEditarVue from "@/modulos/Administrador/carrera/vistas/CarreraEditarVue.vue";
+import CarreraBorrarVue from "@/modulos/Administrador/carrera/vistas/CarreraBorrarVue.vue";
+import DepartamentoVue from "@/modulos/Administrador/departamento/vistas/DepartamentoVue.vue";
+import DepartamentoAgregarVue from "@/modulos/Administrador/departamento/vistas/DepartamentoAgregarVue.vue";
+import DepartamentoEditarVue from "@/modulos/Administrador/departamento/vistas/DepartamentoEditarVue.vue";
+import DepartamentoBorrarVue from "@/modulos/Administrador/departamento/vistas/DepartamentoBorrarVue.vue";
 
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
@@ -126,6 +134,46 @@ const router = createRouter({
       path: "/nivelEstudio/:idNivelEstudio/borrar",
       name: "nivelEstudioborrar",
       component: NivelEstudioBorrarVue,
+    },
+    {
+      path: "/carrera",
+      name: "carrera",
+      component: CarreraVue,
+    },
+    {
+      path: "/carrera/agregar",
+      name: "carreraagregar",
+      component: CarreraAgregarVue,
+    },
+    {
+      path: "/carrera/:idCarrera/editar",
+      name: "carreraeditar",
+      component: CarreraEditarVue,
+    },
+    {
+      path: "/carrera/:idCarrera/borrar",
+      name: "carreraborrar",
+      component: CarreraBorrarVue,
+    },
+    {
+      path: "/departamento",
+      name: "departamento",
+      component: DepartamentoVue,
+    },
+    {
+      path: "/departamento/agregar",
+      name: "departamentoagregar",
+      component: DepartamentoAgregarVue,
+    },
+    {
+      path: "/departamento/:idDepartamento/editar",
+      name: "departamentoeditar",
+      component: DepartamentoEditarVue,
+    },
+    {
+      path: "/departamento/:idDepartamento/borrar",
+      name: "departamentoborrar",
+      component: DepartamentoBorrarVue,
     },
   ],
 });

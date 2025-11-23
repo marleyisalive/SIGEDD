@@ -33,20 +33,15 @@ export const encuentraDepartamentoPorId = async (id: number) => {
 };
 
 export const agregarDepartamento = async (nuevo: Departamento) => {
-  try {
-    const [results] = await conexion.query(
-      "INSERT INTO departamento (idDepartamento, nombreDepartamento, encargadoDepartamento) VALUES (?, ?, ?)",
-      [
-        nuevo.idDepartamento,
-        nuevo.nombreDepartamento,
-        nuevo.encargadoDepartamento,
-      ]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al agregar el departamento: ", err);
-    return { error: "No se pudo agregar el departamento" };
-  }
+  const [results] = await conexion.query(
+    "INSERT INTO departamento (idDepartamento, nombreDepartamento, encargadoDepartamento) VALUES (?, ?, ?)",
+    [
+      nuevo.idDepartamento,
+      nuevo.nombreDepartamento,
+      nuevo.encargadoDepartamento,
+    ]
+  );
+  return results;
 };
 
 export const actualizarDepartamento = async (modificado: Departamento) => {
@@ -67,14 +62,9 @@ export const actualizarDepartamento = async (modificado: Departamento) => {
 };
 
 export const eliminarDepartamento = async (idDepartamento: number) => {
-  try {
-    const [results] = await conexion.query(
-      "DELETE FROM departamento WHERE idDepartamento= ?",
-      [idDepartamento]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al eliminar el departamento: ", err);
-    return { error: "No se pudo eliminar el departamento" };
-  }
+  const [results] = await conexion.query(
+    "DELETE FROM departamento WHERE idDepartamento= ?",
+    [idDepartamento]
+  );
+  return results;
 };

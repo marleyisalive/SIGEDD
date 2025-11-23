@@ -83,6 +83,14 @@
               >Nivel de Estudio</RouterLink
             >
           </li>
+          <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/carrera">Carrera</RouterLink>
+          </li>
+          <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/departamento"
+              >Departamento</RouterLink
+            >
+          </li>
         </ul>
       </div>
     </div>
