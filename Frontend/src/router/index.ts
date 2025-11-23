@@ -27,6 +27,10 @@ import DepartamentoVue from "@/modulos/Administrador/departamento/vistas/Departa
 import DepartamentoAgregarVue from "@/modulos/Administrador/departamento/vistas/DepartamentoAgregarVue.vue";
 import DepartamentoEditarVue from "@/modulos/Administrador/departamento/vistas/DepartamentoEditarVue.vue";
 import DepartamentoBorrarVue from "@/modulos/Administrador/departamento/vistas/DepartamentoBorrarVue.vue";
+import MateriaVue from "@/modulos/Administrador/materia/vistas/MateriaVue.vue";
+import MateriaAgregarVue from "@/modulos/Administrador/materia/vistas/MateriaAgregarVue.vue";
+import MateriaEditarVue from "@/modulos/Administrador/materia/vistas/MateriaEditarVue.vue";
+import MateriaBorrarVue from "@/modulos/Administrador/materia/vistas/MateriaBorrarVue.vue";
 
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
@@ -174,6 +178,26 @@ const router = createRouter({
       path: "/departamento/:idDepartamento/borrar",
       name: "departamentoborrar",
       component: DepartamentoBorrarVue,
+    },
+    {
+      path: "/materia",
+      name: "materia",
+      component: MateriaVue,
+    },
+    {
+      path: "/materia/agregar",
+      name: "materiaagregar",
+      component: MateriaAgregarVue,
+    },
+    {
+      path: "/materia/:idMateria/editar",
+      name: "materiaeditar",
+      component: MateriaEditarVue,
+    },
+    {
+      path: "/materia/:idMateria/borrar",
+      name: "materiaborrar",
+      component: MateriaBorrarVue,
     },
   ],
 });
