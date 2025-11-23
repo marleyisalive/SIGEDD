@@ -20,7 +20,8 @@ router.get("/:id", async (req: Request, res: Response) => {
 //http://localhost:3001/api/departamento/ insertar un nuevo departamento
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { idDepartamento, nombreDepartamento, encargadoDepartamento } = req.body; // desestructuring
+    const { idDepartamento, nombreDepartamento, encargadoDepartamento } =
+      req.body; // desestructuring
     //enviamos un objeto con los datos al servicio
     const nuevo = await departamentoServices.agregarDepartamento({
       idDepartamento,
@@ -28,16 +29,26 @@ router.post("/", async (req: Request, res: Response) => {
       encargadoDepartamento,
     });
     res.send(nuevo);
-  } catch (err) {
+  } catch (err: any) {
     console.error("error al agregar el departamento: ", err);
-    res.status(400).send({ error: "No se pudo agregar el departamento" });
+
+    // Verificar si es un error de entrada duplicada
+    if (err.code === "ER_DUP_ENTRY" || err.errno === 1062) {
+      res.status(400).send({
+        error:
+          "El ID del departamento ya existe. Por favor, use un ID diferente (Duplicate entry)",
+      });
+    } else {
+      res.status(400).send({ error: "No se pudo agregar el departamento" });
+    }
   }
 });
 
 //http://localhost:3001/api/departamento/ <---- editar un departamento
 router.put("/", async (req: Request, res: Response) => {
   try {
-    const { idDepartamento, nombreDepartamento, encargadoDepartamento } = req.body;
+    const { idDepartamento, nombreDepartamento, encargadoDepartamento } =
+      req.body;
     const modificado = await departamentoServices.actualizarDepartamento({
       idDepartamento,
       nombreDepartamento,
@@ -46,9 +57,7 @@ router.put("/", async (req: Request, res: Response) => {
     res.send(modificado);
   } catch (err) {
     console.error("error al actualizar el departamento", err);
-    res
-      .status(400)
-      .send({ error: "No se pudo actualizar el departamento" });
+    res.status(400).send({ error: "No se pudo actualizar el departamento" });
   }
 });
 
@@ -60,9 +69,18 @@ router.delete("/", async (req: Request, res: Response) => {
       idDepartamento
     );
     res.send(eliminado);
-  } catch (err) {
+  } catch (err: any) {
     console.error("error al eliminar el departamento", err);
-    res.status(400).send({ error: "No se pudo eliminar el departamento" });
+
+    // Verificar si es un error de clave foránea
+    if (err.code === "ER_ROW_IS_REFERENCED_2" || err.errno === 1451) {
+      res.status(400).send({
+        error:
+          "No se puede eliminar el departamento porque tiene registros asociados (foreign key constraint)",
+      });
+    } else {
+      res.status(400).send({ error: "No se pudo eliminar el departamento" });
+    }
   }
 });
 
