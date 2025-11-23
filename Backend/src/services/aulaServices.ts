@@ -1,73 +1,90 @@
-// se maneja en base a promesas
-import { aula } from "../types/typesAula";
-import { createPool } from "mysql2/promise";
+// src/services/aulaServices.ts
 
+import { aula } from "../types/typesAula"; // Asegúrate de la ruta y el nombre (minúscula)
+import { createPool } from "mysql2/promise";
+import { aulaSchema } from "../schema/aulaSchema"; // Importamos el esquema
+
+// Configuración de la conexión
 const conexion = createPool({
-  host: "localhost",
-  user: "administrador",
-  password: "admin123456",
-  database: "SIGEDD",
+    host: "localhost",
+    user: "administrador",
+    password: "admin123456",
+    database: "SIGEDD",
+    // port: 3307, // Descomenta si usas otro puerto
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-export const obtieneAula = async () => {
-  try {
-    const [results] = await conexion.query("SELECT * FROM aula");
-    return results;
-  } catch (err) {
-    console.error("error al obtener las aulas: ", err);
-    return { error: "No se pueden obtener las aulas" };
-  }
+// --- Obtener todas las aulas ---
+export const obtenerTodasAulas = async () => {
+    try {
+        const [results] = await conexion.query("SELECT * FROM aula");
+        return results;
+    } catch (err) {
+        console.error("error al obtener aulas: ", err);
+        return { error: "No se pudieron obtener las aulas." };
+    }
 };
 
-export const encuentraAulaPorId = async (id: number) => {
-  try {
-    // el segundo parámetro debe ser un array con los valores para la consulta
-    const [results] = await conexion.query(
-      "SELECT * FROM aula WHERE idAula = ?",
-      id
-    );
-    return results;
-  } catch (err) {
-    console.error("error al obtener el aula por id: ", err);
-    return { error: "No se puede obtener el aula por id" };
-  }
+// --- Encontrar aula por ID ---
+export const encontrarAulaPorId = async (id: number) => {
+    try {
+        const [results] = await conexion.query(
+            "SELECT * FROM aula WHERE idAula = ?",
+            [id]
+        );
+        return results;
+    } catch (err) {
+        console.error("error al obtener aula por id: ", err);
+        return { error: "No se pudo obtener el aula por id." };
+    }
 };
 
-export const agregarAula = async (nuevo: aula) => {
-  try {
-    const [results] = await conexion.query(
-      "INSERT INTO aula (idAula, nombre) VALUES (?, ?)",
-      [nuevo.idAula, nuevo.nombre]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al agregar el aula: ", err);
-    return { error: "No se pudo agregar el aula" };
-  }
+// --- Agregar nueva aula (CON VALIDACIÓN ZOD) ---
+export const agregarAula = async (nueva: aula) => {
+    try {
+        // 1. Validar datos de entrada
+        const validacion = aulaSchema.safeParse(nueva);
+        if (!validacion.success) {
+            return { error: validacion.error };
+        }
+        const [results] = await conexion.query(
+            "INSERT INTO aula (idAula, nombre) VALUES (?, ?)",
+            [nueva.idAula, nueva.nombre]
+        );
+        return results;
+    } catch (err) {
+        console.error("error al agregar aula: ", err);
+        return { error: "No se pudo agregar el aula." };
+    }
 };
 
-export const actualizarAula = async (modificado: aula) => {
-  try {
-    const [results] = await conexion.query(
-      "UPDATE aula SET nombre = ? WHERE idAula = ?",
-      [modificado.nombre, modificado.idAula]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al actualizar el aula: ", err);
-    return { error: "No se pudo actualizar el aula" };
-  }
+// --- Actualizar aula existente ---
+export const actualizarAula = async (modificada: aula) => {
+    try {
+        // No validamos en update siguiendo el patrón
+        const [results] = await conexion.query(
+            "UPDATE aula SET nombre = ? WHERE idAula = ?",
+            [modificada.nombre, modificada.idAula]
+        );
+        return results;
+    } catch (err) {
+        console.error("error al actualizar aula: ", err);
+        return { error: "No se pudo actualizar el aula." };
+    }
 };
 
+// --- Eliminar aula ---
 export const eliminarAula = async (idAula: number) => {
-  try {
-    const [results] = await conexion.query(
-      "DELETE FROM aula WHERE idAula = ?",
-      [idAula]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al eliminar el aula: ", err);
-    return { error: "No se pudo eliminar el aula" };
-  }
+    try {
+        const [results] = await conexion.query(
+            "DELETE FROM aula WHERE idAula = ?",
+            [idAula]
+        );
+        return results;
+    } catch (err) {
+        console.error("error al eliminar aula: ", err);
+        return { error: "No se pudo eliminar el aula." };
+    }
 };

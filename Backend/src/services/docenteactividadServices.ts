@@ -1,141 +1,104 @@
-// Importaciones necesarias
-import {
-  docenteactividad,
-  NuevaDocenteActividad,
-} from "../types/typesDocenteActividad"; // Asegúrate de que la ruta sea correcta
-import { createPool } from "mysql2/promise";
+// src/services/docenteActividadServices.ts
 
-// Reutiliza la configuración de la conexión (idealmente esto debería estar en un archivo de configuración compartido)
+import { docenteactividad } from "../types/typesDocenteActividad";
+import { createPool } from "mysql2/promise";
+import { docenteActividadSchema } from "../schema/docenteActividadSchema";
+
 const conexion = createPool({
-  host: "localhost",
-  user: "administrador",
-  password: "admin123456",
-  database: "SIGEDD",
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+    host: "localhost",
+    user: "administrador",
+    password: "admin123456",
+    database: "SIGEDD",
+    // port: 3307,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-/**
- * Obtiene todas las relaciones docente-actividad de la base de datos.
- * @returns Un array de objetos DocenteActividad o un objeto de error.
- */
+// --- Obtener todas ---
 export const obtenerTodasDocenteActividad = async () => {
-  try {
-    // Especificamos el tipo de los resultados para mejor tipado
-    const [results] = await conexion.query("SELECT * FROM docenteActividad");
-    return results;
-  } catch (err) {
-    console.error("Error al obtener las relaciones docente-actividad:", err);
-    return {
-      error: "No se pudieron obtener las relaciones docente-actividad.",
-    };
-  }
-};
-
-/**
- * Encuentra una relación docente-actividad por su clave primaria compuesta.
- * @param idDocente El ID del docente.
- * @param idActividadInstitucional El ID de la actividad institucional.
- * @returns El objeto DocenteActividad encontrado o null si no existe.
- */
-export const encontrarDocenteActividadPorPK = async (
-  idDocente: number,
-  idActividadInstitucional: number
-) => {
-  try {
-    const [results] = await conexion.query(
-      "SELECT * FROM docenteActividad WHERE idDocente = ? AND idActividadInstitucional = ?",
-      [idDocente, idActividadInstitucional]
-    );
-    // query devuelve un array, si encuentra algo, el objeto estará en la primera posición
-    return results; // Retorna el objeto o null si no lo encuentra
-  } catch (err) {
-    console.error(
-      `Error al obtener la relación docente-actividad con DocenteID ${idDocente} y ActividadID ${idActividadInstitucional}:`,
-      err
-    );
-    return { error: "No se pudo obtener la relación docente-actividad." };
-  }
-};
-
-/**
- * Agrega una nueva relación docente-actividad a la base de datos.
- * @param nuevaDocenteActividad Los datos de la nueva relación.
- * @returns El resultado de la inserción o un objeto de error.
- */
-export const agregarDocenteActividad = async (
-  nuevaDocenteActividad: NuevaDocenteActividad
-) => {
-  try {
-    const [results] = await conexion.query(
-      "INSERT INTO docenteActividad (idDocenteActividad,idActividadInstitucional, idDocente, datosCapturados, fechaRegistro, validadoPor, fechaValidacion) VALUES (?, ?, ?, ?, ?, ?)",
-      [
-        nuevaDocenteActividad.idDocenteActividad,
-        nuevaDocenteActividad.idActividadInstitucional,
-        nuevaDocenteActividad.idDocente,
-        nuevaDocenteActividad.datosCapturados,
-        nuevaDocenteActividad.fechaRegistro,
-        nuevaDocenteActividad.validadoPor,
-        nuevaDocenteActividad.fechaValidacion
-      ]
-    );
-    return results;
-  } catch (err: any) {
-    // Usamos 'any' para acceder a 'err.code' de forma segura
-    console.error("Error al agregar la relación docente-actividad:", err);
-    if (err.code === "ER_NO_REFERENCED_ROW_2") {
-      return {
-        error:
-          "No se pudo agregar la relación. Verifique los IDs de Docente o Actividad Institucional.",
-      };
+    try {
+        const [results] = await conexion.query("SELECT * FROM docenteactividad");
+        return results;
+    } catch (err) {
+        console.error("error al obtener registros de actividades: ", err);
+        return { error: "No se pudieron obtener los registros." };
     }
-    if (err.code === "ER_DUP_ENTRY") {
-      return {
-        error:
-          "Ya existe una entrada para este docente y actividad. (Violación de clave primaria)",
-      };
+};
+
+// --- Encontrar por ID ---
+export const encontrarDocenteActividadPorId = async (id: number) => {
+    try {
+        const [results] = await conexion.query(
+            "SELECT * FROM docenteactividad WHERE idDocenteActividad = ?",
+            [id]
+        );
+        return results;
+    } catch (err) {
+        console.error("error al obtener registro por id: ", err);
+        return { error: "No se pudo obtener el registro por id." };
     }
-    return { error: "No se pudo agregar la relación docente-actividad." };
-  }
 };
 
-export const actualizarDocenteActividad = async (modificado:docenteactividad) => {
-  try {
-    const [results] = await conexion.query(
-      "UPDATE documento SET idDocenteActividad = ?, datosCapturados = ?, fechaRegistro = ?, validadoPor = ?, fechaValidacion = ? WHERE idActividadInstitucional = ?, idDocente = ? ",
-      [
-        modificado.idDocenteActividad,
-        modificado.datosCapturados,
-        modificado.fechaRegistro,
-        modificado.validadoPor,
-        modificado.fechaValidacion,
-        modificado.idActividadInstitucional,
-        modificado.idDocente
-      ]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al actualizar el documento: ", err);
-    return { error: "No se pudo actualizar el documento" };
-  }
+// --- Agregar nuevo (SINTAXIS LIMPIA + JSON) ---
+export const agregarDocenteActividad = async (nueva: docenteactividad) => {
+    try {
+        // 1. Validar con Zod
+        const validacion = docenteActividadSchema.safeParse(nueva);
+        if (!validacion.success) {
+            return { error: validacion.error };
+        }
+
+        // 2. Preparar JSON (Necesario para MySQL)
+        const datosParaInsertar = { ...nueva };
+        // Convertimos el objeto JS a string JSON
+        datosParaInsertar.datosCapturados = JSON.stringify(nueva.datosCapturados) as any;
+
+        // 3. Insertar
+        const [results] = await conexion.query(
+            "INSERT INTO docenteactividad SET ?",
+            [datosParaInsertar]
+        );
+        return results;
+
+    } catch (err) {
+        console.error("error al agregar registro de actividad: ", err);
+        return { error: "No se pudo agregar el registro." };
+    }
 };
 
-export const eliminarDocenteActividad = async (
-  idDocente: number,
-  idActividadInstitucional: number
-) => {
-  try {
-    const [results] = await conexion.query(
-      "DELETE FROM docenteActividad WHERE idDocente = ? AND idActividadInstitucional = ?",
-      [idDocente, idActividadInstitucional]
-    );
-    return results;
-  } catch (err: any) {
-    console.error(
-      `Error al eliminar la relación docente-actividad con DocenteID ${idDocente} y ActividadID ${idActividadInstitucional}:`,
-      err
-    );
-    return { error: "No se pudo eliminar la relación docente-actividad." };
-  }
+// --- Actualizar existente (SINTAXIS LIMPIA + JSON) ---
+export const actualizarDocenteActividad = async (modificado: docenteactividad) => {
+    try {
+        const { idDocenteActividad, ...datosAActualizar } = modificado;
+
+        // Si hay JSON nuevo, convertirlo a string
+        if (datosAActualizar.datosCapturados) {
+             (datosAActualizar as any).datosCapturados = JSON.stringify(datosAActualizar.datosCapturados);
+        }
+
+        const [results] = await conexion.query(
+            "UPDATE docenteactividad SET ? WHERE idDocenteActividad = ?",
+            [datosAActualizar, idDocenteActividad]
+        );
+        return results;
+
+    } catch (err) {
+        console.error("error al actualizar registro de actividad: ", err);
+        return { error: "No se pudo actualizar el registro." };
+    }
+};
+
+// --- Eliminar ---
+export const eliminarDocenteActividad = async (idDocenteActividad: number) => {
+    try {
+        const [results] = await conexion.query(
+            "DELETE FROM docenteactividad WHERE idDocenteActividad = ?",
+            [idDocenteActividad]
+        );
+        return results;
+    } catch (err) {
+        console.error("error al eliminar registro de actividad: ", err);
+        return { error: "No se pudo eliminar el registro." };
+    }
 };

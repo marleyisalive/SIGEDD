@@ -1,16 +1,28 @@
+// src/services/usuarioServices.ts
+
+// Usamos el nombre en minúscula que acordamos
 import { usuario } from "../types/typesUsuario";
 import { createPool } from "mysql2/promise";
+// Importamos bcrypt para la seguridad
+import bcrypt from 'bcrypt';
+// ¡CORRECCIÓN IMPORTANTE! Importamos el esquema para validar
+import { usuarioSchema } from "../schema/usuarioSchema";
 
 const conexion = createPool({
   host: "localhost",
   user: "administrador",
   password: "admin123456",
   database: "SIGEDD",
+  // port: 3307, // Descomenta si es necesario
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 export const obtieneUsuario = async () => {
   try {
-    const [results] = await conexion.query("SELECT * FROM usuario");
+    // OJO: Es buena práctica NO devolver la contraseña en el SELECT
+    const [results] = await conexion.query("SELECT idUsuario, nombreUsuario, apePatUsuario, apeMatUsuario, telefono, correoUsuario, estatus, idRol FROM usuario");
     return results;
   } catch (err) {
     console.error("error al obtener los usuarios: ", err);
@@ -20,9 +32,10 @@ export const obtieneUsuario = async () => {
 
 export const encuentraUsuarioPorId = async (id: number) => {
   try {
+    // También excluimos la contraseña aquí
     const [results] = await conexion.query(
-      "SELECT * FROM usuario WHERE idUsuario = ?",
-      id
+      "SELECT idUsuario, nombreUsuario, apePatUsuario, apeMatUsuario, telefono, correoUsuario, estatus, idRol FROM usuario WHERE idUsuario = ?",
+      [id] // Array
     );
     return results;
   } catch (err) {
@@ -31,8 +44,22 @@ export const encuentraUsuarioPorId = async (id: number) => {
   }
 };
 
+// --- Agregar usuario (CON VALIDACIÓN ZOD Y HASH) ---
 export const agregarUsuario = async (nuevo: usuario) => {
   try {
+    // 1. ¡CORRECCIÓN! VALIDAR CON ZOD PRIMERO
+    const validacion = usuarioSchema.safeParse(nuevo);
+    if (!validacion.success) {
+        // Si los datos están mal (ej. contraseña corta, email inválido), retornamos el error aquí.
+        return { error: validacion.error };
+    }
+
+    // 2. SI PASA LA VALIDACIÓN, HASHEAMOS LA CONTRASEÑA
+    const saltRounds = 10;
+    // Hasheamos la contraseña que viene del objeto 'nuevo' ya validado
+    const hashContrasena = await bcrypt.hash(nuevo.contrasenaUsuario, saltRounds);
+
+    // 3. INSERTAR EN BD USANDO EL HASH
     const [results] = await conexion.query(
       "INSERT INTO usuario (idUsuario, nombreUsuario, apePatUsuario, apeMatUsuario, telefono, correoUsuario, contrasenaUsuario, estatus, idRol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
@@ -42,7 +69,7 @@ export const agregarUsuario = async (nuevo: usuario) => {
         nuevo.apeMatUsuario,
         nuevo.telefono,
         nuevo.correoUsuario,
-        nuevo.contrasenaUsuario,
+        hashContrasena,
         nuevo.estatus,
         nuevo.idRol,
       ]
@@ -50,12 +77,21 @@ export const agregarUsuario = async (nuevo: usuario) => {
     return results;
   } catch (err) {
     console.error("error al agregar el usuario: ", err);
-    return { error: "No se pudo agregar el usuario" };
+    // Aquí podrías manejar errores de duplicados (ej. correo repetido)
+    return { error: "No se pudo agregar el usuario. Posible ID o correo duplicado." };
   }
 };
 
+// --- Actualizar usuario (CON HASH) ---
 export const actualizarUsuario = async (modificado: usuario) => {
   try {
+    // Nota: Siguiendo el patrón de tu compañero, no validamos con Zod en el update.
+
+    // 1. HASHEAR LA CONTRASEÑA NUEVA ANTES DE ACTUALIZAR
+    const saltRounds = 10;
+    const hashContrasena = await bcrypt.hash(modificado.contrasenaUsuario, saltRounds);
+
+    // 2. UPDATE USANDO EL HASH
     const [results] = await conexion.query(
       "UPDATE usuario SET nombreUsuario = ?, apePatUsuario = ?, apeMatUsuario = ?, telefono = ?, correoUsuario = ?, contrasenaUsuario = ?, estatus = ?, idRol = ? WHERE idUsuario = ?",
       [
@@ -64,7 +100,7 @@ export const actualizarUsuario = async (modificado: usuario) => {
         modificado.apeMatUsuario,
         modificado.telefono,
         modificado.correoUsuario,
-        modificado.contrasenaUsuario,
+        hashContrasena,
         modificado.estatus,
         modificado.idRol,
         modificado.idUsuario,
@@ -81,11 +117,12 @@ export const eliminarUsuario = async (idUsuario: number) => {
   try {
     const [results] = await conexion.query(
       "DELETE FROM usuario WHERE idUsuario = ?",
-      idUsuario
+      [idUsuario] // Array
     );
     return results;
   } catch (err) {
     console.error("error al eliminar el usuario: ", err);
-    return { error: "No se pudo eliminar el usuario" };
+    // Manejo básico de error de llave foránea
+    return { error: "No se pudo eliminar el usuario. Puede tener registros asociados." };
   }
 };

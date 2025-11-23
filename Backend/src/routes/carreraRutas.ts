@@ -1,17 +1,17 @@
-// src/routes/materiaRoutes.ts
+// src/routes/carreraRoutes.ts
 
 import express, { Request, Response } from "express";
-import * as materiaServices from "../services/materiaServices";
+import * as carreraServices from "../services/carreraServices";
 
 const router = express.Router();
 
 // --- OBTENER TODAS (GET) ---
 router.get("/", async (_req: Request, res: Response) => {
     try {
-        let materias = await materiaServices.obtenerTodasMaterias();
-        res.send(materias);
+        let carreras = await carreraServices.obtenerTodasCarreras();
+        res.send(carreras);
     } catch (err) {
-        console.error("error al obtener materias: ", err);
+        console.error("error al obtener carreras: ", err);
         res.status(500).send({ error: "Error interno." });
     }
 });
@@ -19,10 +19,10 @@ router.get("/", async (_req: Request, res: Response) => {
 // --- OBTENER POR ID (GET) ---
 router.get("/:id", async (req: Request, res: Response) => {
     try {
-        let materia = await materiaServices.encontrarMateriaPorId(Number(req.params.id));
-        res.send(materia);
+        let carrera = await carreraServices.encontrarCarreraPorId(Number(req.params.id));
+        res.send(carrera);
     } catch (err) {
-        console.error("error al obtener materia por id: ", err);
+        console.error("error al obtener carrera por id: ", err);
         res.status(400).send({ error: "Error al buscar ID." });
     }
 });
@@ -30,12 +30,12 @@ router.get("/:id", async (req: Request, res: Response) => {
 // --- AGREGAR (POST) ---
 router.post("/", async (req: Request, res: Response) => {
     try {
-        // Desestructuramos todos los campos obligatorios
-        const { idMateria, nombre, idDepartamento, creditos } = req.body;
-        const nueva = await materiaServices.agregarMateria({ idMateria, nombre, idDepartamento, creditos });
+        // Desestructuramos los campos del body, incluyendo 'acreditado'
+        const { idCarrera, nombre, acreditado } = req.body;
+        const nueva = await carreraServices.agregarCarrera({ idCarrera, nombre, acreditado });
         res.send(nueva);
     } catch (err) {
-        console.error("error al agregar materia: ", err);
+        console.error("error al agregar carrera: ", err);
         res.status(400).send({ error: "No se pudo agregar." });
     }
 });
@@ -43,11 +43,11 @@ router.post("/", async (req: Request, res: Response) => {
 // --- ACTUALIZAR (PUT) ---
 router.put("/", async (req: Request, res: Response) => {
     try {
-        const { idMateria, nombre, idDepartamento, creditos } = req.body;
-        const modificada = await materiaServices.actualizarMateria({ idMateria, nombre, idDepartamento, creditos });
+        const { idCarrera, nombre, acreditado } = req.body;
+        const modificada = await carreraServices.actualizarCarrera({ idCarrera, nombre, acreditado });
         res.send(modificada);
     } catch (err) {
-        console.error("error al actualizar materia", err);
+        console.error("error al actualizar carrera", err);
         res.status(400).send({ error: "No se pudo actualizar." });
     }
 });
@@ -55,11 +55,11 @@ router.put("/", async (req: Request, res: Response) => {
 // --- ELIMINAR (DELETE - ID en body) ---
 router.delete("/", async (req: Request, res: Response) => {
     try {
-        const { idMateria } = req.body;
-        const eliminada = await materiaServices.eliminarMateria(idMateria);
+        const { idCarrera } = req.body;
+        const eliminada = await carreraServices.eliminarCarrera(idCarrera);
         res.send(eliminada);
     } catch (err) {
-        console.error("error al eliminar materia", err);
+        console.error("error al eliminar carrera", err);
         res.status(400).send({ error: "No se pudo eliminar." });
     }
 });
