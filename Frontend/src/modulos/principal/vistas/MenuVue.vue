@@ -78,6 +78,11 @@
           <li class="nav-item margin">
             <RouterLink class="nav-link item" to="/aula">Aula</RouterLink>
           </li>
+          <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/nivelEstudio"
+              >Nivel de Estudio</RouterLink
+            >
+          </li>
         </ul>
       </div>
     </div>

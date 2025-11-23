@@ -15,6 +15,10 @@ import AulaVue from "@/modulos/Administrador/aula/vistas/AulaVue.vue";
 import AulaAgregarVue from "@/modulos/Administrador/aula/vistas/AulaAgregarVue.vue";
 import AulaEditarVue from "@/modulos/Administrador/aula/vistas/AulaEditarVue.vue";
 import AulaBorrarVue from "@/modulos/Administrador/aula/vistas/AulaBorrarVue.vue";
+import NivelEstudioVue from "@/modulos/Administrador/nivelEstudio/vistas/NivelEstudioVue.vue";
+import NivelEstudioAgregarVue from "@/modulos/Administrador/nivelEstudio/vistas/NivelEstudioAgregarVue.vue";
+import NivelEstudioEditarVue from "@/modulos/Administrador/nivelEstudio/vistas/NivelEstudioEditarVue.vue";
+import NivelEstudioBorrarVue from "@/modulos/Administrador/nivelEstudio/vistas/NivelEstudioBorrarVue.vue";
 
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
@@ -102,6 +106,26 @@ const router = createRouter({
       path: "/aula/:idAula/borrar",
       name: "aulaborrar",
       component: AulaBorrarVue,
+    },
+    {
+      path: "/nivelEstudio",
+      name: "nivelEstudio",
+      component: NivelEstudioVue,
+    },
+    {
+      path: "/nivelEstudio/agregar",
+      name: "nivelEstudioagregar",
+      component: NivelEstudioAgregarVue,
+    },
+    {
+      path: "/nivelEstudio/:idNivelEstudio/editar",
+      name: "nivelEstudioeditar",
+      component: NivelEstudioEditarVue,
+    },
+    {
+      path: "/nivelEstudio/:idNivelEstudio/borrar",
+      name: "nivelEstudioborrar",
+      component: NivelEstudioBorrarVue,
     },
   ],
 });

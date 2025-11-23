@@ -27,9 +27,18 @@ router.post("/", async (req: Request, res: Response) => {
       nombre,
     });
     res.send(nuevo);
-  } catch (err) {
+  } catch (err: any) {
     console.error("error al agregar el nivel de estudio: ", err);
-    res.status(400).send({ error: "No se pudo agregar el nivel de estudio" });
+
+    // Verificar si es un error de entrada duplicada
+    if (err.code === "ER_DUP_ENTRY" || err.errno === 1062) {
+      res.status(400).send({
+        error:
+          "El ID del nivel de estudio ya existe. Por favor, use un ID diferente (Duplicate entry)",
+      });
+    } else {
+      res.status(400).send({ error: "No se pudo agregar el nivel de estudio" });
+    }
   }
 });
 
@@ -58,9 +67,20 @@ router.delete("/", async (req: Request, res: Response) => {
       idNivelEstudio
     );
     res.send(eliminado);
-  } catch (err) {
+  } catch (err: any) {
     console.error("error al eliminar el nivel de estudio", err);
-    res.status(400).send({ error: "No se pudo eliminar el nivel de estudio" });
+
+    // Verificar si es un error de clave foránea
+    if (err.code === "ER_ROW_IS_REFERENCED_2" || err.errno === 1451) {
+      res.status(400).send({
+        error:
+          "No se puede eliminar el nivel de estudio porque tiene registros asociados (foreign key constraint)",
+      });
+    } else {
+      res
+        .status(400)
+        .send({ error: "No se pudo eliminar el nivel de estudio" });
+    }
   }
 });
 
