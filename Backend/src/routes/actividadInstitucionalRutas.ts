@@ -1,66 +1,67 @@
+// src/routes/actividadInstitucionalRoutes.ts
+
 import express, { Request, Response } from "express";
-import * as actividadInstitucionalServices from "../services/actividadInstitucionalServices";
-//activamos las rutas
+// Importamos el servicio (usando un alias más corto para facilitar la lectura)
+import * as actividadServices from "../services/actividadInstitucionalServices";
+
 const router = express.Router();
 
-//http://localhost:3001/api/documento/ <---- obtener todos los documentos
+// --- OBTENER TODAS (GET) ---
 router.get("/", async (_req: Request, res: Response) => {
-  let actividad = await actividadInstitucionalServices.obtieneActividadInstitucional();
-  res.send(actividad);
+    try {
+        let actividades = await actividadServices.obtenerTodasActividades();
+        res.send(actividades);
+    } catch (err) {
+        console.error("error al obtener actividades: ", err);
+        res.status(500).send({ error: "Error interno." });
+    }
 });
 
-//http://localhost:3001/api/documento/1 <---- busqueda por el id del documento
+// --- OBTENER POR ID (GET) ---
 router.get("/:id", async (req: Request, res: Response) => {
-  let actividad = await actividadInstitucionalServices.encuentraActividadInstitucionalPorId(
-    Number(req.params.id)
-  );
-  res.send(actividad);
+    try {
+        let actividad = await actividadServices.encontrarActividadPorId(Number(req.params.id));
+        res.send(actividad);
+    } catch (err) {
+        console.error("error al obtener actividad por id: ", err);
+        res.status(400).send({ error: "Error al buscar ID." });
+    }
 });
 
-//http://localhost:3001/api/documento/ insertar un nuevo documento
+// --- AGREGAR (POST) - SINTAXIS LIMPIA ---
 router.post("/", async (req: Request, res: Response) => {
-  try {
-    const {idActividadInstitucional,idTipoDocumento,nombre,descripcion,periodo,fechaInicio,fechaFin} = req.body; // desestructuring
-    //enviamos un objeto con los datos al servicio
-    const nuevo = await actividadInstitucionalServices.agregarActividadInstitucional({
-      idActividadInstitucional, idTipoDocumento,nombre, descripcion,periodo,fechaInicio,fechaFin
-    });
-    res.send(nuevo);
-  } catch (err) {
-    console.error("error al agregar actividad: ", err);
-    res.status(400).send({ error: "No se pudo agregar la actividad" });
-  }
+    try {
+        // Pasamos el body directo.
+        // El servicio validará con Zod que las fechas vengan en formato "YYYY-MM-DD"
+        const nueva = await actividadServices.agregarActividad(req.body);
+        res.send(nueva);
+    } catch (err) {
+        console.error("error al agregar actividad: ", err);
+        res.status(400).send({ error: "No se pudo agregar." });
+    }
 });
 
-//http://localhost:3001/api/documento/ <---- editar un documento
+// --- ACTUALIZAR (PUT) - SINTAXIS LIMPIA ---
 router.put("/", async (req: Request, res: Response) => {
-  try {
-    const {idActividadInstitucional,idTipoDocumento,nombre,descripcion,periodo,fechaInicio,fechaFin} = req.body;
-    const modificado = await actividadInstitucionalServices.actualizarActividadInstitucional({
-      idActividadInstitucional,idTipoDocumento,nombre,descripcion,periodo,fechaInicio,fechaFin
-    });
-    res.send(modificado);
-  } catch (err) {
-    console.error("error al actualizar la actividad", err);
-    res
-      .status(400)
-      .send({ error: "No se pudo actualizar la actividad" });
-  }
+    try {
+        const modificada = await actividadServices.actualizarActividad(req.body);
+        res.send(modificada);
+    } catch (err) {
+        console.error("error al actualizar actividad", err);
+        res.status(400).send({ error: "No se pudo actualizar." });
+    }
 });
 
-//http://localhost:3001/api/documento/ <---- eliminar un documento
+// --- ELIMINAR (DELETE - ID en body) ---
 router.delete("/", async (req: Request, res: Response) => {
-  try {
-    const { idActividadInstitucional } = req.body;
-    const eliminado = await actividadInstitucionalServices.eliminarActividadInstitucional(
-      idActividadInstitucional
-    );
-    res.send(eliminado);
-  } catch (err) {
-    console.error("error al eliminar la actividad", err);
-    res.status(400).send({ error: "No se pudo eliminar la actividad" });
-  }
+    try {
+        const { idActividadInstitucional } = req.body;
+        const eliminada = await actividadServices.eliminarActividad(idActividadInstitucional);
+        res.send(eliminada);
+    } catch (err) {
+        console.error("error al eliminar actividad", err);
+        res.status(400).send({ error: "No se pudo eliminar." });
+    }
 });
 
-//exportamos las rutas
 export default router;

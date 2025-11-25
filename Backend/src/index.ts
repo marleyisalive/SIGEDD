@@ -22,7 +22,7 @@ import usuarioRutas from "./routes/usuarioRutas";
 import grupoRutas from "./routes/grupoRutas";
 import materiaRutas from "./routes/materiaRutas";
 import actividadInstitucionalRutas from "./routes/actividadInstitucionalRutas";
-
+import carreraRutas from "./routes/carreraRutas";
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
 
@@ -41,7 +41,7 @@ app.use("/api/usuario", usuarioRutas);
 app.use("/api/grupo", grupoRutas);
 app.use("/api/materia", materiaRutas);
 app.use("/api/actividadInstitucional", actividadInstitucionalRutas);
-
+app.use("/api/carrera", carreraRutas);
 //prueba
 // app.get("/hola", (_req, res) => {
 //   let fecha = new Date().toLocaleDateString();

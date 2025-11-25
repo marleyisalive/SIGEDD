@@ -1,97 +1,68 @@
-// import express, { Request, Response } from "express";
-// import * as docenteActividadServices from "../services/docenteactividadServices"; // Importa tu servicio
-// import {
-//   //docenteactividad,
-//   NuevaDocenteActividad,
-// } from "../types/typesDocenteActividad"; // Importa tus tipos
+// src/routes/docenteActividadRoutes.ts
 
-// // Activamos las rutas
-// const router = express.Router();
+import express, { Request, Response } from "express";
+// Importamos el servicio (usando un alias más corto)
+import * as docenteActividadServices from "../services/docenteactividadServices";
 
-// // --- OBTENER TODAS LAS RELACIONES ---
-// // GET http://localhost:3001/api/docente-actividad
-// router.get("/", async (_req: Request, res: Response) => {
-//   let relaciones =
-//     await docenteActividadServices.obtenerTodasDocenteActividad();
-//   res.send(relaciones);
-// });
+const router = express.Router();
 
-// // --- OBTENER UNA RELACIÓN POR PK COMPUESTA ---
-// // GET http://localhost:3001/api/docente-actividad/:idDocente/:idActividadInstitucional
-// // (Esta ruta es la única que difiere porque la PK es compuesta)
-// router.get(
-//   "/:idDocente/:idActividadInstitucional",
-//   async (req: Request, res: Response) => {
-//     let relacion =
-//       await docenteActividadServices.encontrarDocenteActividadPorPK(
-//         Number(req.params.idDocente),
-//         Number(req.params.idActividadInstitucional)
-//       );
-//     res.send(relacion);
-//   }
-// );
+// --- OBTENER TODAS (GET) ---
+router.get("/", async (_req: Request, res: Response) => {
+    try {
+        let actividades = await docenteActividadServices.obtenerTodasDocenteActividad();
+        // Nota: mysql2 convierte automáticamente el string JSON de la BD a objeto JS aquí.
+        res.send(actividades);
+    } catch (err) {
+        console.error("error al obtener registros de actividades: ", err);
+        res.status(500).send({ error: "Error interno." });
+    }
+});
 
-// // --- CREAR UNA NUEVA RELACIÓN ---
-// // POST http://localhost:3001/api/docente-actividad
-// router.post("/", async (req: Request, res: Response) => {
-//   try {
-//     const nuevaRelacion: NuevaDocenteActividad = req.body;
+// --- OBTENER POR ID (GET) ---
+router.get("/:id", async (req: Request, res: Response) => {
+    try {
+        let actividad = await docenteActividadServices.encontrarDocenteActividadPorId(Number(req.params.id));
+        res.send(actividad);
+    } catch (err) {
+        console.error("error al obtener registro por id: ", err);
+        res.status(400).send({ error: "Error al buscar ID." });
+    }
+});
 
-//     const nuevo = await docenteActividadServices.agregarDocenteActividad(
-//       nuevaRelacion
-//     );
-//     res.send(nuevo);
-//   } catch (err) {
-//     console.error("Error al agregar la relación docente-actividad: ", err);
-//     res
-//       .status(400)
-//       .send({ error: "No se pudo agregar la relación docente-actividad" });
-//   }
-// });
+// --- AGREGAR (POST) - SINTAXIS LIMPIA ---
+router.post("/", async (req: Request, res: Response) => {
+    try {
+        // Pasamos el body directo.
+        // El servicio validará con Zod y convertirá el JSON a string.
+        const nueva = await docenteActividadServices.agregarDocenteActividad(req.body);
+        res.send(nueva);
+    } catch (err) {
+        console.error("error al agregar registro de actividad: ", err);
+        res.status(400).send({ error: "No se pudo agregar." });
+    }
+});
 
-// // --- ACTUALIZAR UNA RELACIÓN ---
-// // PUT http://localhost:3001/api/docente-actividad
-// router.put("/", async (req: Request, res: Response) => {
-//   try {
-//     // La PK compuesta (idDocente, idActividadInstitucional) debe venir en el body
-//     const {idDocenteActividad, idActividadInstitucional,idDocente,datosCapturados,fechaRegistro,validadoPor,fechaValidacion}= req.body;
-//     const modificado = await docenteActividadServices.actualizarDocenteActividad({
-//       idDocenteActividad,
-//       idActividadInstitucional,
-//       idDocente,
-//       datosCapturados,
-//       fechaRegistro,
-//       validadoPor,
-//       fechaValidacion,
-//     });
-//     res.send(modificado);
-//   } catch (err) {
-//     console.error("Error al actualizar la relación docente-actividad", err);
-//     res
-//       .status(400)
-//       .send({ error: "No se pudo actualizar la relación docente-actividad" });
-//   }
-// });
+// --- ACTUALIZAR (PUT) - SINTAXIS LIMPIA ---
+router.put("/", async (req: Request, res: Response) => {
+    try {
+        const modificada = await docenteActividadServices.actualizarDocenteActividad(req.body);
+        res.send(modificada);
+    } catch (err) {
+        console.error("error al actualizar registro de actividad", err);
+        res.status(400).send({ error: "No se pudo actualizar." });
+    }
+});
 
-// // --- ELIMINAR UNA RELACIÓN ---
-// // DELETE http://localhost:3001/api/docente-actividad
-// router.delete("/", async (req: Request, res: Response) => {
-//   try {
-//     // La PK compuesta (idDocente, idActividadInstitucional) debe venir en el body
-//     const { idDocente, idActividadInstitucional } = req.body;
+// --- ELIMINAR (DELETE - ID en body) ---
+router.delete("/", async (req: Request, res: Response) => {
+    try {
+        const { idDocenteActividad } = req.body;
+        const eliminada = await docenteActividadServices.eliminarDocenteActividad(idDocenteActividad);
+        res.send(eliminada);
+    } catch (err) {
+        console.error("error al eliminar registro de actividad", err);
+        res.status(400).send({ error: "No se pudo eliminar." });
+    }
+});
 
-//     const eliminado = await docenteActividadServices.eliminarDocenteActividad(
-//       idDocente,
-//       idActividadInstitucional
-//     );
-//     res.send(eliminado);
-//   } catch (err) {
-//     console.error("Error al eliminar la relación docente-actividad", err);
-//     res
-//       .status(400)
-//       .send({ error: "No se pudo eliminar la relación docente-actividad" });
-//   }
-// });
-
-// // Exportamos las rutas
-// export default router;
+export default router;

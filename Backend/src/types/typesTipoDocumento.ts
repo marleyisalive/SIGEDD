@@ -3,5 +3,4 @@ export interface tipoDocumento {
   nombre: string;
   descripcion?: string | null;
   plantillaJSON: Record<string, any>;
-  activo: number;
 }
