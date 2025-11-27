@@ -22,7 +22,6 @@ import usuarioRutas from "./routes/usuarioRutas";
 import grupoRutas from "./routes/grupoRutas";
 import materiaRutas from "./routes/materiaRutas";
 import actividadInstitucionalRutas from "./routes/actividadInstitucionalRutas";
-import carreraRutas from "./routes/carreraRutas";
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
 
