@@ -1,80 +1,91 @@
-import { Departamento } from "../types/typesDepartamentos";
-import { createPool } from "mysql2/promise";
+// src/services/departamentoServices.ts
 
+import { departamento } from "../types/typesDepartamento"; // Nombre en minúscula
+import { createPool } from "mysql2/promise";
+import { departamentoSchema } from "../schema/departamentoSchema"; // Esquema de validación
+
+// Configuración de la conexión
 const conexion = createPool({
   host: "localhost",
   user: "administrador",
   password: "admin123456",
   database: "SIGEDD",
+  // port: 3307, // Descomenta si es necesario
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-export const obtieneDepartamento = async () => {
+// --- Obtener todos ---
+export const obtenerTodosDepartamentos = async () => {
   try {
     const [results] = await conexion.query("SELECT * FROM departamento");
     return results;
   } catch (err) {
-    console.error("error al obtener los departamentos: ", err);
-    return { error: "No se puede obtener los departamentos" };
+    console.error("error al obtener departamentos: ", err);
+    return { error: "No se pudieron obtener los departamentos." };
   }
 };
 
-export const encuentraDepartamentoPorId = async (id: number) => {
+// --- Encontrar por ID ---
+export const encontrarDepartamentoPorId = async (id: number) => {
   try {
-    // el segundo parámetro debe ser un array con los valores para la consulta
     const [results] = await conexion.query(
       "SELECT * FROM departamento WHERE idDepartamento = ?",
-      id
+      [id]
     );
     return results;
   } catch (err) {
-    console.error("error al obtener el departamento por id: ", err);
-    return { error: "No se puede obtener el departamento por id" };
+    console.error("error al obtener departamento por id: ", err);
+    return { error: "No se pudo obtener el departamento por id." };
   }
 };
 
-export const agregarDepartamento = async (nuevo: Departamento) => {
+// --- Agregar nuevo (CON VALIDACIÓN ZOD) ---
+export const agregarDepartamento = async (nueva: departamento) => {
+  // 1. Validar con el esquema (maneja el opcional/nulo de encargado)
+  const validacion = departamentoSchema.safeParse(nueva);
+  if (!validacion.success) {
+    return { error: validacion.error };
+  }
+
+  // 2. Insertar
+  // Nota: Si nueva.encargadoDepartamento es null o undefined, MySQL lo guarda como NULL.
+  const [results] = await conexion.query(
+    "INSERT INTO departamento (idDepartamento, nombreDepartamento, encargadoDepartamento) VALUES (?, ?, ?)",
+    [
+      nueva.idDepartamento,
+      nueva.nombreDepartamento,
+      nueva.encargadoDepartamento,
+    ]
+  );
+  return results;
+};
+
+// --- Actualizar existente ---
+export const actualizarDepartamento = async (modificada: departamento) => {
   try {
+    // No validamos en update siguiendo el patrón
     const [results] = await conexion.query(
-      "INSERT INTO departamento (idDepartamento, nombreDepartamento, encargadoDepartamento) VALUES (?, ?, ?)",
+      "UPDATE departamento SET nombreDepartamento = ?, encargadoDepartamento = ? WHERE idDepartamento = ?",
       [
-        nuevo.idDepartamento,
-        nuevo.nombreDepartamento,
-        nuevo.encargadoDepartamento,
+        modificada.nombreDepartamento,
+        modificada.encargadoDepartamento,
+        modificada.idDepartamento,
       ]
     );
     return results;
   } catch (err) {
-    console.error("error al agregar el departamento: ", err);
-    return { error: "No se pudo agregar el departamento" };
+    console.error("error al actualizar departamento: ", err);
+    return { error: "No se pudo actualizar el departamento." };
   }
 };
 
-export const actualizarDepartamento = async (modificado: Departamento) => {
-  try {
-    const [results] = await conexion.query(
-      "UPDATE departamento SET nombreDepartamento = ?, encargadoDepartamento = ? WHERE IdDepartamento = ?",
-      [
-        modificado.nombreDepartamento,
-        modificado.encargadoDepartamento,
-        modificado.idDepartamento,
-      ]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al actualizar el departamento: ", err);
-    return { error: "No se pudo actualizar el departamento" };
-  }
-};
-
+// --- Eliminar ---
 export const eliminarDepartamento = async (idDepartamento: number) => {
-  try {
-    const [results] = await conexion.query(
-      "DELETE FROM departamento WHERE idDepartamento= ?",
-      [idDepartamento]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al eliminar el departamento: ", err);
-    return { error: "No se pudo eliminar el departamento" };
-  }
+  const [results] = await conexion.query(
+    "DELETE FROM departamento WHERE idDepartamento = ?",
+    [idDepartamento]
+  );
+  return results;
 };

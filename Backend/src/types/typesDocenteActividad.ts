@@ -1,11 +1,15 @@
+// src/types/docenteActividadTypes.ts
 export interface docenteactividad {
   idDocenteActividad: number;
   idActividadInstitucional: number;
   idDocente: number;
-  datosCapturados: Record<string, any>;  // JSON
+  datosCapturados: any; 
   fechaRegistro?: Date | null;
   validadoPor?: number | null;
   fechaValidacion?: Date | null;
-}
 
-export type NuevaDocenteActividad = docenteactividad;
+  nombreActividad?: string;
+  nombreTipo?: string;
+  idTipoDocumento?: number;
+}
+// export type NuevaDocenteActividad = docenteactividad;

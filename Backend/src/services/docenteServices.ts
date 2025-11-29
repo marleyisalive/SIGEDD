@@ -1,108 +1,103 @@
-// Importaciones necesarias
-import { Docente, NuevoDocente } from "../types/typesDocente"; // Asegúrate de que la ruta sea correcta
-import { createPool } from "mysql2/promise";
-//import { crearDocenteSchema, actualizarDocenteSchema } from "../schemas/docenteSchema"; // Asumiendo que esta es la ruta
+// src/services/docenteServices.ts
 
-// Configuración de la conexión a la base de datos (puedes mover esto a un archivo de configuración separado)
+import { docente } from "../types/typesDocente"; // Tipo en minúscula
+import { createPool } from "mysql2/promise";
+import { docenteSchema } from "../schema/docenteSchema"; // Esquema limpio
+
+// Configuración de la conexión
 const conexion = createPool({
   host: "localhost",
   user: "administrador",
   password: "admin123456",
   database: "SIGEDD",
-  waitForConnections: true, // Esperar si todas las conexiones están en uso
-  connectionLimit: 10, // Número máximo de conexiones en el pool
-  queueLimit: 0, // Número ilimitado de peticiones en cola
 });
 
-/**
- * Obtiene todos los docentes de la base de datos.
- * @returns Un array de objetos Docente o un objeto de error.
- */
-export const obtenerTodosLosDocentes = async () => {
+// --- Obtener todos ---
+export const obtenerTodosDocentes = async () => {
   try {
+    // Aquí en el futuro podrías hacer JOINs para traer los nombres de
+    // usuario, departamento, plaza, etc., en lugar de solo los IDs.
+    // Por ahora, lo mantenemos simple con SELECT *
     const [results] = await conexion.query("SELECT * FROM docente");
     return results;
   } catch (err) {
-    console.error("Error al obtener todos los docentes:", err);
+    console.error("error al obtener docentes: ", err);
     return { error: "No se pudieron obtener los docentes." };
   }
 };
 
-/**
- * Encuentra un docente por su ID.
- * @param idDocente El ID del docente a buscar.
- * @returns El objeto Docente encontrado o un objeto de error.
- */
-export const encontrarDocentePorId = async (idDocente: number) => {
+// --- Encontrar por ID ---
+export const encontrarDocentePorId = async (id: number) => {
   try {
     const [results] = await conexion.query(
       "SELECT * FROM docente WHERE idDocente = ?",
-      [idDocente]
+      [id]
     );
     return results;
   } catch (err) {
-    console.error(`Error al obtener el docente con ID ${idDocente}:`, err);
-    return { error: `No se pudo obtener el docente con ID ${idDocente}.` };
+    console.error("error al obtener docente por id: ", err);
+    return { error: "No se pudo obtener el docente por id." };
   }
 };
 
-/**
- * Agrega un nuevo docente a la base de datos.
- * @param nuevoDocente Los datos del nuevo docente.
- * @returns El resultado de la inserción o un objeto de error.
- */
-export const agregarDocente = async (nuevoDocente: NuevoDocente) => {
-  try {
-    const [results] = await conexion.query(
-      "INSERT INTO docente (idUsuario, filiacion, idNivelEstudio, idDepartamento, idPlaza, estatusExclusividad, folioEdd) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [
-        nuevoDocente.idUsuario,
-        nuevoDocente.filiacion,
-        nuevoDocente.idNivelEstudio,
-        nuevoDocente.idDepartamento,
-        nuevoDocente.idPlaza,
-        nuevoDocente.estatusExclusividad,
-        nuevoDocente.folioEdd,
-      ]
-    );
-    return results; // Retorna el objeto de resultados de la inserción
-  } catch (err) {
-    console.error("Error al agregar el docente:", err);
-    return { error: "No se pudo agregar el docente." };
+// --- Agregar nuevo (CON VALIDACIÓN ZOD) ---
+export const agregarDocente = async (nueva: docente) => {
+  // 1. Validar con Zod (longitudes exactas, tipos)
+  const validacion = docenteSchema.safeParse(nueva);
+  if (!validacion.success) {
+    throw new Error(JSON.stringify(validacion.error));
   }
+
+  // 2. Insertar
+  const [results] = await conexion.query(
+    "INSERT INTO docente (idDocente, idUsuario, filiacion, idNivelEstudio, idDepartamento, idPlaza, estatusExclusividad, folioEdd) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [
+      nueva.idDocente,
+      nueva.idUsuario,
+      nueva.filiacion,
+      nueva.idNivelEstudio,
+      nueva.idDepartamento,
+      nueva.idPlaza,
+      nueva.estatusExclusividad, // MySQL maneja si es null
+      nueva.folioEdd, // MySQL maneja si es null
+    ]
+  );
+  return results;
 };
 
-export const actualizarDocente = async (modificado: Docente) => {
+// --- Actualizar existente ---
+export const actualizarDocente = async (modificada: docente) => {
   try {
+    // No validamos con Zod en update siguiendo el patrón
     const [results] = await conexion.query(
-      "UPDATE documento SET idDocente = ?, idUsuario = ?, filiacion = ?, idNivelEstudio = ?, idDepartamento = ?, idPlaza = ?, estatusExclusividad = ?, folioEdd = ? WHERE idDocente = ?",
+      "UPDATE docente SET idUsuario = ?, filiacion = ?, idNivelEstudio = ?, idDepartamento = ?, idPlaza = ?, estatusExclusividad = ?, folioEdd = ? WHERE idDocente = ?",
       [
-        modificado.idDocente,
-        modificado.idUsuario,
-        modificado.filiacion,
-        modificado.idNivelEstudio,
-        modificado.idDepartamento,
-        modificado.idPlaza,
-        modificado.estatusExclusividad,
-        modificado.folioEdd
+        modificada.idUsuario,
+        modificada.filiacion,
+        modificada.idNivelEstudio,
+        modificada.idDepartamento,
+        modificada.idPlaza,
+        modificada.estatusExclusividad,
+        modificada.folioEdd,
+        modificada.idDocente, // ID para el WHERE
       ]
     );
     return results;
   } catch (err) {
-    console.error("error al actualizar el docente: ", err);
-    return { error: "No se pudo actualizar el docente" };
+    console.error("error al actualizar docente: ", err);
+    // También puede fallar por FKs si intentas cambiar a un ID que no existe
+    return {
+      error:
+        "No se pudo actualizar el docente. Verifique la existencia de los IDs relacionados.",
+    };
   }
 };
 
+// --- Eliminar ---
 export const eliminarDocente = async (idDocente: number) => {
-  try {
-    const [results] = await conexion.query(
-      "DELETE FROM docente WHERE idDocente = ?",
-      [idDocente]
-    );
-    return results; // Retorna el objeto de resultados de la eliminación
-  } catch (err) {
-    console.error(`Error al eliminar el docente con ID ${idDocente}:`, err);
-    return { error: `No se pudo eliminar el docente con ID ${idDocente}.` };
-  }
+  const [results] = await conexion.query(
+    "DELETE FROM docente WHERE idDocente = ?",
+    [idDocente]
+  );
+  return results;
 };

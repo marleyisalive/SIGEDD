@@ -1,48 +1,84 @@
 import express, { Request, Response } from "express";
-import * as docenteServices from "../services/docenteServices"; // Importa tu servicio de docente
-import {  NuevoDocente } from "../types/typesDocente"; // Importa tus tipos
+// Importamos el servicio de docentes
+import * as docenteServices from "../services/docenteServices";
 
-// Activamos las rutas
 const router = express.Router();
 
-// --- OBTENER TODOS LOS DOCENTES ---
-// GET http://localhost:3001/api/docentes
+// --- OBTENER TODOS (GET) ---
 router.get("/", async (_req: Request, res: Response) => {
-  let docentes = await docenteServices.obtenerTodosLosDocentes();
-  res.send(docentes); // El servicio devuelve los datos o el objeto de error
-});
-
-// --- OBTENER UN DOCENTE POR ID ---
-// GET http://localhost:3001/api/docentes/:idDocente
-router.get("/:idDocente", async (req: Request, res: Response) => {
-  let docente = await docenteServices.encontrarDocentePorId(
-    Number(req.params.idDocente)
-  );
-  res.send(docente); // El servicio devuelve el docente o el objeto de error
-});
-
-// --- CREAR UN NUEVO DOCENTE ---
-// POST http://localhost:3001/api/docentes
-router.post("/", async (req: Request, res: Response) => {
   try {
-    // Tomamos todos los campos del body que coinciden con NuevoDocente
-    const nuevoDocente: NuevoDocente = req.body;
-
-    // Enviamos el objeto completo al servicio
-    const nuevo = await docenteServices.agregarDocente(nuevoDocente);
-    res.send(nuevo);
+    let docentes = await docenteServices.obtenerTodosDocentes();
+    res.send(docentes);
   } catch (err) {
-    console.error("Error al agregar el docente: ", err);
-    res.status(400).send({ error: "No se pudo agregar el docente" });
+    console.error("error al obtener docentes: ", err);
+    res.status(500).send({ error: "Error interno." });
   }
 });
 
-// --- ACTUALIZAR UN DOCENTE ---
-// PUT http://localhost:3001/api/docentes
+// --- OBTENER POR ID (GET) ---
+router.get("/:id", async (req: Request, res: Response) => {
+  try {
+    let docente = await docenteServices.encontrarDocentePorId(
+      Number(req.params.id)
+    );
+    res.send(docente);
+  } catch (err) {
+    console.error("error al obtener docente por id: ", err);
+    res.status(400).send({ error: "Error al buscar ID." });
+  }
+});
+
+// --- AGREGAR (POST) ---
+router.post("/", async (req: Request, res: Response) => {
+  try {
+    // Desestructuramos TODOS los campos necesarios del body, incluyendo los opcionales.
+    const {
+      idDocente,
+      idUsuario,
+      filiacion,
+      idNivelEstudio,
+      idDepartamento,
+      idPlaza,
+      estatusExclusividad,
+      folioEdd,
+    } = req.body;
+
+    // Pasamos los datos al servicio (que validará con Zod).
+    const nuevo = await docenteServices.agregarDocente({
+      idDocente,
+      idUsuario,
+      filiacion,
+      idNivelEstudio,
+      idDepartamento,
+      idPlaza,
+      estatusExclusividad,
+      folioEdd,
+    });
+    return res.send(nuevo);
+  } catch (err: any) {
+    console.error("error al agregar docente: ", err);
+    if (err.code === "ER_DUP_ENTRY" || err.errno === 1062) {
+      return res.status(400).json({
+        error: "El ID del docente ya existe. Por favor, utiliza otro ID.",
+      });
+    }
+    return res.status(400).send({ error: "No se pudo agregar." });
+  }
+});
+
+// --- ACTUALIZAR (PUT) ---
 router.put("/", async (req: Request, res: Response) => {
   try {
-    // En otras rutas se envía un único objeto al servicio; hacemos lo mismo aquí
-    const { idDocente, idUsuario, filiacion, idNivelEstudio, idDepartamento, idPlaza, estatusExclusividad, folioEdd } = req.body;
+    const {
+      idDocente,
+      idUsuario,
+      filiacion,
+      idNivelEstudio,
+      idDepartamento,
+      idPlaza,
+      estatusExclusividad,
+      folioEdd,
+    } = req.body;
 
     const modificado = await docenteServices.actualizarDocente({
       idDocente,
@@ -56,26 +92,28 @@ router.put("/", async (req: Request, res: Response) => {
     });
     res.send(modificado);
   } catch (err) {
-    console.error("Error al actualizar el docente", err);
-    res.status(400).send({ error: "No se pudo actualizar el docente" });
+    console.error("error al actualizar docente", err);
+    res.status(400).send({ error: "No se pudo actualizar." });
   }
 });
 
-// --- ELIMINAR UN DOCENTE ---
-// DELETE http://localhost:3001/api/docentes
+// --- ELIMINAR (DELETE - ID en body) ---
 router.delete("/", async (req: Request, res: Response) => {
   try {
-    // Seguimos el patrón de tu compañero de enviar el ID en el body
     const { idDocente } = req.body;
-
     const eliminado = await docenteServices.eliminarDocente(idDocente);
-    res.send(eliminado);
-  } catch (err) {
-    console.error("Error al eliminar el docente", err);
-    res.status(400).send({ error: "No se pudo eliminar el docente" });
+    return res.send(eliminado);
+  } catch (err: any) {
+    console.error("error al eliminar docente", err);
+    if (err.code === "ER_ROW_IS_REFERENCED_2" || err.errno === 1451) {
+      return res.status(400).json({
+        error:
+          "No se puede eliminar el docente porque está siendo utilizado en otros registros.",
+      });
+    }
+    return res.status(400).send({ error: "No se pudo eliminar." });
   }
 });
 
-// Exportamos las rutas
 export default router;
 

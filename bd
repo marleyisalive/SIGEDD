@@ -291,7 +291,7 @@ INSERT INTO materia (idMateria, nombre, idDepartamento, creditos) VALUES
 (43, 'Taller de Investigación II', 8, 4), 
 (44, 'Programación Web', 16, 5),         
 (45, 'Programación Lógica y Funcional', 16, 5), 
-(46, 'Inteligencia Artificial', 16, 5),
+(46, 'Inteligencia Artificial', 16, 5);
 
 
 

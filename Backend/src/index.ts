@@ -6,11 +6,13 @@ const app = express();
 //Todo lo que regresa al usuario es tipo json
 app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 //configurar rutas para el acceso
 import nivelEstudioRutas from "./routes/nivelEstudioRutas";
 import rolRutas from "./routes/rolRutas";
 import aulaRutas from "./routes/aulaRutas";
+import carreraRutas from "./routes/carreraRutas";
 import plazaRutas from "./routes/plazaRutas";
 import tipoDocumentoRutas from "./routes/tipoDocumentoRutas";
 import documentoRutas from "./routes/documentoRutas";
@@ -21,7 +23,6 @@ import usuarioRutas from "./routes/usuarioRutas";
 import grupoRutas from "./routes/grupoRutas";
 import materiaRutas from "./routes/materiaRutas";
 import actividadInstitucionalRutas from "./routes/actividadInstitucionalRutas";
-
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
 
@@ -29,6 +30,7 @@ const Puerto = 3001;
 app.use("/api/nivelEstudio", nivelEstudioRutas);
 app.use("/api/rol", rolRutas);
 app.use("/api/aula", aulaRutas);
+app.use("/api/carrera", carreraRutas);
 app.use("/api/plaza", plazaRutas);
 app.use("/api/docente", docenteRutas);
 app.use("/api/docenteactividad", docenteActividadRutas);
@@ -39,7 +41,7 @@ app.use("/api/usuario", usuarioRutas);
 app.use("/api/grupo", grupoRutas);
 app.use("/api/materia", materiaRutas);
 app.use("/api/actividadInstitucional", actividadInstitucionalRutas);
-
+app.use("/api/carrera", carreraRutas);
 //prueba
 // app.get("/hola", (_req, res) => {
 //   let fecha = new Date().toLocaleDateString();

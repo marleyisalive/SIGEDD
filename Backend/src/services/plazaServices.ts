@@ -1,7 +1,10 @@
-// se maneja en base a promesas
-import { plaza } from "../types/typesPlaza";
-import { createPool } from "mysql2/promise";
+// src/services/plazaServices.ts
 
+import { plaza } from "../types/typesPlaza"; // Asegúrate de la ruta
+import { createPool } from "mysql2/promise";
+import { plazaSchema } from "../schema/plazaSchema"; // Importamos el esquema
+
+// Configuración de la conexión
 const conexion = createPool({
   host: "localhost",
   user: "administrador",
@@ -9,65 +12,67 @@ const conexion = createPool({
   database: "SIGEDD",
 });
 
-export const obtieneRol = async () => {
+// --- Obtener todas las plazas ---
+export const obtenerTodasPlazas = async () => {
   try {
     const [results] = await conexion.query("SELECT * FROM plaza");
     return results;
   } catch (err) {
-    console.error("error al obtener los plaza: ", err);
-    return { error: "No se puede obtener los plaza" };
+    console.error("error al obtener plazas: ", err);
+    return { error: "No se pudieron obtener las plazas." };
   }
 };
 
-export const encuentraPlazaPorId = async (id: number) => {
+// --- Encontrar plaza por ID ---
+export const encontrarPlazaPorId = async (id: number) => {
   try {
-    // el segundo parámetro debe ser un array con los valores para la consulta
     const [results] = await conexion.query(
       "SELECT * FROM plaza WHERE idPlaza = ?",
-      id
+      [id]
     );
     return results;
   } catch (err) {
-    console.error("error al obtener el plaza por id: ", err);
-    return { error: "No se puede obtener el plaza por id" };
+    console.error("error al obtener plaza por id: ", err);
+    return { error: "No se pudo obtener la plaza por id." };
   }
 };
 
-export const agregarPlaza = async (nuevo: plaza) => {
-  try {
-    const [results] = await conexion.query(
-      "INSERT INTO plaza (idPlaza, descripcion) VALUES (?, ?)",
-      [nuevo.idPlaza, nuevo.descripcion]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al agregar el plaza: ", err);
-    return { error: "No se pudo agregar el plaza" };
+// --- Agregar nueva plaza (CON VALIDACIÓN ZOD) ---
+export const agregarPlaza = async (nueva: plaza) => {
+  // 1. Validar datos de entrada
+  const validacion = plazaSchema.safeParse(nueva);
+  if (!validacion.success) {
+    return { error: validacion.error };
   }
+
+  // 2. Insertar si la validación pasa
+  const [results] = await conexion.query(
+    "INSERT INTO plaza (idPlaza, descripcion) VALUES (?, ?)",
+    [nueva.idPlaza, nueva.descripcion]
+  );
+  return results;
 };
 
-export const actualizarPlaza = async (modificado: plaza) => {
+// --- Actualizar plaza existente ---
+export const actualizarPlaza = async (modificada: plaza) => {
   try {
+    // No validamos en update siguiendo el patrón de tu equipo
     const [results] = await conexion.query(
       "UPDATE plaza SET descripcion = ? WHERE idPlaza = ?",
-      [modificado.descripcion, modificado.idPlaza]
+      [modificada.descripcion, modificada.idPlaza]
     );
     return results;
   } catch (err) {
-    console.error("error al actualizar el plaza: ", err);
-    return { error: "No se pudo actualizar el plaza" };
+    console.error("error al actualizar plaza: ", err);
+    return { error: "No se pudo actualizar la plaza." };
   }
 };
 
+// --- Eliminar plaza ---
 export const eliminarPlaza = async (idPlaza: number) => {
-  try {
-    const [results] = await conexion.query(
-      "DELETE FROM plaza WHERE idPlaza = ?",
-      [idPlaza]
-    );
-    return results;
-  } catch (err) {
-    console.error("error al eliminar el plaza: ", err);
-    return { error: "No se pudo eliminar el plaza" };
-  }
+  const [results] = await conexion.query(
+    "DELETE FROM plaza WHERE idPlaza = ?",
+    [idPlaza]
+  );
+  return results;
 };

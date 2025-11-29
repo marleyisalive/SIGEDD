@@ -1,7 +1,6 @@
 // Importaciones necesarias
 import {
-  docenteactividad,
-  NuevaDocenteActividad,
+  docenteactividad
 } from "../types/typesDocenteActividad"; // Asegúrate de que la ruta sea correcta
 import { createPool } from "mysql2/promise";
 
@@ -20,7 +19,6 @@ const conexion = createPool({
  * Obtiene todas las relaciones docente-actividad de la base de datos.
  * @returns Un array de objetos DocenteActividad o un objeto de error.
  */
-// En services/docenteactividadServices.ts
 
 export const obtenerTodasDocenteActividad = async () => {
   try {
@@ -30,9 +28,9 @@ export const obtenerTodasDocenteActividad = async () => {
         da.idActividadInstitucional,
         da.idDocente,
         da.fechaRegistro,
-        ai.nombre AS nombreActividad,  -- Importante para la columna 1
+        ai.nombre AS nombreActividad,  -- NECESARIO para que salga el nombre en la tabla
         ai.idTipoDocumento,
-        td.nombre as nombreTipo        -- Importante para la columna 2 (badge)
+        td.nombre as nombreTipo        -- NECESARIO para que salga el badge gris
       FROM docenteactividad da
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
       JOIN tipodocumento td ON ai.idTipoDocumento = td.idTipoDocumento
@@ -46,7 +44,6 @@ export const obtenerTodasDocenteActividad = async () => {
     return [];
   }
 };
-
 /**
  * Encuentra una relación docente-actividad por su clave primaria compuesta.
  * @param idDocente El ID del docente.
@@ -79,7 +76,7 @@ export const encontrarDocenteActividadPorPK = async (
  * @returns El resultado de la inserción o un objeto de error.
  */
 export const agregarDocenteActividad = async (
-  nuevaDocenteActividad: NuevaDocenteActividad
+  nuevaDocenteActividad: docenteactividad
 ) => {
   try {
     const [results] = await conexion.query(
@@ -498,7 +495,7 @@ export const obtenerDatosHorarioActividades = async (idDocenteActividad: number)
         g.periodo, 
         g.horario, 
         g.numeroAlumnos,
-        'ING. SISTEMAS' as nombreCarrera, 
+        'ING. SISTEMAS COMPUTACIONALES' as nombreCarrera, 
         a.nombre as aula
       FROM grupo g
       JOIN materia m ON g.idMateria = m.idMateria
