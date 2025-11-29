@@ -11,9 +11,7 @@ router.get("/", async (_req: Request, res: Response) => {
 
 //http://localhost:3001/api/rol/1 <---- busqueda por el id del rol
 router.get("/:id", async (req: Request, res: Response) => {
-  let rol = await rolServices.encuentraRolPorId(
-    Number(req.params.id)
-  );
+  let rol = await rolServices.encuentraRolPorId(Number(req.params.id));
   res.send(rol);
 });
 
@@ -27,9 +25,17 @@ router.post("/", async (req: Request, res: Response) => {
       descripcion,
     });
     res.send(nuevo);
-  } catch (err) {
+  } catch (err: any) {
     console.error("error al agregar el rol: ", err);
-    res.status(400).send({ error: "No se pudo agregar el rol" });
+
+    // Verificar si es un error de entrada duplicada
+    if (err.code === "ER_DUP_ENTRY" || err.errno === 1062) {
+      res.status(400).send({
+        error: "El ID del rol ya existe. Por favor, use un ID diferente.",
+      });
+    } else {
+      res.status(400).send({ error: "No se pudo agregar el rol" });
+    }
   }
 });
 
@@ -44,9 +50,7 @@ router.put("/", async (req: Request, res: Response) => {
     res.send(modificado);
   } catch (err) {
     console.error("error al actualizar el rol", err);
-    res
-      .status(400)
-      .send({ error: "No se pudo actualizar el rol" });
+    res.status(400).send({ error: "No se pudo actualizar el rol" });
   }
 });
 
@@ -54,13 +58,20 @@ router.put("/", async (req: Request, res: Response) => {
 router.delete("/", async (req: Request, res: Response) => {
   try {
     const { idRol } = req.body;
-    const eliminado = await rolServices.eliminarRol(
-      idRol
-    );
+    const eliminado = await rolServices.eliminarRol(idRol);
     res.send(eliminado);
-  } catch (err) {
+  } catch (err: any) {
     console.error("error al eliminar el rol", err);
-    res.status(400).send({ error: "No se pudo eliminar el rol" });
+
+    // Verificar si es un error de clave foránea
+    if (err.code === "ER_ROW_IS_REFERENCED_2" || err.errno === 1451) {
+      res.status(400).send({
+        error:
+          "No se puede eliminar el rol porque tiene registros asociados. Elimine primero los registros relacionados.",
+      });
+    } else {
+      res.status(400).send({ error: "No se pudo eliminar el rol" });
+    }
   }
 });
 

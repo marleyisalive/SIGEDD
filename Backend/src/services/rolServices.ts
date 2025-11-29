@@ -36,24 +36,18 @@ export const encuentraRolPorId = async (id: number) => {
 };
 
 export const agregarRol = async (nuevo: rol) => {
-  try {
-    // 1. VALIDACIÓN CON ZOD (Igual que nivelEstudio)
-    const validacion = rolSchema.safeParse(nuevo);
-    if (!validacion.success) {
-      return { error: validacion.error };
-    }
-
-    // 2. INSERT (Si pasa la validación)
-    const [results] = await conexion.query(
-      "INSERT INTO rol (idRol, descripcion) VALUES (?, ?)",
-      [nuevo.idRol, nuevo.descripcion]
-    );
-    return results;
-  } catch (err) {
-    // Catch simple, sin códigos de error específicos, igual que el ejemplo
-    console.error("error al agregar el rol: ", err);
-    return { error: "No se pudo agregar el rol" };
+  // 1. VALIDACIÓN CON ZOD (Igual que nivelEstudio)
+  const validacion = rolSchema.safeParse(nuevo);
+  if (!validacion.success) {
+    return { error: validacion.error };
   }
+
+  // 2. INSERT (Si pasa la validación)
+  const [results] = await conexion.query(
+    "INSERT INTO rol (idRol, descripcion) VALUES (?, ?)",
+    [nuevo.idRol, nuevo.descripcion]
+  );
+  return results;
 };
 
 export const actualizarRol = async (modificado: rol) => {
@@ -71,15 +65,10 @@ export const actualizarRol = async (modificado: rol) => {
 };
 
 export const eliminarRol = async (idRol: number) => {
-  try {
-    const [results] = await conexion.query(
-      "DELETE FROM rol WHERE idRol = ?",
-      [idRol]
-    );
-    return results;
-  } catch (err) {
-    // Catch simple, sin manejar errores de llaves foráneas
-    console.error("error al eliminar el rol: ", err);
-    return { error: "No se pudo eliminar el rol" };
-  }
+  const [results] = await conexion.query("DELETE FROM rol WHERE idRol = ?", [
+    idRol,
+  ]);
+  return results;
 };
+// Catch simple, sin manejar errores de llaves foráneas
+//console.error("error al eliminar el rol: ");

@@ -94,6 +94,15 @@
           <li class="nav-item margin">
             <RouterLink class="nav-link item" to="/materia">Materia</RouterLink>
           </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link item" to="/usuario">Usuario</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link item" to="/rol">Rol</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link item" to="/plaza">Plaza</RouterLink>
+          </li>
         </ul>
       </div>
     </div>

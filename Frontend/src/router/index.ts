@@ -31,6 +31,18 @@ import MateriaVue from "@/modulos/Administrador/materia/vistas/MateriaVue.vue";
 import MateriaAgregarVue from "@/modulos/Administrador/materia/vistas/MateriaAgregarVue.vue";
 import MateriaEditarVue from "@/modulos/Administrador/materia/vistas/MateriaEditarVue.vue";
 import MateriaBorrarVue from "@/modulos/Administrador/materia/vistas/MateriaBorrarVue.vue";
+import UsuarioVue from "@/modulos/Administrador/usuario/vistas/UsuarioVue.vue";
+import UsuarioAgregarVue from "@/modulos/Administrador/usuario/vistas/UsuarioAgregarVue.vue";
+import UsuarioEditarVue from "@/modulos/Administrador/usuario/vistas/UsuarioEditarVue.vue";
+import UsuarioBorrarVue from "@/modulos/Administrador/usuario/vistas/UsuarioBorrarVue.vue";
+import RolVue from "@/modulos/Administrador/rol/vistas/RolVue.vue";
+import RolAgregarVue from "@/modulos/Administrador/rol/vistas/RolAgregarVue.vue";
+import RolEditarVue from "@/modulos/Administrador/rol/vistas/RolEditarVue.vue";
+import RolBorrarVue from "@/modulos/Administrador/rol/vistas/RolBorrarVue.vue";
+import PlazaVue from "@/modulos/Administrador/plaza/vistas/PlazaVue.vue";
+import PlazaAgregarVue from "@/modulos/Administrador/plaza/vistas/PlazaAgregarVue.vue";
+import PlazaEditarVue from "@/modulos/Administrador/plaza/vistas/PlazaEditarVue.vue";
+import PlazaBorrarVue from "@/modulos/Administrador/plaza/vistas/PlazaBorrarVue.vue";
 
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
@@ -198,6 +210,66 @@ const router = createRouter({
       path: "/materia/:idMateria/borrar",
       name: "materiaborrar",
       component: MateriaBorrarVue,
+    },
+    {
+      path: "/usuario",
+      name: "usuario",
+      component: UsuarioVue,
+    },
+    {
+      path: "/usuario/agregar",
+      name: "usuarioagregar",
+      component: UsuarioAgregarVue,
+    },
+    {
+      path: "/usuario/:idUsuario/editar",
+      name: "usuarioeditar",
+      component: UsuarioEditarVue,
+    },
+    {
+      path: "/usuario/:idUsuario/borrar",
+      name: "usuarioborrar",
+      component: UsuarioBorrarVue,
+    },
+    {
+      path: "/rol",
+      name: "rol",
+      component: RolVue,
+    },
+    {
+      path: "/rol/agregar",
+      name: "rolagregar",
+      component: RolAgregarVue,
+    },
+    {
+      path: "/rol/:idRol/editar",
+      name: "roleditar",
+      component: RolEditarVue,
+    },
+    {
+      path: "/rol/:idRol/borrar",
+      name: "rolborrar",
+      component: RolBorrarVue,
+    },
+    {
+      path: "/plaza",
+      name: "plaza",
+      component: PlazaVue,
+    },
+    {
+      path: "/plaza/agregar",
+      name: "plazaagregar",
+      component: PlazaAgregarVue,
+    },
+    {
+      path: "/plaza/:idPlaza/editar",
+      name: "plazaeditar",
+      component: PlazaEditarVue,
+    },
+    {
+      path: "/plaza/:idPlaza/borrar",
+      name: "plazaborrar",
+      component: PlazaBorrarVue,
     },
   ],
 });
