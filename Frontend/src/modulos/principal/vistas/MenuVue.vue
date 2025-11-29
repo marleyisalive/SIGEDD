@@ -106,6 +106,21 @@
           <li class="nav-item">
             <RouterLink class="nav-link item" to="/docente">Docente</RouterLink>
           </li>
+          <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/tipoDocumento"
+              >Tipo de Documento</RouterLink
+            >
+          </li>
+          <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/actividadInstitucional"
+              >Actividad Institucional</RouterLink
+            >
+          </li>
+          <li class="nav-item margin">
+            <RouterLink class="nav-link item" to="/docenteActividad"
+              >Actividad de Docente</RouterLink
+            >
+          </li>
         </ul>
       </div>
     </div>
