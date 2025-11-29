@@ -7,6 +7,7 @@ dotenv.config();
 //creamos la aplicacion de express y llamamos a su constructor
 const app = express();
 //Todo lo que regresa al usuario es tipo json
+app.use(cors());
 app.use(express.json());
 app.use(cors());
 

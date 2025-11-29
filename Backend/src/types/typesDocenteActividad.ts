@@ -1,13 +1,15 @@
 // src/types/docenteActividadTypes.ts
 export interface docenteactividad {
-  idDocenteActividad: number; // PK Manual
+  idDocenteActividad: number;
   idActividadInstitucional: number;
   idDocente: number;
-  datosCapturados: Record<string, any>; // JSON
-  // Fechas opcionales (la BD maneja el default de fechaRegistro)
+  datosCapturados: any; 
   fechaRegistro?: Date | null;
   validadoPor?: number | null;
   fechaValidacion?: Date | null;
-}
 
+  nombreActividad?: string;
+  nombreTipo?: string;
+  idTipoDocumento?: number;
+}
 // export type NuevaDocenteActividad = docenteactividad;

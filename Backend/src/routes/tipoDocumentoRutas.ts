@@ -18,16 +18,14 @@ router.get("/", async (_req: Request, res: Response) => {
 });
 
 // --- OBTENER POR ID (GET) ---
-router.get("/:id", async (req: Request, res: Response) => {
-  try {
-    let tipo = await tipoDocumentoServices.encontrarTipoDocumentoPorId(
-      Number(req.params.id)
-    );
-    res.send(tipo);
-  } catch (err) {
-    console.error("error al obtener tipo de documento por id: ", err);
-    res.status(400).send({ error: "Error al buscar ID." });
-  }
+router.get("/:id", async (_req: Request, res: Response) => {
+    try {
+        let tipo = await tipoDocumentoServices.encontrarTipoDocumentoPorId(Number(_req.params.id));
+        res.send(tipo);
+    } catch (err) {
+        console.error("error al obtener tipo de documento por id: ", err);
+        res.status(400).send({ error: "Error al buscar ID." });
+    }
 });
 
 // --- AGREGAR (POST) ---

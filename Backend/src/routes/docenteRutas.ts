@@ -1,5 +1,3 @@
-// src/routes/docenteRoutes.ts
-
 import express, { Request, Response } from "express";
 // Importamos el servicio de docentes
 import * as docenteServices from "../services/docenteServices";
@@ -107,3 +105,4 @@ router.delete("/", async (req: Request, res: Response) => {
 });
 
 export default router;
+

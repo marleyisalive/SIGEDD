@@ -11,6 +11,7 @@ import AdministrativoValidarDocenteDocumentoVue from "@/modulos/principal/vistas
 import DocentesPVue from "@/modulos/principal/vistas/DocentesPVue.vue";
 import DocumentosLVue from "@/modulos/principal/vistas/DocumentosLVue.vue";
 import AdministrativoPVue from "@/modulos/principal/vistas/AdministrativoPVue.vue";
+import ConstanciaTutoriaVue from "@/modulos/principal/vistas/plantillas/ConstanciaTutoriaVue.vue";
 import AulaVue from "@/modulos/Administrador/aula/vistas/AulaVue.vue";
 import AulaAgregarVue from "@/modulos/Administrador/aula/vistas/AulaAgregarVue.vue";
 import AulaEditarVue from "@/modulos/Administrador/aula/vistas/AulaEditarVue.vue";
@@ -126,7 +127,8 @@ const router = createRouter({
       path: "/AdministrativoP",
       name: "Administrativo Principal",
       component: AdministrativoPVue,
-    },
+    },   
+
     {
       path: "/aula",
       name: "aula",
