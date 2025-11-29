@@ -43,6 +43,10 @@ import PlazaVue from "@/modulos/Administrador/plaza/vistas/PlazaVue.vue";
 import PlazaAgregarVue from "@/modulos/Administrador/plaza/vistas/PlazaAgregarVue.vue";
 import PlazaEditarVue from "@/modulos/Administrador/plaza/vistas/PlazaEditarVue.vue";
 import PlazaBorrarVue from "@/modulos/Administrador/plaza/vistas/PlazaBorrarVue.vue";
+import DocenteVue from "@/modulos/Administrador/docente/vistas/DocenteVue.vue";
+import DocenteAgregarVue from "@/modulos/Administrador/docente/vistas/DocenteAgregarVue.vue";
+import DocenteEditarVue from "@/modulos/Administrador/docente/vistas/DocenteEditarVue.vue";
+import DocenteBorrarVue from "@/modulos/Administrador/docente/vistas/DocenteBorrarVue.vue";
 
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
@@ -270,6 +274,26 @@ const router = createRouter({
       path: "/plaza/:idPlaza/borrar",
       name: "plazaborrar",
       component: PlazaBorrarVue,
+    },
+    {
+      path: "/docente",
+      name: "docente",
+      component: DocenteVue,
+    },
+    {
+      path: "/docente/agregar",
+      name: "docenteagregar",
+      component: DocenteAgregarVue,
+    },
+    {
+      path: "/docente/:idDocente/editar",
+      name: "docenteeditar",
+      component: DocenteEditarVue,
+    },
+    {
+      path: "/docente/:idDocente/borrar",
+      name: "docenteborrar",
+      component: DocenteBorrarVue,
     },
   ],
 });

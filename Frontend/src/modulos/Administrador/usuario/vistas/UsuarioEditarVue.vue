@@ -74,8 +74,8 @@
             <label>Estatus</label>
             <Field name="estatus" as="select" class="form-control">
               <option value="">Seleccione un estatus</option>
-              <option :value="1">Activo</option>
-              <option :value="0">Inactivo</option>
+              <option :value="1">Activo - 1</option>
+              <option :value="0">Inactivo - 0</option>
             </Field>
             <ErrorMessage name="estatus" class="errorValidacion" />
           </div>
@@ -84,7 +84,7 @@
             <Field name="idRol" as="select" class="form-control">
               <option value="">Seleccione un rol</option>
               <option v-for="rol in roles" :key="rol.idRol" :value="rol.idRol">
-                {{ rol.descripcion }}
+                {{ rol.descripcion }} - {{ rol.idRol }}
               </option>
             </Field>
             <ErrorMessage name="idRol" class="errorValidacion" />

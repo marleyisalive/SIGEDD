@@ -103,6 +103,9 @@
           <li class="nav-item">
             <RouterLink class="nav-link item" to="/plaza">Plaza</RouterLink>
           </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link item" to="/docente">Docente</RouterLink>
+          </li>
         </ul>
       </div>
     </div>
