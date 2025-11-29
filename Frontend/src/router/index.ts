@@ -48,6 +48,18 @@ import DocenteVue from "@/modulos/Administrador/docente/vistas/DocenteVue.vue";
 import DocenteAgregarVue from "@/modulos/Administrador/docente/vistas/DocenteAgregarVue.vue";
 import DocenteEditarVue from "@/modulos/Administrador/docente/vistas/DocenteEditarVue.vue";
 import DocenteBorrarVue from "@/modulos/Administrador/docente/vistas/DocenteBorrarVue.vue";
+import TipoDocumentoVue from "@/modulos/Administrador/tipoDocumento/vistas/TipoDocumentoVue.vue";
+import TipoDocumentoAgregarVue from "@/modulos/Administrador/tipoDocumento/vistas/TipoDocumentoAgregarVue.vue";
+import TipoDocumentoEditarVue from "@/modulos/Administrador/tipoDocumento/vistas/TipoDocumentoEditarVue.vue";
+import TipoDocumentoBorrarVue from "@/modulos/Administrador/tipoDocumento/vistas/TipoDocumentoBorrarVue.vue";
+import ActividadInstitucionalVue from "@/modulos/Administrador/actividadInstitucional/vistas/ActividadInstitucionalVue.vue";
+import ActividadInstitucionalAgregarVue from "@/modulos/Administrador/actividadInstitucional/vistas/ActividadInstitucionalAgregarVue.vue";
+import ActividadInstitucionalEditarVue from "@/modulos/Administrador/actividadInstitucional/vistas/ActividadInstitucionalEditarVue.vue";
+import ActividadInstitucionalBorrarVue from "@/modulos/Administrador/actividadInstitucional/vistas/ActividadInstitucionalBorrarVue.vue";
+import DocenteActividadVue from "@/modulos/Administrador/docenteActividad/vistas/DocenteActividadVue.vue";
+import DocenteActividadAgregarVue from "@/modulos/Administrador/docenteActividad/vistas/DocenteActividadAgregarVue.vue";
+import DocenteActividadEditarVue from "@/modulos/Administrador/docenteActividad/vistas/DocenteActividadEditarVue.vue";
+import DocenteActividadBorrarVue from "@/modulos/Administrador/docenteActividad/vistas/DocenteActividadBorrarVue.vue";
 
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
@@ -296,6 +308,66 @@ const router = createRouter({
       path: "/docente/:idDocente/borrar",
       name: "docenteborrar",
       component: DocenteBorrarVue,
+    },
+    {
+      path: "/tipoDocumento",
+      name: "tipoDocumento",
+      component: TipoDocumentoVue,
+    },
+    {
+      path: "/tipoDocumento/agregar",
+      name: "tipoDocumentoagregar",
+      component: TipoDocumentoAgregarVue,
+    },
+    {
+      path: "/tipoDocumento/:idTipoDocumento/editar",
+      name: "tipoDocumentoeditar",
+      component: TipoDocumentoEditarVue,
+    },
+    {
+      path: "/tipoDocumento/:idTipoDocumento/borrar",
+      name: "tipoDocumentoborrar",
+      component: TipoDocumentoBorrarVue,
+    },
+    {
+      path: "/actividadInstitucional",
+      name: "actividadInstitucional",
+      component: ActividadInstitucionalVue,
+    },
+    {
+      path: "/actividadInstitucional/agregar",
+      name: "actividadInstitucionalagregar",
+      component: ActividadInstitucionalAgregarVue,
+    },
+    {
+      path: "/actividadInstitucional/:idActividadInstitucional/editar",
+      name: "actividadInstitucionaleditar",
+      component: ActividadInstitucionalEditarVue,
+    },
+    {
+      path: "/actividadInstitucional/:idActividadInstitucional/borrar",
+      name: "actividadInstitucionalborrar",
+      component: ActividadInstitucionalBorrarVue,
+    },
+    {
+      path: "/docenteActividad",
+      name: "docenteActividad",
+      component: DocenteActividadVue,
+    },
+    {
+      path: "/docenteActividad/agregar",
+      name: "docenteActividadagregar",
+      component: DocenteActividadAgregarVue,
+    },
+    {
+      path: "/docenteActividad/:idDocenteActividad/editar",
+      name: "docenteActividadeditar",
+      component: DocenteActividadEditarVue,
+    },
+    {
+      path: "/docenteActividad/:idDocenteActividad/borrar",
+      name: "docenteActividadborrar",
+      component: DocenteActividadBorrarVue,
     },
   ],
 });

@@ -10,6 +10,7 @@ const conexion = createPool({
   user: "administrador",
   password: "admin123456",
   database: "SIGEDD",
+  // port: 3307,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -174,6 +175,21 @@ const obtenerNombreFuncionario = async (idUsuario: number) => {
     return "-----";
   }
 };
+
+// --- Encontrar por ID ---
+export const encontrarDocenteActividadPorId = async (id: number) => {
+  try {
+    const [results] = await conexion.query(
+      "SELECT * FROM docenteactividad WHERE idDocenteActividad = ?",
+      [id]
+    );
+    return results;
+  } catch (err) {
+    console.error("error al obtener registro por id: ", err);
+    return { error: "No se pudo obtener el registro por id." };
+  }
+};
+
 
 
 // 01
@@ -2434,7 +2450,7 @@ export const obtenerDatosConstanciaAuditoria = async (idDocenteActividad: number
 };
 
 // 1.4.8.1 - Desarrollo Curricular
-
+/*
 export const obtenerDatosDesarrolloCurricular = async (idDocenteActividad: number) => {
   try {
     const query = `
@@ -2620,4 +2636,4 @@ export const obtenerDatosConstanciaSinodal = async (idDocenteActividad: number) 
     console.error("Error servicio Sinodal:", err);
     throw err;
   }
-};
+};*/

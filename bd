@@ -388,3 +388,40 @@ INSERT INTO tipodocumento (idTipoDocumento, nombre, descripcion, plantillaJSON) 
 '{"campos": ["nombreEstudiante", "numControl", "carrera", "opcionTitulacion", "fechaActa", "idSecretario", "idVocal", "idPresidente"]}'
 );
 
+
+
+CREATE TABLE actividadInstitucional (
+  idActividadInstitucional int NOT NULL,
+  idTipoDocumento int NOT NULL,
+  nombre varchar(200) NOT NULL,
+  descripcion text,
+  periodo varchar(50),
+  fechaInicio date,
+  fechaFin date,
+  PRIMARY KEY (idActividadInstitucional),
+  FOREIGN KEY (idTipoDocumento) REFERENCES tipodocumento(idTipoDocumento)
+);
+
+
+insert into actividadInstitucional (idActividadInstitucional, idTipoDocumento, nombre, descripcion, periodo, fechaInicio, fechaFin) values
+(1, 10, 'Acción Tutorial', 'Acción tutorial realizada durante el periodo.', 'ENE-JUN 2024', '2024-01-15', '2024-06-15'),
+(2, 20, 'Programa Educativo Acreditado', 'Acreditación del programa educativo vigente.', '2024', '2024-01-01', '2024-12-31'),
+(3, 30, 'Créditos Complementarios', 'Monitoreo de créditos complementarios durante el semestre.', 'AGO-DIC 2024', '2024-08-15', '2024-12-15'),
+(4, 40, 'Recurso Educativo Digital', 'Elaboración y aprobación de recurso educativo digital.', 'ENE-JUN 2024', '2024-01-20', '2024-06-10'),
+(5, 60, 'Estrategias Didácticas Innovadoras', 'Implementación de estrategias didácticas innovadoras en aula.', 'AGO-DIC 2024', '2024-08-20', '2024-12-05'),
+(6, 90, 'Asesoría Titulación Licenciatura', 'Participación como Presidente de Jurado en procesos de titulación.', '2024', '2024-01-01', '2024-12-31');
+
+
+
+
+
+
+
+
+insert into docenteactividad (idDocenteActividad, idActividadInstitucional, idDocente, datosCapturados, fechaRegistro, validadoPor, fechaValidacion) values
+(1, 1, 1, '{"totalTutorados": 15, "idJefeDDA": 2, "idSubdirectorAcademico": 3, "carrera": "Ingeniería en Sistemas Computacionales"}', '2024-06-20 10:00:00', 4, '2024-06-22 15:30:00'),
+(2, 2, 1, '{"organismoAcreditador": "CACEI", "fechaInicioVigencia": "2024-01-01", "fechaFinVigencia": "2027-12-31", "numRegistro": "CACEI-12345"}', '2024-02-15 11:30:00', 4, '2024-02-20 14:00:00'),
+(3, 3, 1, '{"numOficio": "OFICIO-6789", "dictamen": "Aprobado", "totalAlumnosAtendidos": 20, "alumnosObtuvieronCredito": 18, "idJefeDepartamento": 5, "idSubdirectorAcademico": 3}', '2024-12-10 09:45:00', null, null),
+(4, 4, 1, '{"asignatura": "Fundamentos de Programación", "idPresidenteAcademia": 6, "idJefeDepto": 5, "idJefeDDA": 2}', '2024-05-30 14:20:00', 4, '2024-06-02 10:15:00'),
+(5, 5, 1, '{"asignaturaImplementada": "Estructura de Datos", "estrategiaUtilizada": "Aprendizaje Basado en Proyectos", "productoObtenido": "Proyecto de Software Funcional", "idPresidenteAcademia": 6, "idJefeDepto": 5}', '2024-11-25 16:10:00', null, null),
+(6, 6, 1, '{"nombreEstudiante": "Juan Pérez", "numControl": "2021001234", "carrera": "Ingeniería en Sistemas Computacionales", "opcionTitulacion": "Examen Profesional", "fechaActa": "2024-03-15", "idSecretario": 7, "idVocal": 8, "idPresidente": 1}', '2024-03-20 13:00:00', 4, '2024-03-25 11:30:00');   

@@ -12,8 +12,8 @@ export const AulaSchema = toTypedSchema(
       .min(1, "El nombre del aula es obligatorio")
       .max(100, "El nombre del aula no puede exceder los 100 caracteres")
       .regex(
-        /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/,
-        "El nombre solo puede contener letras y espacios"
+        /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/,
+        "El nombre solo puede contener letras, números y espacios"
       ),
   })
 );
