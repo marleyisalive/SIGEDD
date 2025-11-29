@@ -56,15 +56,10 @@ router.post("/", async (req: Request, res: Response) => {
       estatusExclusividad,
       folioEdd,
     });
-    return res.send(nuevo);
-  } catch (err: any) {
+    res.send(nuevo);
+  } catch (err) {
     console.error("error al agregar docente: ", err);
-    if (err.code === "ER_DUP_ENTRY" || err.errno === 1062) {
-      return res.status(400).json({
-        error: "El ID del docente ya existe. Por favor, utiliza otro ID.",
-      });
-    }
-    return res.status(400).send({ error: "No se pudo agregar." });
+    res.status(400).send({ error: "No se pudo agregar." });
   }
 });
 
@@ -104,16 +99,10 @@ router.delete("/", async (req: Request, res: Response) => {
   try {
     const { idDocente } = req.body;
     const eliminado = await docenteServices.eliminarDocente(idDocente);
-    return res.send(eliminado);
-  } catch (err: any) {
+    res.send(eliminado);
+  } catch (err) {
     console.error("error al eliminar docente", err);
-    if (err.code === "ER_ROW_IS_REFERENCED_2" || err.errno === 1451) {
-      return res.status(400).json({
-        error:
-          "No se puede eliminar el docente porque está siendo utilizado en otros registros.",
-      });
-    }
-    return res.status(400).send({ error: "No se pudo eliminar." });
+    res.status(400).send({ error: "No se pudo eliminar." });
   }
 });
 
