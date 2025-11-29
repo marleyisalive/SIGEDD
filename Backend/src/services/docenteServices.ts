@@ -40,6 +40,22 @@ export const encontrarDocentePorId = async (id: number) => {
   }
 };
 
+// --- Encontrar docente por idUsuario ---
+export const encontrarDocentePorUsuario = async (idUsuario: number) => {
+  try {
+    const [results] = await conexion.query(
+      "SELECT * FROM docente WHERE idUsuario = ?",
+      [idUsuario]
+    );
+    const rows: any = results as any;
+    if (rows.length === 0) return null;
+    return rows[0];
+  } catch (err) {
+    console.error("error al obtener docente por idUsuario: ", err);
+    return null;
+  }
+};
+
 // --- Agregar nuevo (CON VALIDACIÓN ZOD) ---
 export const agregarDocente = async (nueva: docente) => {
   // 1. Validar con Zod (longitudes exactas, tipos)

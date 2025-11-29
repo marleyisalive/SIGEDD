@@ -370,4 +370,72 @@ const router = createRouter({
   ],
 });
 
+// ---- Guardas de ruta (DESACTIVADAS) ----
+// Nota: El siguiente bloque de guardas se ha comentado temporalmente para
+// facilitar pruebas. Si quieres volver a activarlas, descomenta el bloque
+// y asegúrate de que el `localStorage.usuario` contiene el objeto esperado.
+
+
+router.beforeEach((to, _from, next) => {
+  // Rutas abiertas
+  const open = ["/Login", "/OlvidarContraseña", "/RestablecerContraseña", "/", "/inicio"];
+  if (open.includes(to.path)) return next();
+
+  const raw = localStorage.getItem("usuario");
+  if (!raw) {
+    // No autenticado
+    return next({ path: "/Login" });
+  }
+
+  let usuario: any = null;
+  try {
+    usuario = JSON.parse(raw);
+  } catch (e) {
+    return next({ path: "/Login" });
+  }
+
+  const rol = usuario.idRol;
+
+  // Rutas que requieren rol Administrador (1)
+  const adminPaths = [
+    "/aula",
+    "/nivelEstudio",
+    "/carrera",
+    "/departamento",
+    "/usuario",
+    "/rol",
+    "/plaza",
+    "/docente",
+    "/tipoDocumento",
+    "/actividadInstitucional",
+    "/docenteActividad",
+    "/materia",
+  ];
+
+  // Rutas para Docente (2)
+  const docentePaths = ["/docentesgenerar", "/docenteselegir", "/DocentesP", "/DocumentosL",];
+
+  // Rutas para Validador (3)
+  const validadorPaths = [
+    "/AdministrativoP",
+    "/administrativovalidar",
+    "/administrativovalidardocente",
+    "/administrativovalidardocentedocumento",
+  ];
+
+  // Comprueba si la ruta coincide exactamente con un prefijo o es una subruta.
+  // Evita colisiones donde "/docente" matchea "/docentesgenerar".
+  const startsWithAny = (list: string[]) =>
+    list.some((p) => to.path === p || to.path.startsWith(p + "/"));
+
+  if (startsWithAny(adminPaths) && rol !== 1) return next({ path: "/Login" });
+  if (startsWithAny(docentePaths) && rol !== 2) return next({ path: "/Login" });
+  if (startsWithAny(validadorPaths) && rol !== 3) return next({ path: "/Login" });
+
+  // Si pasó todas las comprobaciones, permitir
+  return next();
+});
+
+
+
 export default router;
