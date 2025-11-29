@@ -49,7 +49,7 @@
                 :value="usuario.idUsuario"
               >
                 {{ usuario.nombreUsuario }} {{ usuario.apePatUsuario }}
-                {{ usuario.apeMatUsuario }}
+                {{ usuario.apeMatUsuario }} - {{ usuario.idUsuario }}
               </option>
             </Field>
             <ErrorMessage

@@ -45,7 +45,8 @@
                 :key="departamento.idDepartamento"
                 :value="departamento.idDepartamento"
               >
-                {{ departamento.nombreDepartamento }}
+                {{ departamento.nombreDepartamento }} -
+                {{ departamento.idDepartamento }}
               </option>
             </Field>
             <ErrorMessage name="idDepartamento" class="errorValidacion" />
