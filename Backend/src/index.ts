@@ -1,5 +1,8 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 //creamos la aplicacion de express y llamamos a su constructor
 const app = express();
@@ -26,6 +29,8 @@ import actividadInstitucionalRutas from "./routes/actividadInstitucionalRutas";
 //puerto para escuchar la peticion del front
 const Puerto = 3001;
 
+import authRutas from "./routes/authRutas";
+
 //activamos la ruta base
 app.use("/api/nivelEstudio", nivelEstudioRutas);
 app.use("/api/rol", rolRutas);
@@ -42,6 +47,7 @@ app.use("/api/grupo", grupoRutas);
 app.use("/api/materia", materiaRutas);
 app.use("/api/actividadInstitucional", actividadInstitucionalRutas);
 app.use("/api/carrera", carreraRutas);
+app.use("/api/auth", authRutas);
 //prueba
 // app.get("/hola", (_req, res) => {
 //   let fecha = new Date().toLocaleDateString();

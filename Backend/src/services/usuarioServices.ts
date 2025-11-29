@@ -32,6 +32,23 @@ export const obtieneUsuario = async () => {
   }
 };
 
+export const encuentraUsuarioPorCorreo = async (correo: string) => {
+  try {
+    // Aquí sí necesitamos la contraseña para la verificación de login
+    const [results] = await conexion.query(
+      "SELECT idUsuario, nombreUsuario, apePatUsuario, apeMatUsuario, telefono, correoUsuario, contrasenaUsuario, estatus, idRol FROM usuario WHERE correoUsuario = ?",
+      [correo]
+    );
+    // results es un array; retornamos el primer elemento si existe
+    const rows: any = results as any;
+    if (rows.length === 0) return null;
+    return rows[0];
+  } catch (err) {
+    console.error("error al obtener usuario por correo: ", err);
+    return null;
+  }
+};
+
 export const encuentraUsuarioPorId = async (id: number) => {
   try {
     // También excluimos la contraseña aquí
