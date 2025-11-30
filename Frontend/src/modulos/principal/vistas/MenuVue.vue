@@ -190,7 +190,7 @@ const toggleSidebar = () => {
   left: 0;
   height: 100vh;
   width: 280px;
-  background: linear-gradient(180deg, #1a3a52 0%, #0d1f2d 100%);
+  background: linear-gradient(180deg, #1b0b76 0%, #0d1f2d 100%);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
   z-index: 1000;
