@@ -121,11 +121,11 @@ export const obtenerDocumentosPorUsuario = async (idUsuario: number) => {
                     ELSE 'Pendiente'
                 END as estatus
             FROM documento d
-            INNER JOIN docenteactividad da ON d.idDocenteActividad = da.idDocenteActividad
+            INNER JOIN docenteActividad da ON d.idDocenteActividad = da.idDocenteActividad
             INNER JOIN docente doc ON da.idDocente = doc.idDocente
             INNER JOIN usuario u ON doc.idUsuario = u.idUsuario
-            INNER JOIN actividadinstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
-            INNER JOIN tipodocumento td ON ai.idTipoDocumento = td.idTipoDocumento
+            INNER JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
+            INNER JOIN tipoDocumento td ON ai.idTipoDocumento = td.idTipoDocumento
             WHERE u.idUsuario = ?
             ORDER BY d.fechaGeneracion DESC
         `;

@@ -116,6 +116,12 @@
             </RouterLink>
           </li>
           <li class="nav-item">
+            <RouterLink class="nav-link" to="/grupo">
+              <i class="fa fa-users"></i>
+              <span v-if="!isCollapsed">Grupos</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
             <RouterLink class="nav-link" to="/aula">
               <i class="fa fa-building"></i>
               <span v-if="!isCollapsed">Aulas</span>
@@ -224,6 +230,13 @@ onMounted(() => {
   setTimeout(() => {
     updateUserData();
   }, 50);
+
+  // Aplicar clase inicial según el estado del sidebar
+  if (isCollapsed.value) {
+    document.body.classList.add("sidebar-collapsed");
+  } else {
+    document.body.classList.remove("sidebar-collapsed");
+  }
 
   // Listener para evento personalizado de login
   window.addEventListener("user-logged-in", updateUserData);
@@ -418,17 +431,27 @@ const cerrarSesion = () => {
   padding: 0;
 }
 
+/* Ajustar todos los contenedores principales cuando el sidebar está abierto */
 :global(.container),
 :global(.container-fluid),
-:global(main) {
+:global(main),
+:global(section),
+:global(.card),
+:global(table) {
   margin-left: 280px;
-  transition: margin-left 0.3s ease;
+  width: calc(100% - 280px);
+  transition: margin-left 0.3s ease, width 0.3s ease;
 }
 
-:global(body:has(.sidebar.collapsed) .container),
-:global(body:has(.sidebar.collapsed) .container-fluid),
-:global(body:has(.sidebar.collapsed) main) {
+/* Cuando el sidebar está colapsado */
+:global(body.sidebar-collapsed .container),
+:global(body.sidebar-collapsed .container-fluid),
+:global(body.sidebar-collapsed main),
+:global(body.sidebar-collapsed section),
+:global(body.sidebar-collapsed .card),
+:global(body.sidebar-collapsed table) {
   margin-left: 70px;
+  width: calc(100% - 70px);
 }
 
 /* Responsive */
@@ -448,8 +471,12 @@ const cerrarSesion = () => {
 
   :global(.container),
   :global(.container-fluid),
-  :global(main) {
+  :global(main),
+  :global(section),
+  :global(.card),
+  :global(table) {
     margin-left: 0 !important;
+    width: 100% !important;
   }
 }
 

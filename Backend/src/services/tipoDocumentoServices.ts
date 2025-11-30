@@ -19,7 +19,7 @@ const conexion = createPool({
 // --- Obtener todos ---
 export const obtenerTodosTiposDocumento = async () => {
   try {
-    const [results] = await conexion.query("SELECT * FROM tipodocumento");
+    const [results] = await conexion.query("SELECT * FROM tipoDocumento");
     return results;
   } catch (err) {
     console.error("error al obtener tipos de documento: ", err);
@@ -31,7 +31,7 @@ export const obtenerTodosTiposDocumento = async () => {
 export const encontrarTipoDocumentoPorId = async (id: number) => {
   try {
     const [results] = await conexion.query(
-      "SELECT * FROM tipodocumento WHERE idTipoDocumento = ?",
+      "SELECT * FROM tipoDocumento WHERE idTipoDocumento = ?",
       [id]
     );
     return results;
@@ -56,7 +56,7 @@ export const agregarTipoDocumento = async (nueva: tipoDocumento) => {
   const plantillaString = JSON.stringify(nueva.plantillaJSON);
 
   const [results] = await conexion.query(
-    "INSERT INTO tipodocumento (idTipoDocumento, nombre, descripcion, plantillaJSON) VALUES (?, ?, ?, ?)",
+    "INSERT INTO tipoDocumento (idTipoDocumento, nombre, descripcion, plantillaJSON) VALUES (?, ?, ?, ?)",
     [nueva.idTipoDocumento, nueva.nombre, nueva.descripcion, plantillaString]
   );
   return results;
@@ -70,7 +70,7 @@ export const actualizarTipoDocumento = async (modificada: tipoDocumento) => {
 
     // Nota: No validamos con Zod en el update siguiendo el patrón de tu equipo
     const [results] = await conexion.query(
-      "UPDATE tipodocumento SET nombre = ?, descripcion = ?, plantillaJSON = ? WHERE idTipoDocumento = ?",
+      "UPDATE tipoDocumento SET nombre = ?, descripcion = ?, plantillaJSON = ? WHERE idTipoDocumento = ?",
       [
         modificada.nombre,
         modificada.descripcion,
@@ -88,7 +88,7 @@ export const actualizarTipoDocumento = async (modificada: tipoDocumento) => {
 // --- Eliminar ---
 export const eliminarTipoDocumento = async (idTipoDocumento: number) => {
   const [results] = await conexion.query(
-    "DELETE FROM tipodocumento WHERE idTipoDocumento = ?",
+    "DELETE FROM tipoDocumento WHERE idTipoDocumento = ?",
     [idTipoDocumento]
   );
   return results;

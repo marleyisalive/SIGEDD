@@ -62,6 +62,10 @@ import DocenteActividadAgregarVue from "@/modulos/Administrador/docenteActividad
 import DocenteActividadEditarVue from "@/modulos/Administrador/docenteActividad/vistas/DocenteActividadEditarVue.vue";
 import DocenteActividadBorrarVue from "@/modulos/Administrador/docenteActividad/vistas/DocenteActividadBorrarVue.vue";
 import DocentePVue from "@/modulos/principal/vistas/DocentePVue.vue";
+import GrupoVue from "@/modulos/Administrador/grupo/vistas/GrupoVue.vue";
+import GrupoAgregarVue from "@/modulos/Administrador/grupo/vistas/GrupoAgregarVue.vue";
+import GrupoEditarVue from "@/modulos/Administrador/grupo/vistas/GrupoEditarVue.vue";
+import GrupoBorrarVue from "@/modulos/Administrador/grupo/vistas/GrupoBorrarVue.vue";
 
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
@@ -97,9 +101,9 @@ const router = createRouter({
     },
     {
       path: "/administrativo/validar/:idUsuario",
-      name: "administrativo-validar",             
+      name: "administrativo-validar",
       component: AdministrativoValidarVue,
-      props: true
+      props: true,
     },
     {
       path: "/administrativovalidardocentedocumento",
@@ -241,6 +245,26 @@ const router = createRouter({
       path: "/materia/:idMateria/borrar",
       name: "materiaborrar",
       component: MateriaBorrarVue,
+    },
+    {
+      path: "/grupo",
+      name: "grupo",
+      component: GrupoVue,
+    },
+    {
+      path: "/grupo/agregar",
+      name: "grupoagregar",
+      component: GrupoAgregarVue,
+    },
+    {
+      path: "/grupo/:idGrupo/editar",
+      name: "grupoeditar",
+      component: GrupoEditarVue,
+    },
+    {
+      path: "/grupo/:idGrupo/borrar",
+      name: "grupoborrar",
+      component: GrupoBorrarVue,
     },
     {
       path: "/usuario",
@@ -434,6 +458,7 @@ router.beforeEach((to, _from, next) => {
       "/actividadInstitucional",
       "/docenteActividad",
       "/materia",
+      "/grupo",
     ],
     // Docente (rol 2)
     2: ["/docentesgenerar", "/docenteselegir", "/DocentesP", "/DocumentosL"],

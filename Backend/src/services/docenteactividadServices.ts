@@ -33,7 +33,7 @@ export const obtenerTodasDocenteActividad = async () => {
         td.nombre as nombreTipo        -- NECESARIO para que salga el badge gris
       FROM docenteActividad da
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
-      JOIN tipodocumento td ON ai.idTipoDocumento = td.idTipoDocumento
+      JOIN tipoDocumento td ON ai.idTipoDocumento = td.idTipoDocumento
       ORDER BY da.fechaRegistro DESC
     `;
 
@@ -67,7 +67,7 @@ export const obtenerActividadesPorUsuario = async (idUsuario: number) => {
       JOIN docente d ON da.idDocente = d.idDocente
       JOIN usuario u ON d.idUsuario = u.idUsuario
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
-      JOIN tipodocumento td ON ai.idTipoDocumento = td.idTipoDocumento
+      JOIN tipoDocumento td ON ai.idTipoDocumento = td.idTipoDocumento
       WHERE u.idUsuario = ?
       ORDER BY da.fechaRegistro DESC
     `;
@@ -1804,7 +1804,7 @@ export const obtenerGruposActividades = async () => {
         COUNT(da.idDocenteActividad) as cantidadDocumentos
       FROM docenteActividad da
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
-      JOIN tipodocumento td ON ai.idTipoDocumento = td.idTipoDocumento
+      JOIN tipoDocumento td ON ai.idTipoDocumento = td.idTipoDocumento
       WHERE td.grupo IS NOT NULL
       GROUP BY td.grupo
       ORDER BY td.grupo ASC
@@ -3130,7 +3130,10 @@ export const obtenerDatosConstanciaAuditoria = async (
 };
 
 // --- APROBAR ACTIVIDAD (Pegar al final de docenteactividadServices.ts) ---
-export const aprobarActividad = async (idDocenteActividad: number, idAdmin: number) => {
+export const aprobarActividad = async (
+  idDocenteActividad: number,
+  idAdmin: number
+) => {
   try {
     const [result] = await conexion.query(
       "UPDATE docenteActividad SET validadoPor = ?, fechaValidacion = NOW() WHERE idDocenteActividad = ?",
@@ -3144,7 +3147,10 @@ export const aprobarActividad = async (idDocenteActividad: number, idAdmin: numb
 };
 
 // --- RECHAZAR ACTIVIDAD ---
-export const rechazarActividad = async (idDocenteActividad: number, motivo: string) => {
+export const rechazarActividad = async (
+  idDocenteActividad: number,
+  motivo: string
+) => {
   try {
     const [result] = await conexion.query(
       "UPDATE docenteactividad SET validadoPor = 0, fechaValidacion = NOW(), motivoRechazo = ? WHERE idDocenteActividad = ?",
@@ -3156,7 +3162,6 @@ export const rechazarActividad = async (idDocenteActividad: number, motivo: stri
     return { error: "No se pudo rechazar la actividad" };
   }
 };
-
 
 // 1.4.8.1 - Desarrollo Curricular
 /*

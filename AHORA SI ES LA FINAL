@@ -1,0 +1,953 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 30-11-2025 a las 19:53:10
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de datos: `sigedd`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `actividadInstitucional`
+--
+
+CREATE TABLE `actividadInstitucional` (
+  `idActividadInstitucional` int(11) NOT NULL,
+  `idTipoDocumento` int(11) NOT NULL,
+  `nombre` varchar(200) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `periodo` varchar(50) DEFAULT NULL,
+  `fechaInicio` date DEFAULT NULL,
+  `fechaFin` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `actividadInstitucional`
+--
+
+INSERT INTO `actividadInstitucional` (`idActividadInstitucional`, `idTipoDocumento`, `nombre`, `descripcion`, `periodo`, `fechaInicio`, `fechaFin`) VALUES
+(111, 100, 'Comisión Instructor Diplomado 2024', 'Impartición de curso externo', 'ENE-JUN 2024', NULL, NULL),
+(112, 110, 'Comisión DDIE 2024', 'Instructor curso nacional', 'AGO-DIC 2024', NULL, NULL),
+(123, 120, 'Diplomado Pensamiento Crítico 2024', 'Instructor DDIE', 'AGO-DIC 2024', NULL, NULL),
+(133, 130, 'Diplomado Ambientes Virtuales 2024', 'Instructor DDIE', 'AGO-DIC 2024', NULL, NULL),
+(134, 131, 'Diplomado Inclusiva 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(135, 132, 'Diplomado Semiconductores 2025', NULL, 'AGO-DIC 2025', NULL, NULL),
+(144, 140, 'Constancia Laboral 2025', 'Solicitud de constancia', 'ENE-JUN 2025', NULL, NULL),
+(155, 150, 'Firma Exclusividad 2025', 'Trámite anual', 'ENE-JUN 2025', NULL, NULL),
+(166, 160, 'Actualización CVU 2024', 'Registro anual en plataforma', 'ENE-JUN 2025', NULL, NULL),
+(177, 170, 'Constancia Alumnos 2024', 'Reporte automático de grupos', 'ANUAL 2024', NULL, NULL),
+(187, 182, 'Carga Posgrado 2024', 'Materias de Maestría/Doctorado', 'AGO-DIC 2024', NULL, NULL),
+(188, 180, 'Horario Personal 2024', 'Carga horaria semestral', 'ENE-JUN 2024', NULL, NULL),
+(189, 181, 'Carga Adicional 2024', 'Evidencia de asignaturas extra', 'ENE-JUN 2024', NULL, NULL),
+(199, 190, 'Talón Q1 Abril 2025', 'Comprobante de ingresos', 'ENE-JUN 2025', NULL, NULL),
+(202, 200, 'Apertura Ing. IA', 'Diseño curricular nueva carrera', 'ENE-JUN 2024', NULL, NULL),
+(212, 210, 'Licencia Sabática 2024', 'Periodo Sabático', 'ENE-JUN 2024', NULL, NULL),
+(222, 80, 'Producto Académico 2024', 'Documentación de producto', 'AGO-DIC 2024', NULL, NULL),
+(228, 220, 'Liberación ENE-JUN 2024', 'Evaluación semestral', 'ENE-JUN 2024', NULL, NULL),
+(233, 230, 'Liberación Academia 2024', 'Evaluación colegiada', 'ENE-JUN 2024', NULL, NULL),
+(244, 240, 'Reporte Investigación 2024', 'Proyectos anuales', 'ENE-DIC 2024', NULL, NULL),
+(255, 250, 'Evaluación Docente ENE-JUN 2024', 'Encuesta estudiantil', 'ENE-JUN 2024', NULL, NULL),
+(333, 70, 'Instructor Diplomado Tutores 2024', 'Impartición de módulo', 'ENE-JUN 2024', NULL, NULL),
+(411, 410, 'Asesoría Cálculo 2024', 'Asesoría académica', 'AGO-DIC 2024', NULL, NULL),
+(444, 90, 'Titulación Integral: Benjamin Quintero', 'Acto de recepción profesional', 'ENE-JUN 2024', NULL, NULL),
+(450, 50, 'Elaboración Manual Prácticas 2024', 'Manual para laboratorio', 'AGO-DIC 2024', NULL, NULL),
+(555, 60, 'Estrategias Didácticas 2024', 'Innovación en el aula', 'AGO-DIC 2024', NULL, NULL),
+(666, 40, 'Creación de Material Didáctico 2024', 'Recurso digital para la materia', 'AGO-DIC 2024', NULL, NULL),
+(777, 30, 'Monitor de Cine 2024', 'Actividad complementaria cultural', 'AGO-DIC 2024', NULL, NULL),
+(888, 20, 'Acreditación CONAIC 2022', 'Proceso de acreditación de carrera', 'AGO-DIC 2022', NULL, NULL),
+(991, 195, 'Grado Doctorado', 'Documento Probatorio', 'PERMANENTE', NULL, NULL),
+(992, 196, 'Grado Maestría', 'Documento Probatorio', 'PERMANENTE', NULL, NULL),
+(999, 10, 'Tutoría Individual 2024', 'Programa Institucional de Tutorías', 'ENE-JUN 2024', NULL, NULL),
+(1550, 155, 'Investigación Vigente 2024', 'Proyecto registrado', 'ANUAL 2024', NULL, NULL),
+(1830, 183, 'Reporte Estudiantes 1.1.4', 'Cálculo de puntaje por estudiantes', 'ANUAL 2024', NULL, NULL),
+(2150, 215, 'Licencia Médica 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(2160, 216, 'Cédula Grado Máximo', 'Requisito de Inicio 10', 'PERMANENTE', NULL, NULL),
+(3120, 312, 'Grado Especialidad', NULL, '2024', NULL, NULL),
+(3130, 313, 'Grado Maestría', NULL, '2024', NULL, NULL),
+(3140, 314, 'Codirección Maestría 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(3150, 315, 'Grado Doctorado', NULL, '2024', NULL, NULL),
+(3160, 316, 'Codirección Doctorado 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(3210, 321, 'Sinodal TSU 2024', NULL, 'ENE-JUN 2024', NULL, NULL),
+(3220, 322, 'Sinodal Licenciatura 2024', NULL, 'ENE-JUN 2024', NULL, NULL),
+(3230, 323, 'Sinodal Especialización 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(3240, 324, 'Sinodal Maestría 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(3250, 325, 'Sinodal Doctorado 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4210, 421, 'Pack Proyectos Locales 2024', NULL, '2024', NULL, NULL),
+(4220, 422, 'Pack Proyectos Nacionales 2024', NULL, '2024', NULL, NULL),
+(4230, 423, 'Pack Proyectos Internacionales 2024', NULL, '2024', NULL, NULL),
+(4310, 431, 'Pack Asesorías 1.4.3.1', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4320, 432, 'Pack Asesorías Diseño 1.4.3.2', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4330, 433, 'Pack Asesorías Desarrollo 1.4.3.3', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4340, 434, 'Pack Asesorías Equipo 1.4.3.4', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4350, 435, 'Pack Servicio Social 1.4.3.5', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4360, 436, 'Pack Residencias 1.4.3.6', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4410, 441, 'Coordinación Concurso Ciencias 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4420, 442, 'Coord. Regional Ciencias 2024', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4430, 443, 'Coord. Nacional Hackathon 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4440, 444, 'Colaboración Hackathon 2024', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4450, 445, 'Colaboración Regional Robótica 2024', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4460, 446, 'Colaboración Nacional Innovatec 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4510, 451, 'Jurado Local Ciencias 2024', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4520, 452, 'Jurado Regional Robótica 2024', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4530, 453, 'Jurado Nacional Innovatec 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4540, 454, 'Jurado Internacional Ciencias 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4610, 461, 'Evaluador Local 2024', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4620, 462, 'Evaluador Nacional 2024', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4630, 463, 'Evaluador Internacional 2025', NULL, 'AGO-DIC 2025', NULL, NULL),
+(4710, 471, 'Auditoría SGC 2024-1', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4720, 472, 'Auditoría Cruzada Mazatlán', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4730, 473, 'Líder Auditoría Ambiental', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4740, 474, 'Líder Auditoría Externa Guasave', NULL, 'AGO-DIC 2024', NULL, NULL),
+(4810, 481, 'Revisión Retícula ISC Local', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4820, 482, 'Diseño Especialidad Ciberseguridad', NULL, 'ENE-JUN 2024', NULL, NULL),
+(4830, 483, 'Reunión Nacional Curricular', NULL, 'AGO-DIC 2024', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `aula`
+--
+
+CREATE TABLE `aula` (
+  `idAula` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `aula`
+--
+
+INSERT INTO `aula` (`idAula`, `nombre`) VALUES
+(1, 'EA01'),
+(2, 'EA02'),
+(3, 'EA03'),
+(4, 'EA04'),
+(5, 'EA05'),
+(6, 'EB01'),
+(7, 'EB02'),
+(8, 'EB03'),
+(9, 'EB04'),
+(10, 'EB05'),
+(11, 'EC01'),
+(12, 'EC02'),
+(13, 'EC03'),
+(14, 'EC04'),
+(15, 'EC05'),
+(16, 'CCPW'),
+(17, 'CCDM'),
+(18, 'CCLR'),
+(19, 'CC01'),
+(20, 'CC02'),
+(21, 'CC03'),
+(22, 'CC04'),
+(23, 'CC05');
+
+-- (No hay FK para aula, es tabla independiente)
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `carrera`
+--
+
+CREATE TABLE `carrera` (
+  `idCarrera` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `acreditado` tinyint(4) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `departamento`
+--
+
+CREATE TABLE `departamento` (
+  `idDepartamento` int(11) NOT NULL,
+  `nombreDepartamento` varchar(100) NOT NULL,
+  `encargadoDepartamento` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `departamento`
+--
+
+INSERT INTO `departamento` (`idDepartamento`, `nombreDepartamento`, `encargadoDepartamento`) VALUES
+(1, 'Dirección del Plantel', NULL),
+(2, 'Subdirección Académica', 1),
+(3, 'Departamento de Desarrollo Académico', 2),
+(4, 'Departamento de Servicios Escolares', 3),
+(5, 'Departamento de Recursos Humanos', 4),
+(6, 'Departamento de Gestión Tecnológica y Vinculación', 5),
+(7, 'Departamento Académico (Genérico)', 6),
+(8, 'Departamento de Ciencias Básicas', 7),
+(10, 'Departamento de Ingeniería Eléctrica', NULL),
+(11, 'Departamento de Ingeniería Electrónica', NULL),
+(12, 'Departamento de Ingeniería Industrial y de Sistemas', 10),
+(13, 'Departamento de Ingeniería Mecánica', NULL),
+(14, 'Departamento de Ingeniería Química', 12),
+(15, 'Departamento de mecatronica', 13),
+(16, 'Departamento de Sistemas Computacionales y tecnologias de la informacion', 6),
+(18, 'Departamento de mecatronica', 15),
+(19, 'Departamento centro de informacion', 16),
+(20, 'Subdirección academica', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `docente`
+--
+
+CREATE TABLE `docente` (
+  `idDocente` int(11) NOT NULL,
+  `idUsuario` int(11) NOT NULL,
+  `filiacion` char(18) NOT NULL,
+  `idNivelEstudio` int(11) NOT NULL,
+  `idDepartamento` int(11) NOT NULL,
+  `idPlaza` int(11) NOT NULL,
+  `estatusExclusividad` tinyint(4) DEFAULT 0,
+  `folioEdd` char(9) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `docente`
+--
+
+INSERT INTO `docente` (`idDocente`, `idUsuario`, `filiacion`, `idNivelEstudio`, `idDepartamento`, `idPlaza`, `estatusExclusividad`, `folioEdd`) VALUES
+(1, 1, 'MURF500101H99C001', 5, 16, 381700, 1, '2025ISC1'),
+(2, 2, 'GARO550202H99C002', 4, 16, 381700, 1, '2025ISC2'),
+(3, 3, 'URMO600303H99C003', 5, 16, 381700, 1, '12341'),
+(4, 4, 'VATI650404H99C004', 4, 16, 381700, 1, '2012313'),
+(5, 5, 'FEMA700505H99C005', 2, 16, 381800, 0, '2025ISC5'),
+(6, 6, 'NERI750606H99C006', 5, 16, 381700, 0, '2025ISC6'),
+(7, 7, 'QUCA800707H99C007', 4, 16, 381700, 1, NULL),
+(10, 10, 'URPO851010H99C010', 5, 16, 381700, 1, '2025ISC10'),
+(12, 12, 'GAIN901212H99C012', 4, 16, 381700, 0, '2025ISC11'),
+(13, 13, 'CAGA951313H99C013', 5, 16, 381700, 1, '2025ISC12'),
+(14, 14, 'GOCA901414H99C014', 5, 16, 381700, 1, NULL),
+(15, 15, 'ESSO951515H99C015', 4, 16, 381700, 0, '2025ISC14'),
+(16, 16, 'VICA001616H99C016', 5, 16, 381700, 1, '2025ISC15'),
+(17, 17, 'ZACA051717H99C017', 4, 16, 381700, 1, '2025ISC16'),
+(18, 18, 'GAOS101818H99C018', 5, 16, 381700, 1, '2025ISC17'),
+(19, 19, 'QUIM151919H99C019', 4, 16, 381700, 1, '2025ISC18'),
+(20, 20, 'LEGU202020H99C020', 5, 16, 381700, 1, '2025ISC19'),
+(21, 21, 'ROAR252121H99C021', 4, 16, 381700, 1, NULL),
+(22, 8, 'BABE500808H99C008', 5, 8, 381700, 1, '2025CB1'),
+(23, 9, 'ASPA550909H99C009', 4, 8, 381700, 1, '2025CB2');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `docenteActividad`
+--
+
+CREATE TABLE `docenteActividad` (
+  `idDocenteActividad` int(11) NOT NULL,
+  `idActividadInstitucional` int(11) NOT NULL,
+  `idDocente` int(11) NOT NULL,
+  `datosCapturados` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`datosCapturados`)),
+  `fechaRegistro` datetime DEFAULT current_timestamp(),
+  `validadoPor` int(11) DEFAULT NULL,
+  `fechaValidacion` datetime DEFAULT NULL,
+  `motivoRechazo` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `docenteActividad`
+--
+
+INSERT INTO `docenteActividad` (`idDocenteActividad`, `idActividadInstitucional`, `idDocente`, `datosCapturados`, `fechaRegistro`, `validadoPor`, `fechaValidacion`, `motivoRechazo`) VALUES
+(1, 999, 4, '{\"carrera\": \"Ing. Sistemas Computacionales\", \"totalTutorados\": 46, \"idJefeDDA\": 2, \"idSubdirectorAcademico\": 3}', '2025-11-22 15:41:59', 2, NULL, NULL),
+(2, 888, 4, '{\r\n        \"organismoAcreditador\": \"CONAIC\",\r\n        \"programaEducativo\": \"Ingeniería en Tecnologías de la Información y Comunicaciones\",\r\n        \"fechaInicioVigencia\": \"2022-11-30\",\r\n        \"fechaFinVigencia\": \"2027-11-29\",\r\n        \"numRegistro\": \"1700975\",\r\n        \"fechaExpedicion\": \"2022-11-30\"\r\n    }', '2025-11-25 15:34:42', 3, '2025-11-30 00:33:14', NULL),
+(3, 777, 4, '{\r\n        \"numOficio\": \"CI-30/2025\",\r\n        \"dictamen\": \"12345\",\r\n        \"totalAlumnosAtendidos\": 50,\r\n        \"alumnosObtuvieronCredito\": 48,\r\n        \"idJefeDepartamento\": 2,\r\n        \"idJefeCentroInformacion\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 16:00:45', NULL, '2025-11-30 00:33:14', NULL),
+(4, 666, 4, '{\r\n        \"numOficio\": \"DSyC-388/2025\",\r\n        \"asignatura\": \"Programación Orientada a Objetos\",\r\n        \"programaEducativo\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 16:33:25', 2, '2025-11-30 00:33:14', NULL),
+(5, 450, 4, '{\r\n        \"numOficio\": \"DSyC-388/2025\",\r\n        \"asignatura\": \"Administración de Bases de Datos\",\r\n        \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 18:41:55', 2, '2025-11-30 00:33:14', NULL),
+(6, 555, 4, '{\r\n        \"numOficio\": \"DSyC-391/2025\",\r\n        \"asignatura\": \"Estructura de Datos\",\r\n        \"estrategia\": \"Aprendizaje Basado en Problemas\",\r\n        \"programaEducativo\": \"Ing. Sist. Computacionales\",\r\n        \"productoObtenido\": \"Reporte de resolución de problemas\",\r\n        \"habilidades\": \"pensamiento crítico y trabajo en equipo\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 17:25:53', 2, '2025-11-30 00:33:14', NULL),
+(7, 333, 4, '{\r\n        \"folioConstancia\": \"DDIE-2025-001\",\r\n        \"nombreDiplomado\": \"Diplomado para la Formación y Desarrollo de Competencias de Tutores(as)\",\r\n        \"duracion\": \"120\",\r\n        \"periodoImparticion\": \"agosto a diciembre de 2024\",\r\n        \"fechaExpedicion\": \"2025-06-15\",\r\n        \"idDirectorDDIE\": 5 \r\n    }', '2025-11-25 18:59:03', 5, '2025-11-30 00:33:14', NULL),
+(8, 222, 4, '{\r\n        \"numOficio\": \"DSyC-391/2025\",\r\n        \"asignatura\": \"Metodologias agiles\",\r\n        \"estrategia\": \"Desarrollo de Software Ágil\",\r\n        \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"producto\": \"Cartera de huevo bachoco\",\r\n        \"impacto\": \"Bajo la cartera huevo\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 19:19:50', 2, '2025-11-30 00:33:14', NULL),
+(9, 444, 4, '{\r\n        \"nombreEstudiante\": \"Benjamin Quintero Camacho\",\r\n        \"numControl\": \"17171459\",\r\n        \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"opcionTitulacion\": \"Titulación Integral: Informe Técnico de Residencia Profesional \\\"Medio de pago externo para BAPRO (Provincia net) como canal de abonos a cuentas coppel\\\"\",\r\n        \"fechaActa\": \"2024-06-21\",\r\n        \"idPresidente\": 1, \r\n        \"idSecretario\": 2,\r\n        \"idVocal\": 3\r\n    }', '2025-11-25 17:40:34', 1, '2025-11-30 00:33:14', NULL),
+(10, 111, 4, '{\r\n        \"oficio\": \"DDA-100/2024\",\r\n        \"nombreCurso\": \"Diplomado en Competencias Digitales\",\r\n        \"institucionCurso\": \"Tecnológico Nacional de México / Virtual\",\r\n        \"fechaInicio\": \"2024-08-15\",\r\n        \"fechaFin\": \"2024-12-15\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 19:51:05', 2, '2025-11-30 00:33:14', NULL),
+(11, 112, 4, '{\r\n        \"oficio\": \"DDA-110/2024\",\r\n        \"nombreCurso\": \"Diplomado en Recursos Educativos Abiertos\",\r\n        \"fechaInicio\": \"2024-09-01\",\r\n        \"fechaFin\": \"2024-11-30\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 20:02:18', 2, '2025-11-30 00:33:14', NULL),
+(12, 123, 4, '{\r\n        \"oficio\": \"DDA-120/2025\",\r\n        \"nombreCurso\": \"Diplomado en Pensamiento Crítico para la Educación Tecnológica del TecNM\",\r\n        \"fechaInicio\": \"2025-02-01\",\r\n        \"fechaFin\": \"2025-06-30\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 20:14:26', 2, '2025-11-30 00:33:14', NULL),
+(13, 133, 4, '{\r\n        \"oficio\": \"DDA-130/2025\",\r\n        \"nombreCurso\": \"Diplomado Recursos Educativos en Ambientes Virtuales para Profesores(as) del TecNM\",\r\n        \"fechaInicio\": \"2025-03-01\",\r\n        \"fechaFin\": \"2025-07-31\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 20:18:47', 2, '2025-11-30 00:33:14', NULL),
+(14, 134, 4, '{\r\n        \"oficio\": \"DDA-131/2025\",\r\n        \"nombreCurso\": \"Diplomado en Educación Inclusiva para Profesores(as) del TecNM\",\r\n        \"fechaInicio\": \"2025-02-15\",\r\n        \"fechaFin\": \"2025-06-15\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-27 19:43:45', NULL, '2025-11-30 11:39:46', 'asdzxcxzc'),
+(20, 999, 17, '{\"carrera\": \"Ing. Sistemas Computacionales\", \"totalTutorados\": 26, \"idJefeDDA\": 2, \"idSubdirectorAcademico\": 3}', '2025-11-22 15:41:59', 2, '2025-11-30 00:33:14', NULL),
+(21, 888, 17, '{\r\n        \"organismoAcreditador\": \"CONAIC\",\r\n        \"programaEducativo\": \"Ingeniería en Tecnologías de la Información y Comunicaciones\",\r\n        \"fechaInicioVigencia\": \"2022-11-30\",\r\n        \"fechaFinVigencia\": \"2027-11-29\",\r\n        \"numRegistro\": \"1700975\",\r\n        \"fechaExpedicion\": \"2022-11-30\"\r\n    }', '2025-11-25 15:34:42', 3, '2025-11-30 00:33:14', NULL),
+(22, 777, 17, '{\r\n        \"numOficio\": \"CI-30/2025\",\r\n        \"dictamen\": \"12345\",\r\n        \"totalAlumnosAtendidos\": 40,\r\n        \"alumnosObtuvieronCredito\": 38,\r\n        \"idJefeDepartamento\": 2,\r\n        \"idJefeCentroInformacion\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 16:00:45', 2, '2025-11-30 00:33:14', NULL),
+(23, 666, 17, '{\r\n        \"numOficio\": \"DSyC-388/2025\",\r\n        \"asignatura\": \"Lenguajes y automatas\",\r\n        \"programaEducativo\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 16:33:25', 2, '2025-11-30 00:33:14', NULL),
+(24, 450, 17, '{\r\n        \"numOficio\": \"DSyC-388/2025\",\r\n        \"asignatura\": \"Inteligencia artificial\",\r\n        \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 18:41:55', 2, '2025-11-30 00:33:14', NULL),
+(25, 555, 17, '{\r\n        \"numOficio\": \"DSyC-391/2025\",\r\n        \"asignatura\": \"Clases de baile\",\r\n        \"estrategia\": \"Aprendizaje Basado en Problemas\",\r\n        \"programaEducativo\": \"Ing. Sist. Computacionales\",\r\n        \"productoObtenido\": \"Bailo muy bien\",\r\n        \"habilidades\": \"Bailaste mi niño\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 17:25:53', 2, '2025-11-30 00:33:14', NULL),
+(26, 333, 17, '{\r\n        \"folioConstancia\": \"DDIE-2025-001\",\r\n        \"nombreDiplomado\": \"maestria en automatas\",\r\n        \"duracion\": \"120\",\r\n        \"periodoImparticion\": \"agosto a diciembre de 2024\",\r\n        \"fechaExpedicion\": \"2025-06-15\",\r\n        \"idDirectorDDIE\": 5 \r\n    }', '2025-11-25 18:59:03', 5, '2025-11-30 00:33:14', NULL),
+(27, 222, 17, '{\r\n        \"numOficio\": \"DSyC-391/2025\",\r\n        \"asignatura\": \"prolog\",\r\n        \"estrategia\": \"prologini\",\r\n        \"carrera\": \"Ingeniería en Sistemas programables\",\r\n        \"producto\": \"nadota\",\r\n        \"impacto\": \"en la cabeza \",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 19:19:50', 2, '2025-11-30 00:33:14', NULL),
+(28, 444, 17, '{\r\n        \"nombreEstudiante\": \"benjamon Quintero Camacho\",\r\n        \"numControl\": \"17171459\",\r\n        \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"opcionTitulacion\": \"Titulación bailando: fomo de Residencia Profesional \\\"Medio de pago externo para BAPRO (Provincia net) como canal de abonos a cuentas coppel\\\"\",\r\n        \"fechaActa\": \"2024-06-21\",\r\n        \"idPresidente\": 1, \r\n        \"idSecretario\": 2,\r\n        \"idVocal\": 3\r\n    }', '2025-11-25 17:40:34', 1, '2025-11-30 00:33:14', NULL),
+(101, 999, 1, '{\"carrera\": \"Ing. Sistemas Computacionales\", \"totalTutorados\": 46, \"idJefeDDA\": 2, \"idSubdirectorAcademico\": 4}', '2025-11-22 15:41:59', 2, '2025-11-30 00:33:14', NULL),
+(201, 888, 1, '{\r\n        \"organismoAcreditador\": \"CONAIC\",\r\n        \"programaEducativo\": \"Ingeniería en Tecnologías de la Información y Comunicaciones\",\r\n        \"fechaInicioVigencia\": \"2022-11-30\",\r\n        \"fechaFinVigencia\": \"2027-11-29\",\r\n        \"numRegistro\": \"1700975\",\r\n        \"fechaExpedicion\": \"2022-11-30\"\r\n    }', '2025-11-25 15:34:42', 3, '2025-11-30 00:33:14', NULL),
+(301, 777, 1, '{\r\n        \"numOficio\": \"CI-30/2025\",\r\n        \"dictamen\": \"12345\",\r\n        \"totalAlumnosAtendidos\": 50,\r\n        \"alumnosObtuvieronCredito\": 48,\r\n        \"idJefeDepartamento\": 2,\r\n        \"idJefeCentroInformacion\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 16:00:45', 2, '2025-11-30 00:33:14', NULL),
+(401, 666, 1, '{\r\n        \"numOficio\": \"DSyC-388/2025\",\r\n        \"asignatura\": \"Programación Orientada a Objetos\",\r\n        \"programaEducativo\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 16:33:25', 2, '2025-11-30 00:33:14', NULL),
+(501, 450, 1, '{\r\n        \"numOficio\": \"DSyC-388/2025\",\r\n        \"asignatura\": \"Administración de Bases de Datos\",\r\n        \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 18:41:55', 2, '2025-11-30 00:33:14', NULL),
+(601, 555, 1, '{\n        \"numOficio\": \"DSyC-391/2025\",\n        \"asignatura\": \"Estructura de Datos\",\n        \"estrategia\": \"Aprendizaje Basado en Problemas\",\n        \"programaEducativo\": \"Ing. Sist. Computacionales\",\n        \"productoObtenido\": \"Reporte de resolución de problemas\",\n        \"habilidades\": \"pensamiento crítico y trabajo en equipo\",\n        \"idJefeDepto\": 2,\n        \"idPresidenteAcademia\": 4, \n        \"idSubdirectorAcademico\": 3\n    }', '2025-11-25 17:25:53', 2, NULL, NULL),
+(701, 333, 1, '{\r\n        \"folioConstancia\": \"DDIE-2025-001\",\r\n        \"nombreDiplomado\": \"Diplomado para la Formación y Desarrollo de Competencias de Tutores(as)\",\r\n        \"duracion\": \"120\",\r\n        \"periodoImparticion\": \"agosto a diciembre de 2024\",\r\n        \"fechaExpedicion\": \"2025-06-15\",\r\n        \"idDirectorDDIE\": 5 \r\n    }', '2025-11-25 18:59:03', 5, '2025-11-30 00:33:14', NULL),
+(801, 222, 1, '{\r\n        \"numOficio\": \"DSyC-391/2025\",\r\n        \"asignatura\": \"Programación Web\",\r\n        \"estrategia\": \"Desarrollo de Software Ágil\",\r\n        \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"producto\": \"un prototipo funcional de sistema de ventas\",\r\n        \"impacto\": \"la mejora en los tiempos de respuesta del proceso de ventas en un 50%\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 19:19:50', 2, '2025-11-30 00:33:14', NULL),
+(901, 444, 1, '{\r\n        \"nombreEstudiante\": \"Benjamin Quintero Camacho\",\r\n        \"numControl\": \"17171459\",\r\n        \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"opcionTitulacion\": \"Titulación Integral: Informe Técnico de Residencia Profesional \\\"Medio de pago externo para BAPRO (Provincia net) como canal de abonos a cuentas coppel\\\"\",\r\n        \"fechaActa\": \"2024-06-21\",\r\n        \"idPresidente\": 1, \r\n        \"idSecretario\": 2,\r\n        \"idVocal\": 3\r\n    }', '2025-11-25 17:40:34', 1, '2025-11-30 00:33:14', NULL),
+(1001, 111, 1, '{\r\n        \"oficio\": \"DDA-100/2024\",\r\n        \"nombreCurso\": \"Diplomado en Competencias Digitales\",\r\n        \"institucionCurso\": \"Tecnológico Nacional de México / Virtual\",\r\n        \"fechaInicio\": \"2024-08-15\",\r\n        \"fechaFin\": \"2024-12-15\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 19:51:05', 2, '2025-11-30 00:33:14', NULL),
+(1101, 112, 1, '{\r\n        \"oficio\": \"DDA-110/2024\",\r\n        \"nombreCurso\": \"Diplomado en Recursos Educativos Abiertos\",\r\n        \"fechaInicio\": \"2024-09-01\",\r\n        \"fechaFin\": \"2024-11-30\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 20:02:18', 2, '2025-11-30 00:33:14', NULL),
+(1201, 123, 1, '{\r\n        \"oficio\": \"DDA-120/2025\",\r\n        \"nombreCurso\": \"Diplomado en Pensamiento Crítico para la Educación Tecnológica del TecNM\",\r\n        \"fechaInicio\": \"2025-02-01\",\r\n        \"fechaFin\": \"2025-06-30\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 20:14:26', 2, '2025-11-30 00:33:14', NULL),
+(1301, 133, 1, '{\r\n        \"oficio\": \"DDA-130/2025\",\r\n        \"nombreCurso\": \"Diplomado Recursos Educativos en Ambientes Virtuales para Profesores(as) del TecNM\",\r\n        \"fechaInicio\": \"2025-03-01\",\r\n        \"fechaFin\": \"2025-07-31\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 20:18:47', 2, '2025-11-30 00:33:14', NULL),
+(1311, 134, 1, '{\r\n        \"oficio\": \"DDA-131/2025\",\r\n        \"nombreCurso\": \"Diplomado en Educación Inclusiva para Profesores(as) del TecNM\",\r\n        \"fechaInicio\": \"2025-02-15\",\r\n        \"fechaFin\": \"2025-06-15\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-27 19:43:45', 2, '2025-11-30 00:33:14', NULL),
+(1321, 135, 1, '{\r\n        \"oficio\": \"DDA-132/2025\",\r\n        \"nombreCurso\": \"Diplomado en Cadena de Valor de Semiconductores\",\r\n        \"fechaInicio\": \"2025-03-01\",\r\n        \"fechaFin\": \"2025-08-30\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-27 21:13:55', 2, '2025-11-30 00:33:14', NULL),
+(1401, 144, 1, '{\r\n        \"numOficio\": \"DARH-0288/VI/2025\",\r\n        \"filiacion\": \"MURF500101H99C001\",\r\n        \"fechaContratacion\": \"16 de Agosto de 2000\",\r\n        \"clavePresupuestal\": \"1402-0100489-E3815-001\",\r\n        \"fechaEfectos\": \"01 de Febrero de 2024\",\r\n        \"periodoInicio\": \"01 de Enero\",\r\n        \"periodoFin\": \"31 de Diciembre de 2024\",\r\n        \"idJefeRH\": 4 \r\n    }', '2025-11-25 20:28:00', 4, '2025-11-30 00:33:14', NULL),
+(1501, 155, 1, '{\r\n        \"filiacion\": \"MURF500101H99C001\",\r\n        \"clavePresupuestal\": \"1402-0100489-E3815-001\"\r\n    }', '2025-11-25 20:35:27', NULL, '2025-11-30 00:33:14', NULL),
+(1551, 1550, 1, '{\r\n        \"numOficio\": \"DPII-05/2024\",\r\n        \"tituloProyecto\": \"Implementación de Redes Neuronales para la Detección de Plagas en Cultivos de Sinaloa\",\r\n        \"claveRegistro\": \"TecNM-2024-123\",\r\n        \"vigenciaInicio\": \"01 de enero de 2024\",\r\n        \"vigenciaFin\": \"31 de diciembre de 2025\",\r\n        \"idDirector\": 5,\r\n        \"idSubdirector\": 3\r\n    }', '2025-11-28 22:45:30', NULL, '2025-11-30 03:05:46', 'aaaa'),
+(1601, 166, 1, '{\r\n        \"numOficio\": \"DDA-476-06-2025\",\r\n        \"registroCVU\": \"IT19B258\",\r\n        \"anioCVU\": \"2024\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 20:41:11', 2, '2025-11-30 00:33:14', NULL),
+(1701, 177, 1, '{\r\n        \"expediente\": \"8950\",\r\n        \"anio\": \"2024\",\r\n        \"idJefeEscolares\": 6\r\n    }', '2025-11-25 20:52:16', 6, '2025-11-30 00:33:14', NULL),
+(1801, 188, 1, '{\r\n        \"horasPreparacion\": 5,\r\n        \"actividadesApoyo\": [\r\n            {\"nombre\": \"Tutorías\", \"metas\": \"Atender 20 alumnos\", \"lunes\": \"10-11\", \"total\": 1},\r\n            {\"nombre\": \"Asesoría de Residencias\", \"metas\": \"Revisar 3 proyectos\", \"martes\": \"12-14\", \"total\": 2}\r\n        ],\r\n        \"actividadesAdmin\": [\r\n            {\"puesto\": \"Presidente de Academia\", \"unidad\": \"Sistemas\", \"viernes\": \"10-12\", \"total\": 2}\r\n        ],\r\n        \"idJefeDDA\": 2,\r\n        \"idSubdirector\": 3\r\n    }', '2025-11-25 20:59:51', 2, '2025-11-30 00:33:14', NULL),
+(1811, 189, 1, '{\r\n        \"horasPreparacion\": 5,\r\n        \"actividadesApoyo\": [],\r\n        \"actividadesAdmin\": [],\r\n        \"idJefeDDA\": 2,\r\n        \"idSubdirector\": 3\r\n    }', '2025-11-27 19:16:26', 2, '2025-11-30 00:33:14', NULL),
+(1821, 187, 1, '{\r\n        \"horasPreparacion\": 8,\r\n        \"actividadesApoyo\": [\r\n            {\"nombre\": \"Tesis de Maestría\", \"metas\": \"1 alumno\", \"lunes\": \"16-18\", \"total\": 2}\r\n        ],\r\n        \"actividadesAdmin\": [],\r\n        \"idJefeDDA\": 2,\r\n        \"idSubdirector\": 3\r\n    }', '2025-11-27 19:23:13', 2, '2025-11-30 00:33:14', NULL),
+(1831, 1830, 1, '{\r\n        \"expediente\": \"8950\",\r\n        \"anio\": \"2024\",\r\n        \"idJefeEscolares\": 6\r\n    }', '2025-11-27 19:31:26', 6, '2025-11-30 00:33:14', NULL),
+(1901, 199, 1, '{\r\n        \"periodoPago\": \"15/04/2025\",\r\n        \"numEmpleado\": \"123456\",\r\n        \"fechaEmision\": \"26/11/2025\",\r\n        \"percepciones\": [\r\n            {\"clave\": \"07\", \"descripcion\": \"SUELDO BASE\", \"importe\": 15450.00}\r\n        ],\r\n        \"deducciones\": [\r\n            {\"clave\": \"01\", \"descripcion\": \"ISR RETENIDO\", \"importe\": 3200.00},\r\n            {\"clave\": \"04\", \"descripcion\": \"CUOTA SINDICAL\", \"importe\": 150.50}\r\n        ]\r\n    }', '2025-11-26 19:35:44', 3, '2025-11-30 00:33:14', NULL),
+(2001, 202, 1, '{\r\n        \"oficio\": \"123/2024\",\r\n        \"nombreProyecto\": \"ELABORACIÓN DE LA PROPUESTA PARA LA APERTURA DEL PROGRAMA EDUCATIVO DE: INGENIERÍA EN INTELIGENCIA ARTIFICIAL\",\r\n        \"fechaInicio\": \"01 de febrero de 2024\",\r\n        \"fechaFin\": \"30 de junio de 2024\",\r\n        \"actividades\": \"el análisis de factibilidad, estudio de mercado y diseño de la retícula curricular\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4,\r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-26 21:26:20', 2, '2025-11-30 00:33:14', NULL),
+(2101, 212, 1, '{\r\n        \"numOficio\": \"123/2024\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-27 17:16:13', 2, '2025-11-30 00:33:14', NULL),
+(2151, 2150, 1, '{\r\n        \"numOficio\": \"DRH-09/2024\",\r\n        \"fechaInicio\": \"01 de septiembre de 2024\",\r\n        \"fechaFin\": \"30 de noviembre de 2024\",\r\n        \"idJefeRH\": 4,\r\n        \"idDirector\": 5\r\n    }', '2025-11-28 22:55:56', NULL, '2025-11-30 03:05:14', 'asdsad'),
+(2161, 2160, 1, '{\r\n        \"nivel\": \"DOCTORADO\", \r\n        \"numeroCedula\": \"87654321\",\r\n        \"nombrePrograma\": \"DOCTORADO EN CIENCIAS COMPUTACIONALES\",\r\n        \"clavePrograma\": \"DCC-2010-001\",\r\n        \"institucion\": \"TECNOLÓGICO NACIONAL DE MÉXICO\",\r\n        \"claveInstitucion\": \"25DIT0021\",\r\n        \"fechaExpedicion\": \"10 de octubre de 2015\",\r\n        \"horaExpedicion\": \"12:00:00 HRS\",\r\n        \"cadenaOriginal\": \"||1.0|87654|2015-10-10T12:00:00|SEP|...\",\r\n        \"selloDigital\": \"DigitalSealSample1234567890...\",\r\n        \"firmaElectronica\": \"ElectronicSignatureSample...\"\r\n    }', '2025-11-28 23:01:52', 3, '2025-11-30 11:37:33', NULL),
+(2201, 228, 1, '{\r\n        \"semestre\": \"Enero-Junio 2024\",\r\n        \"estadoLiberacion\": \"LIBERADO\",\r\n        \"lugarFecha\": \"Culiacán, Sin., a 25 de junio de 2024\",\r\n        \"idJefeDepto\": 2,\r\n        \"idSubdirector\": 3\r\n    }', '2025-11-27 17:49:57', 2, '2025-11-30 00:33:14', NULL),
+(2301, 233, 1, '{\r\n        \"semestre\": \"Enero-Junio 2024\",\r\n        \"lugarFecha\": \"Culiacán, Sinaloa, a 28 de junio de 2024\",\r\n        \"otrosActividad\": \"Diseño de reactivos para examen departamental\",\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idJefeDepto\": 2\r\n    }', '2025-11-27 18:01:13', 2, '2025-11-30 00:33:14', NULL),
+(2401, 244, 1, '{\r\n        \"semestre\": \"Enero - Diciembre 2024\",\r\n        \"lugarFecha\": \"Culiacán, Sinaloa, a 15 de noviembre de 2024\",\r\n        \"proyectos\": [\r\n            {\r\n                \"titulo\": \"Desarrollo de Algoritmos de IA para Detección de Plagas\",\r\n                \"estatus\": \"En Proceso\",\r\n                \"claveRegistro\": \"TecNM-INV-2024-015\"\r\n            },\r\n            {\r\n                \"titulo\": \"Análisis de Big Data en Redes Sociales Educativas\",\r\n                \"estatus\": \"Terminado\",\r\n                \"claveRegistro\": \"TecNM-INV-2023-089 (Autorizado)\"\r\n            }\r\n        ],\r\n        \"idCoordinadorInvestigacion\": 5 \r\n    }', '2025-11-27 18:28:18', 5, '2025-11-30 00:33:14', NULL),
+(2501, 255, 1, '{\r\n        \"periodoEvaluado\": \"Enero-Junio 2024\",\r\n        \"calificacionFinal\": \"96.50\",\r\n        \"desempeno\": \"Destaacado\",\r\n        \"resultados\": [\r\n            {\"rubro\": \"A. Dominio de la asignatura\", \"puntaje\": \"4.8\"},\r\n            {\"rubro\": \"B. Planificación del curso\", \"puntaje\": \"4.9\"},\r\n            {\"rubro\": \"C. Ambientes de aprendizaje\", \"puntaje\": \"4.7\"},\r\n            {\"rubro\": \"D. Estrategias, métodos y técnicas\", \"puntaje\": \"4.8\"},\r\n            {\"rubro\": \"E. Motivación\", \"puntaje\": \"4.9\"},\r\n            {\"rubro\": \"F. Evaluación\", \"puntaje\": \"4.8\"},\r\n            {\"rubro\": \"G. Comunicación\", \"puntaje\": \"4.9\"},\r\n            {\"rubro\": \"H. Gestión del curso\", \"puntaje\": \"4.7\"},\r\n            {\"rubro\": \"I. Tecnologías de la información\", \"puntaje\": \"4.8\"},\r\n            {\"rubro\": \"J. Satisfacción general\", \"puntaje\": \"4.9\"}\r\n        ],\r\n        \"idJefeDDA\": 2,\r\n        \"idSubdirector\": 3\r\n    }', '2025-11-27 18:39:56', 2, '2025-11-30 00:33:14', NULL),
+(3121, 3120, 1, '{\"nombreEstudiante\": \"Juan Pérez\", \"numControl\": \"E12345\", \"carrera\": \"Especialización en Redes\", \"opcionTitulacion\": \"Tesis: Seguridad en la Nube\", \"fechaActa\": \"2025-01-15\", \"idPresidente\": 1, \"idSecretario\": 2, \"idVocal\": 3}', '2025-11-27 21:16:13', 1, '2025-11-30 00:33:14', NULL),
+(3131, 3130, 1, '{\"nombreEstudiante\": \"María López\", \"numControl\": \"M67890\", \"carrera\": \"Maestría en Ciencias\", \"opcionTitulacion\": \"Tesis: IA Aplicada\", \"fechaActa\": \"2025-02-20\", \"idPresidente\": 2, \"idSecretario\": 1, \"idVocal\": 3}', '2025-11-27 21:16:13', 2, '2025-11-30 00:33:14', NULL),
+(3141, 3140, 1, '{\"nombreTesista\": \"Ana María Gómez\", \"tituloTesis\": \"Optimización de Redes Neuronales\", \"fechaExamen\": \"2024-12-05\", \"idDirector\": 2, \"idCodirector\": 1, \"numControl\": \"M23050123\"}', '2025-11-27 21:35:40', 2, '2025-11-30 00:33:14', NULL),
+(3151, 3150, 1, '{\"nombreEstudiante\": \"Pedro Ruiz\", \"numControl\": \"D54321\", \"carrera\": \"Doctorado en Ciencias\", \"opcionTitulacion\": \"Tesis: Computación Cuántica\", \"fechaActa\": \"2025-03-10\", \"idPresidente\": 3, \"idSecretario\": 2, \"idVocal\": 1}', '2025-11-27 21:16:13', 3, '2025-11-30 00:33:14', NULL),
+(3161, 3160, 1, '{\"nombreTesista\": \"Luis Torres\", \"tituloTesis\": \"Ciberseguridad en Cómputo Cuántico\", \"fechaExamen\": \"2024-11-20\", \"idDirector\": 3, \"idCodirector\": 1, \"numControl\": \"D21040567\"}', '2025-11-27 21:35:40', 3, '2025-11-30 00:33:14', NULL),
+(3211, 3210, 1, '{\r\n    \"numOficio\": \"SE-321/2024\",\r\n    \"folioActa\": \"TSU-001\",\r\n    \"fechaExamen\": \"20 de mayo de 2024\",\r\n    \"nombreEstudiante\": \"Pedro Picapiedra\",\r\n    \"carrera\": \"Técnico Superior Universitario en TIC\",\r\n    \"rol\": \"PRESIDENTE\",\r\n    \"idJefeEscolares\": 6\r\n}', '2025-11-28 21:56:27', NULL, '2025-11-30 03:14:05', 'asdasd'),
+(3221, 3220, 1, '{\r\n    \"numOficio\": \"SE-322/2024\",\r\n    \"folioActa\": \"12345\",\r\n    \"fechaExamen\": \"15 de junio de 2024\",\r\n    \"nombreEstudiante\": \"Roberto Gómez Bolaños\",\r\n    \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n    \"rol\": \"SECRETARIO\",\r\n    \"idJefeEscolares\": 6\r\n}', '2025-11-28 21:48:26', 6, '2025-11-30 00:33:14', NULL),
+(3231, 3230, 1, '{\r\n    \"numOficio\": \"SE-323/2024\",\r\n    \"folioActa\": \"ESP-999\",\r\n    \"fechaExamen\": \"05 de septiembre de 2024\",\r\n    \"nombreEstudiante\": \"Marie Curie\",\r\n    \"carrera\": \"Especialización en Ciberseguridad\",\r\n    \"rol\": \"VOCAL\",\r\n    \"idJefeEscolares\": 6\r\n}', '2025-11-28 21:56:27', 6, '2025-11-30 00:33:14', NULL),
+(3241, 3240, 1, '{\r\n    \"numOficio\": \"SE-324/2024\",\r\n    \"folioActa\": \"M-9876\",\r\n    \"fechaExamen\": \"20 de noviembre de 2024\",\r\n    \"nombreEstudiante\": \"Ana María Polo\",\r\n    \"carrera\": \"Maestría en Ciencias de la Computación\",\r\n    \"rol\": \"VOCAL\",\r\n    \"idJefeEscolares\": 6\r\n}', '2025-11-28 21:48:26', 6, '2025-11-30 00:33:14', NULL),
+(3251, 3250, 1, '{\r\n    \"numOficio\": \"SE-325/2024\",\r\n    \"folioActa\": \"D-5555\",\r\n    \"fechaExamen\": \"10 de diciembre de 2024\",\r\n    \"nombreEstudiante\": \"Sheldon Cooper\",\r\n    \"carrera\": \"Doctorado en Ciencias de la Ingeniería\",\r\n    \"rol\": \"VOCAL\",\r\n    \"idJefeEscolares\": 6\r\n}', '2025-11-28 21:48:26', 6, '2025-11-30 00:33:14', NULL),
+(4000, 999, 4, '{\"carrera\": \"Ing. Sistemas Computacionales\", \"totalTutorados\": 40, \"idJefeDDA\": 2, \"idSubdirectorAcademico\": 3}', '2025-11-22 15:41:59', 2, '2025-11-30 00:33:14', NULL),
+(4101, 411, 1, '{\r\n        \"numOficio\": \"CB-141/2025\",\r\n        \"asignatura\": \"Cálculo Integral\",\r\n        \"totalAlumnos\": 15,\r\n        \"periodo\": \"Agosto-Diciembre 2024\",\r\n        \"idJefeCienciasBasicas\": 7, \r\n        \"idSubdirector\": 3\r\n    }', '2025-11-28 18:53:33', 7, '2025-11-30 00:33:14', NULL),
+(4211, 4210, 1, '{\r\n    \"periodo\": \"Enero-Junio 2024\",\r\n    \"idJefeDepto\": 2, \"idSubdirector\": 3, \"idJefeInvestigacion\": 4,\r\n    \"proyectos\": [\r\n        {\"nombre\": \"Sistema de Riego IoT Culiacán\", \"tipo\": \"Desarrollo Tecnológico\", \"nivel\": \"Responsable\", \"producto\": \"Prototipo Funcional\", \"alcance\": \"Local\"},\r\n        {\"nombre\": \"Análisis de Suelos Sinaloa\", \"tipo\": \"Investigación Aplicada\", \"nivel\": \"Colaborador\", \"producto\": \"Informe Técnico\", \"alcance\": \"Regional\"}\r\n    ]\r\n}', '2025-11-28 18:37:31', 2, '2025-11-30 00:33:14', NULL),
+(4221, 4220, 1, '{\r\n    \"periodo\": \"Agosto-Diciembre 2024\",\r\n    \"idJefeDepto\": 2, \"idSubdirector\": 3, \"idJefeInvestigacion\": 4,\r\n    \"proyectos\": [\r\n        {\"nombre\": \"Red Nacional de Ciberseguridad TecNM\", \"tipo\": \"Investigación\", \"nivel\": \"Responsable\", \"producto\": \"Artículo Indexado\", \"alcance\": \"Nacional\"}\r\n    ]\r\n}', '2025-11-28 18:37:31', 2, '2025-11-30 00:33:14', NULL),
+(4231, 4230, 1, '{\r\n    \"periodo\": \"Anual 2024\",\r\n    \"idJefeDepto\": 2, \"idSubdirector\": 3, \"idJefeInvestigacion\": 4,\r\n    \"proyectos\": [\r\n        {\"nombre\": \"AI for Climate Change (MX-USA)\", \"tipo\": \"Investigación Conjunta\", \"nivel\": \"Co-Responsable\", \"producto\": \"Patente Solicitada\", \"alcance\": \"Internacional\"}\r\n    ]\r\n}', '2025-11-28 18:37:31', 2, '2025-11-30 00:33:14', NULL),
+(4311, 4310, 1, '{\r\n    \"numOficio\": \"DDA-431/2024\",\r\n    \"periodo\": \"agosto-diciembre 2024\",\r\n    \"nombreProyecto\": \"Sistema Inteligente de Riego Urbano\",\r\n    \"estudiantes\": [\"Juan Pérez López\", \"María García Torres\"],\r\n    \"idJefeDepto\": 2, \"idSubdirector\": 3\r\n}', '2025-11-28 19:18:26', 2, '2025-11-30 00:33:14', NULL),
+(4321, 4320, 1, '{\r\n    \"numOficio\": \"DDA-432/2024\",\r\n    \"periodo\": \"enero-junio 2024\",\r\n    \"nombreProyecto\": \"Diseño de Brazo Robótico Didáctico\",\r\n    \"estudiantes\": [\"Ana López\", \"Carlos Ruiz\"],\r\n    \"idJefeDepto\": 2, \"idSubdirector\": 3\r\n}', '2025-11-28 19:31:20', 2, '2025-11-30 00:33:14', NULL),
+(4331, 4330, 1, '{\r\n    \"numOficio\": \"DDA-433/2024\",\r\n    \"periodo\": \"agosto-diciembre 2024\",\r\n    \"nombreProyecto\": \"Desarrollo de App Móvil para Control Escolar\",\r\n    \"estudiantes\": [\"Diana Laura Martínez\"],\r\n    \"idJefeDepto\": 2, \"idSubdirector\": 3\r\n}', '2025-11-28 19:31:20', 2, '2025-11-30 00:33:14', NULL),
+(4341, 4340, 1, '{\r\n    \"numOficio\": \"DDA-434/2024\",\r\n    \"periodo\": \"agosto-diciembre 2024\",\r\n    \"nombreProyecto\": \"Banco de Pruebas para Motores AC\",\r\n    \"estudiantes\": [\"Jorge Luis Vega\", \"Sofia Hernández\"],\r\n    \"idJefeDepto\": 2, \"idSubdirector\": 3\r\n}', '2025-11-28 19:31:20', 2, '2025-11-30 00:33:14', NULL),
+(4351, 4350, 1, '{\r\n    \"numOficio\": \"VINC-435/2024\",\r\n    \"periodo\": \"enero-junio 2024\",\r\n    \"nombreProyecto\": \"Brigada de Alfabetización Digital\",\r\n    \"estudiantes\": [\"Pedro Sánchez\", \"Luisa Medina\"],\r\n    \"idJefeDepto\": 2, \"idSubdirector\": 3\r\n}', '2025-11-28 19:18:26', 2, '2025-11-30 00:33:14', NULL),
+(4361, 4360, 1, '{\r\n    \"numOficio\": \"VINC-436/2024\",\r\n    \"periodo\": \"agosto-diciembre 2024\",\r\n    \"nombreProyecto\": \"Implementación de ERP en Empresa X\",\r\n    \"estudiantes\": [\"Roberto Carlos Valdez\"],\r\n    \"idJefeDepto\": 2, \"idSubdirector\": 3\r\n}', '2025-11-28 19:18:26', 2, '2025-11-30 00:33:14', NULL),
+(4411, 4410, 1, '{\r\n    \"numOficio\": \"CI-30/2025\",\r\n    \"periodo\": \"agosto-diciembre 2024\",\r\n    \"nombreConcurso\": \"Concurso de Ciencias Básicas - Fase Local\",\r\n    \"funcion\": \"COORDINADOR(A) GENERAL LOCAL\",\r\n    \"actividades\": \"organización logística, gestión de jurados y supervisión del evento\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3,\r\n    \"idJefeCentroInfo\": 4\r\n}', '2025-11-28 19:52:05', 2, '2025-11-30 00:33:14', NULL),
+(4421, 4420, 1, '{\r\n    \"numOficio\": \"CI-40/2025\",\r\n    \"periodo\": \"enero-junio 2024\",\r\n    \"nombreConcurso\": \"Concurso Regional de Ciencias Básicas\",\r\n    \"funcion\": \"COORDINADOR(A) GENERAL REGIONAL\",\r\n    \"actividades\": \"planeación de logística regional y coordinación de sedes\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3,\r\n    \"idJefeCentroInfo\": 4\r\n}', '2025-11-28 20:13:55', 2, '2025-11-30 00:33:14', NULL),
+(4431, 4430, 1, '{\r\n    \"numOficio\": \"CI-41/2025\",\r\n    \"periodo\": \"agosto-diciembre 2024\",\r\n    \"nombreConcurso\": \"Hackathon Nacional TecNM 2024\",\r\n    \"funcion\": \"COORDINADOR(A) GENERAL NACIONAL\",\r\n    \"actividades\": \"supervisión general del evento y enlace con oficinas centrales\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3,\r\n    \"idJefeCentroInfo\": 4\r\n}', '2025-11-28 20:13:55', 2, '2025-11-30 00:33:14', NULL),
+(4441, 4440, 1, '{\r\n    \"numOficio\": \"CI-31/2025\",\r\n    \"periodo\": \"enero-junio 2024\",\r\n    \"nombreConcurso\": \"InnovatecNM 2024\",\r\n    \"funcion\": \"COLABORADOR(A) LOCAL\",\r\n    \"actividades\": \"evaluación de proyectos y apoyo técnico a participantes\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3,\r\n    \"idJefeCentroInfo\": 4\r\n}', '2025-11-28 19:52:05', 2, '2025-11-30 00:33:14', NULL),
+(4451, 4450, 1, '{\r\n    \"numOficio\": \"CI-42/2025\",\r\n    \"periodo\": \"enero-junio 2024\",\r\n    \"nombreConcurso\": \"Torneo Regional de Robótica\",\r\n    \"funcion\": \"COLABORADOR(A) REGIONAL\",\r\n    \"actividades\": \"juez de pista y soporte técnico en área de competencia\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3,\r\n    \"idJefeCentroInfo\": 4\r\n}', '2025-11-28 20:13:55', 2, '2025-11-30 00:33:14', NULL),
+(4461, 4460, 1, '{\r\n    \"numOficio\": \"CI-43/2025\",\r\n    \"periodo\": \"agosto-diciembre 2024\",\r\n    \"nombreConcurso\": \"InnovatecNM Etapa Nacional\",\r\n    \"funcion\": \"COLABORADOR(A) NACIONAL\",\r\n    \"actividades\": \"evaluación de proyectos en la categoría de software\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3,\r\n    \"idJefeCentroInfo\": 4\r\n}', '2025-11-28 20:13:55', 2, '2025-11-30 00:33:14', NULL),
+(4511, 4510, 1, '{\r\n    \"numOficio\": \"DDA-451/2024\",\r\n    \"periodo\": \"del 20 al 22 de mayo de 2024\",\r\n    \"evento\": \"Concurso Local de Ciencias Básicas\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 20:25:14', 2, '2025-11-30 00:33:14', NULL),
+(4521, 4520, 1, '{\r\n    \"numOficio\": \"DDA-452/2024\",\r\n    \"periodo\": \"del 15 al 17 de mayo de 2024\",\r\n    \"evento\": \"Concurso Regional de Creatividad e Innovación\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 20:45:06', 2, '2025-11-30 00:33:14', NULL),
+(4531, 4530, 1, '{\r\n    \"numOficio\": \"DDA-453/2024\",\r\n    \"periodo\": \"del 10 al 15 de noviembre de 2024\",\r\n    \"evento\": \"Cumbre Nacional de Desarrollo Tecnológico\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 20:25:14', 2, '2025-11-30 00:33:14', NULL),
+(4541, 4540, 1, '{\r\n    \"numOficio\": \"DDA-454/2024\",\r\n    \"periodo\": \"del 01 al 05 de diciembre de 2024\",\r\n    \"evento\": \"International Science and Engineering Fair (ISEF)\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 20:45:06', 2, '2025-11-30 00:33:14', NULL),
+(4611, 4610, 1, '{\r\n    \"numOficio\": \"515/2024\",\r\n    \"periodo\": \"Enero - Junio 2024\",\r\n    \"idDirector\": 5,\r\n    \"evaluaciones\": [\r\n        {\"nivel\": \"LOCAL\", \"organismo\": \"Comité de Investigación del IT Culiacán\", \"actividad\": \"Evaluación de protocolos de tesis de posgrado y proyectos de residencia.\", \"fechas\": \"Feb - Jun 2024\"}\r\n    ]\r\n}', '2025-11-28 20:54:55', 5, '2025-11-30 00:33:14', NULL),
+(4621, 4620, 1, '{\r\n    \"numOficio\": \"516/2024\",\r\n    \"periodo\": \"Enero - Junio 2024\",\r\n    \"idDirector\": 5,\r\n    \"evaluaciones\": [\r\n        {\"nivel\": \"NACIONAL\", \"organismo\": \"CACEI / CONAHCYT\", \"actividad\": \"Par evaluador en el proceso de acreditación de la carrera de Ing. en Sistemas (Sede: IT de Morelia).\", \"fechas\": \"15-18 Mar 2024\"}\r\n    ]\r\n}', '2025-11-28 20:54:55', 5, '2025-11-30 00:33:14', NULL),
+(4631, 4630, 1, '{\r\n    \"numOficio\": \"INT-463/2025\",\r\n    \"periodo\": \"Agosto - Diciembre 2025\",\r\n    \"idDirector\": 5,\r\n    \"evaluaciones\": [\r\n        {\"nivel\": \"INTERNACIONAL\", \"organismo\": \"IEEE Latin America\", \"actividad\": \"Revisión técnica y arbitraje (peer-review) de artículos científicos sobre IA.\", \"fechas\": \"10 May 2025\"}\r\n    ]\r\n}', '2025-11-28 21:02:28', 5, '2025-11-30 00:33:14', NULL),
+(4711, 4710, 1, '{\r\n    \"numOficio\": \"CAL-01/2024\",\r\n    \"periodo\": \"del 10 al 12 de abril de 2024\",\r\n    \"tipoAuditoria\": \"Sistema de Gestión de Calidad (SGC)\",\r\n    \"funcion\": \"AUDITOR INTERNO\",\r\n    \"lugar\": \"Instituto Tecnológico de Culiacán\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 21:16:28', 2, '2025-11-30 00:33:14', NULL),
+(4721, 4720, 1, '{\r\n    \"numOficio\": \"CAL-02/2024\",\r\n    \"periodo\": \"del 20 al 24 de mayo de 2024\",\r\n    \"tipoAuditoria\": \"Sistema de Gestión Ambiental (SGA)\",\r\n    \"funcion\": \"AUDITOR INTERNO (EXTERNO)\",\r\n    \"lugar\": \"Instituto Tecnológico de Mazatlán\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 21:16:28', 2, '2025-11-30 00:33:14', NULL),
+(4731, 4730, 1, '{\r\n    \"numOficio\": \"CAL-03/2024\",\r\n    \"periodo\": \"del 15 al 19 de octubre de 2024\",\r\n    \"tipoAuditoria\": \"Sistema de Gestión de Igualdad de Género\",\r\n    \"funcion\": \"AUDITOR LÍDER\",\r\n    \"lugar\": \"Instituto Tecnológico de Culiacán\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 21:16:28', 2, '2025-11-30 00:33:14', NULL),
+(4741, 4740, 1, '{\r\n    \"numOficio\": \"CAL-04/2024\",\r\n    \"periodo\": \"del 01 al 05 de diciembre de 2024\",\r\n    \"tipoAuditoria\": \"Sistema de Gestión Integral\",\r\n    \"funcion\": \"AUDITOR LÍDER (EXTERNO)\",\r\n    \"lugar\": \"Instituto Tecnológico de Guasave\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 21:16:28', 2, '2025-11-30 00:33:14', NULL),
+(4811, 4810, 1, '{\r\n    \"numOficio\": \"DDA-481/2024\",\r\n    \"periodo\": \"Enero - Junio 2024\",\r\n    \"nombrePrograma\": \"Ingeniería en Sistemas Computacionales\",\r\n    \"actividad\": \"Análisis y seguimiento de la retícula en la especialidad de Desarrollo Web\",\r\n    \"idDirector\": 5\r\n}', '2025-11-28 21:34:36', 5, '2025-11-30 00:33:14', NULL),
+(4821, 4820, 1, '{\r\n    \"numOficio\": \"DDA-482/2024\",\r\n    \"periodo\": \"Enero - Junio 2024\",\r\n    \"nombreModulo\": \"Ciberseguridad en Entornos Industriales\",\r\n    \"carrera\": \"Ingeniería Electrónica\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 21:27:18', 2, '2025-11-30 00:33:14', NULL),
+(4831, 4830, 1, '{\r\n    \"numOficio\": \"DDIE-483/2024\",\r\n    \"periodo\": \"Agosto - Diciembre 2024\",\r\n    \"nombrePrograma\": \"Ingeniería en Inteligencia Artificial\",\r\n    \"actividad\": \"Diseño de planes y programas de estudio para la nueva carrera\",\r\n    \"idDirectorDDIE\": 2\r\n}', '2025-11-28 21:34:36', 2, '2025-11-30 00:33:14', NULL),
+(9501, 991, 1, '{\n        \"numeroCedula\": \"12345678\",\n        \"nombrePrograma\": \"DOCTORADO EN CIENCIAS COMPUTACIONALES\",\n        \"clavePrograma\": \"DCC-2023-001\",\n        \"institucion\": \"UNIVERSIDAD NACIONAL DE INNOVACIÓN TECNOLÓGICA\",\n        \"claveInstitucion\": \"UNIT-MX\",\n        \"fechaExpedicion\": \"26 de noviembre de 2024\",\n        \"horaExpedicion\": \"10:30:00 HRS\",\n        \"cadenaOriginal\": \"||1.0|12345|2024-11-26T10:30:00|SEP|...\",\n        \"selloDigital\": \"AbCdEfGhIjKlMnOpQrStUvWxYz1234567890...\",\n        \"firmaElectronica\": \"a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0...\"\n    }', '2025-11-26 20:51:26', 3, '2025-11-30 00:33:14', NULL),
+(9601, 992, 1, '{\n        "numeroCedula": "87654321",\n        "nombrePrograma": "MAESTRÍA EN SISTEMAS DISTRIBUIDOS",\n        "clavePrograma": "MSD-2019-005",\n        "institucion": "INSTITUTO TECNOLÓGICO DE CULIACÁN",\n        "claveInstitucion": "25DIT0021",\n        "fechaExpedicion": "15 de agosto de 2019",\n        "horaExpedicion": "14:00:00 HRS",\n        "cadenaOriginal": "||1.0|87654|2019-08-15T14:00:00|SEP|...",\n        "selloDigital": "ZyXwVuTsRqPoNmLkJiHgFeDcBa0987654321...",\n        "firmaElectronica": "z9y8x7w6v5u4t3s2r1q0p9o8n7m6l5k4j3i2h1..."\n    }', '2025-11-26 20:51:26', 3, '2025-11-30 00:33:14', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `documento`
+--
+
+CREATE TABLE `documento` (
+  `idDocumento` int(11) NOT NULL,
+  `idDocenteActividad` int(11) NOT NULL,
+  `fechaGeneracion` datetime DEFAULT current_timestamp(),
+  `urlArchivo` varchar(500) NOT NULL,
+  `version` int(11) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `grupo`
+--
+
+CREATE TABLE `grupo` (
+  `idGrupo` int(11) NOT NULL,
+  `idDocente` int(11) NOT NULL,
+  `idMateria` int(11) NOT NULL,
+  `idAula` int(11) NOT NULL,
+  `periodo` varchar(50) DEFAULT NULL,
+  `horario` varchar(50) NOT NULL,
+  `numeroAlumnos` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `grupo`
+--
+
+INSERT INTO `grupo` (`idGrupo`, `idDocente`, `idMateria`, `idAula`, `periodo`, `horario`, `numeroAlumnos`) VALUES
+(2, 1, 22, 6, 'ENE-JUN 2024', '11:00 - 12:00', 40),
+(3, 1, 2, 1, 'AGO-DIC 2024', '10:00 - 11:00', 45),
+(4, 1, 22, 6, 'AGO-DIC 2024', '11:00 - 12:00', 40),
+(5, 1, 44, 16, 'ENE-JUN 2024', '09:00 - 10:00', 38),
+(6, 14, 35, 1, 'AGO-DIC 2024', '14:00 - 15:00', 35),
+(7, 14, 30, 7, 'AGO-DIC 2024', '15:00 - 16:00', 30),
+(8, 14, 29, 1, 'AGO-DIC 2024', '14:00 - 15:00', 42),
+(9, 5, 1, 11, 'AGO-DIC 2024', '07:00 - 08:00', 50),
+(10, 5, 10, 12, 'AGO-DIC 2024', '08:00 - 09:00', 48),
+(11, 5, 17, 11, 'ENE-JUN 2024', '07:00 - 08:00', 45),
+(12, 7, 21, 19, 'AGO-DIC 2024', '17:00 - 18:00', 32),
+(13, 7, 34, 19, 'ENE-JUN 2024', '17:00 - 18:00', 35),
+(14, 16, 32, 22, 'AGO-DIC 2024', '12:00 - 13:00', 30),
+(15, 16, 38, 22, 'ENE-JUN 2024', '12:00 - 13:00', 31),
+(16, 16, 8, 2, 'AGO-DIC 2024', '16:00 - 17:00', 41),
+(17, 13, 14, 8, 'AGO-DIC 2024', '13:00 - 14:00', 33),
+(18, 14, 32, 17, 'AGO-DIC 2024', '17:00 - 18:00', 36),
+(19, 13, 27, 20, 'AGO-DIC 2024', '11:00 - 12:00', 39),
+(20, 13, 7, 13, 'AGO-DIC 2024', '10:00 - 11:00', 52),
+(21, 13, 46, 16, 'AGO-DIC 2024', '18:00 - 19:00', 28),
+(22, 13, 25, 23, 'AGO-DIC 2024', '09:00 - 10:00', 40),
+(23, 13, 31, 14, 'AGO-DIC 2024', '16:00 - 17:00', 34),
+(24, 14, 24, 10, 'AGO-DIC 2024', '15:00 - 16:00', 48),
+(25, 5, 11, 9, 'AGO-DIC 2024', '07:00 - 08:00', 55),
+(26, 12, 42, 18, 'AGO-DIC 2024', '14:00 - 15:00', 30);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `materia`
+--
+
+CREATE TABLE `materia` (
+  `idMateria` int(11) NOT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `idDepartamento` int(11) NOT NULL,
+  `creditos` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `materia`
+--
+
+INSERT INTO `materia` (`idMateria`, `nombre`, `idDepartamento`, `creditos`) VALUES
+(1, 'Cálculo Diferencial', 8, 5),
+(2, 'Fundamentos de Programación', 16, 5),
+(3, 'Taller de Ética', 8, 4),
+(4, 'Matemáticas Discretas', 8, 5),
+(5, 'Taller de Administración', 8, 4),
+(6, 'Fundamentos de Investigación', 8, 4),
+(7, 'Cálculo Integral', 8, 5),
+(8, 'Programación Orientada a Objetos', 16, 5),
+(9, 'Contabilidad Financiera', 8, 4),
+(10, 'Álgebra Lineal', 8, 5),
+(11, 'Probabilidad y Estadística', 8, 5),
+(12, 'Química', 8, 4),
+(13, 'Cálculo Vectorial', 8, 5),
+(14, 'Estructura de Datos', 16, 5),
+(15, 'Investigación de Operaciones', 8, 5),
+(16, 'Desarrollo Sustentable', 8, 4),
+(17, 'Física General', 8, 5),
+(18, 'Cultura Empresarial', 8, 4),
+(19, 'Ecuaciones Diferenciales', 8, 5),
+(20, 'Métodos Numéricos', 16, 5),
+(21, 'Tópicos Avanzados de Programación', 16, 5),
+(22, 'Fundamentos de Base de Datos', 16, 5),
+(23, 'Simulación', 16, 5),
+(24, 'Principios Eléctricos y Aplicaciones Digitales', 10, 5),
+(25, 'Graficación', 16, 5),
+(26, 'Fundamentos de Telecomunicaciones', 16, 5),
+(27, 'Sistemas Operativos', 16, 5),
+(28, 'Taller de Base de Datos', 16, 5),
+(29, 'Fundamentos de Ingeniería de Software', 16, 5),
+(30, 'Arquitectura de Computadoras', 16, 5),
+(31, 'Lenguajes y Autómatas I', 16, 5),
+(32, 'Redes de Computadoras', 16, 5),
+(33, 'Taller de Sistemas Operativos', 16, 5),
+(34, 'Administración de Base de Datos', 16, 5),
+(35, 'Ingeniería de Software', 16, 5),
+(36, 'Lenguajes de Interfaz', 16, 5),
+(37, 'Lenguajes y autómatas II', 16, 5),
+(38, 'Conmutación y Enrutamiento en Redes de Datos', 16, 5),
+(39, 'Taller de Investigación I', 8, 4),
+(40, 'Sistemas Programables', 16, 5),
+(41, 'Gestión de Proyectos de Software', 16, 5),
+(42, 'Administración de Redes', 16, 5),
+(43, 'Taller de Investigación II', 8, 4),
+(44, 'Programación Web', 16, 5),
+(45, 'Programación Lógica y Funcional', 16, 5),
+(46, 'Inteligencia Artificial', 16, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `nivelEstudio`
+--
+
+CREATE TABLE `nivelEstudio` (
+  `idNivelEstudio` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `nivelEstudio`
+--
+
+INSERT INTO `nivelEstudio` (`idNivelEstudio`, `nombre`) VALUES
+(1, 'Técnico Superior'),
+(2, 'Licenciatura'),
+(3, 'Especialización'),
+(4, 'Maestría'),
+(5, 'Doctorado');
+
+-- (No hay FK para nivelestudio, es tabla independiente)
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `plaza`
+--
+
+CREATE TABLE `plaza` (
+  `idPlaza` int(11) NOT NULL,
+  `descripcion` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `plaza`
+--
+
+INSERT INTO `plaza` (`idPlaza`, `descripcion`) VALUES
+(381700, 'Tiempo completo'),
+(381800, 'Medio tiempo'),
+(381900, 'Horas parciales'),
+(382000, 'Asignatura aislada');
+
+-- (No hay FK para plaza, es tabla independiente)
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `rol`
+--
+
+CREATE TABLE `rol` (
+  `idRol` int(11) NOT NULL,
+  `descripcion` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `rol`
+--
+
+INSERT INTO `rol` (`idRol`, `descripcion`) VALUES
+(1, 'Administrador del sistema'),
+(2, 'Docente'),
+(3, 'Jefe de Departamento'),
+(4, 'Director de Instituto');
+
+-- (No hay FK para rol, es tabla independiente)
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tipoDocumento`
+--
+
+CREATE TABLE `tipoDocumento` (
+  `idTipoDocumento` int(11) NOT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `plantillaJSON` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`plantillaJSON`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tipoDocumento`
+--
+
+INSERT INTO `tipoDocumento` (`idTipoDocumento`, `nombre`, `descripcion`, `plantillaJSON`) VALUES
+(10, 'Constancia Cumplimiento PIT', 'Documento que avala la acción tutorial, incluyendo número de tutorados y evaluación de impacto (1.1.5).', '{\"campos\": [\"totalTutorados\", \"idJefeDDA\", \"idSubdirectorAcademico\",\"carrera\"]}'),
+(20, 'Constancia Acreditación PE', 'Documento que avala que el PE está acreditado, con vigencia y registro (1.1.6).', '{\"campos\": [\"organismoAcreditador\", \"fechaInicioVigencia\", \"fechaFinVigencia\", \"numRegistro\"]}'),
+(30, 'Constancia Actividad Complementaria', 'Avala el cumplimiento como monitor de crédito complementario (1.1.7).', '{\"campos\": [\"numOficio\", \"dictamen\", \"totalAlumnosAtendidos\", \"alumnosObtuvieronCredito\", \"idJefeDepartamento\", \"idSubdirectorAcademico\"]}'),
+(40, 'Constancia Recurso Educativo Digital', 'Avala la elaboración de un RED aprobado por academia (1.2.1.1).', '{\"campos\": [ \"asignatura\", \"idPresidenteAcademia\", \"idJefeDepto\",\"idJefeDDA\"]}'),
+(50, 'Constancia Manual de Prácticas', 'Avala la elaboración de un Manual de Prácticas (1.2.1.2).', '{\"campos\": [\"numOficio\", \"asignatura\", \"carrera\", \"idJefeDepto\", \"idPresidenteAcademia\", \"idSubdirectorAcademico\"]}'),
+(60, 'Constancia Estrategia Innovadora', 'Avala estrategias didácticas innovadoras (1.2.1.3).', '{\"campos\": [\"numOficio\", \"asignatura\", \"estrategia\", \"programaEducativo\", \"productoObtenido\", \"habilidades\", \"idJefeDepto\", \"idPresidenteAcademia\", \"idSubdirectorAcademico\"]}'),
+(70, 'Constancia Instructor Diplomado', 'Avala participación como instructor en diplomado (1.2.1.4).', '{\"campos\": [\"folioConstancia\", \"nombreDiplomado\", \"duracion\", \"periodoImparticion\", \"fechaExpedicion\", \"idDirectorDDIE\"]}'),
+(80, 'Constancia de Productos (1.2.1.4)', 'Avala productos obtenidos y su impacto.', '{\"campos\": [\"numOficio\", \"asignatura\", \"estrategia\", \"carrera\", \"producto\", \"impacto\", \"idJefeDepto\", \"idPresidenteAcademia\", \"idSubdirectorAcademico\"]}'),
+(90, 'Constancia Exención Examen Profesional', 'Avala la participación como Presidente de Jurado en titulación (1.3.1.1).', '{\"campos\": [\"nombreEstudiante\", \"numControl\", \"carrera\", \"opcionTitulacion\", \"fechaActa\", \"idSecretario\", \"idVocal\", \"idPresidente\"]}'),
+(100, 'Oficio de Comisión (1.2.2.1)', 'Comisión para participar como instructor/facilitador.', '{\"campos\": [\"oficio\", \"nombreCurso\", \"institucionCurso\", \"fechaInicio\", \"fechaFin\", \"idJefeDDA\"]}'),
+(110, 'Oficio Comisión TecNM (1.2.2.2)', 'Comisión para curso de la DDIE (1.2.2.2).', '{\"campos\": [\"oficio\", \"nombreCurso\", \"fechaInicio\", \"fechaFin\", \"idJefeDDA\"]}'),
+(120, 'Oficio Comisión Pensamiento Crítico (1.2.2.3)', 'Comisión para Diplomado en Pensamiento Crítico (1.2.2.3).', '{\"campos\": [\"oficio\", \"nombreCurso\", \"fechaInicio\", \"fechaFin\", \"idJefeDDA\"]}'),
+(130, 'Oficio Comisión Ambientes Virtuales (1.2.2.5)', 'Comisión para Diplomado en Ambientes Virtuales (1.2.2.5).', '{\"campos\": [\"oficio\", \"nombreCurso\", \"fechaInicio\", \"fechaFin\", \"idJefeDDA\"]}'),
+(131, 'Oficio Comisión Inclusiva (1.2.2.6)', 'Comisión para Diplomado Inclusiva.', '{\"campos\": [\"oficio\", \"nombreCurso\", \"fechaInicio\", \"fechaFin\", \"idJefeDDA\"]}'),
+(132, 'Oficio Comisión Estratégicos (1.2.2.7)', 'Comisión 1.2.2.7', '{\"campos\": [\"oficio\", \"nombreCurso\", \"fechaInicio\", \"fechaFin\", \"idJefeDDA\"]}'),
+(140, 'Constancia de Recursos Humanos (01)', 'Constancia de servicios y situación laboral.', '{\"campos\": [\"numOficio\", \"filiacion\", \"fechaContratacion\", \"clavePresupuestal\", \"fechaEfectos\", \"periodoInicio\", \"periodoFin\", \"idJefeRH\"]}'),
+(150, 'Carta de Exclusividad Laboral (04)', 'Compromiso de exclusividad para tiempo completo.', '{\"campos\": [\"filiacion\", \"clavePresupuestal\"]}'),
+(155, 'Constancia Proyecto Investigación (05)', 'Avala proyecto de investigación vigente.', '{\"campos\": [\"numOficio\", \"tituloProyecto\", \"claveRegistro\", \"vigenciaInicio\", \"vigenciaFin\", \"idDirector\", \"idSubdirector\"]}'),
+(160, 'Constancia Actualización CVU (06)', 'Avala el registro y actualización del CVU-TecNM.', '{\"campos\": [\"numOficio\", \"registroCVU\", \"anioCVU\", \"idJefeDDA\"]}'),
+(170, 'Constancia Alumnos Atendidos (07)', 'Desglose de materias impartidas y alumnos atendidos.', '{\"campos\": [\"expediente\", \"anio\", \"idJefeEscolares\"]}'),
+(180, 'Horario de Actividades (1.1.1)', 'Formato completo de carga académica y actividades.', '{\"campos\": [\"horasPreparacion\", \"actividadesApoyo\", \"actividadesAdmin\", \"idJefeDDA\", \"idSubdirector\"]}'),
+(181, 'Horario Asignaturas Adicionales (1.1.2)', 'Evidencia de asignaturas adicionales (mismo formato que 1.1.1).', '{\"campos\": [\"horasPreparacion\", \"actividadesApoyo\", \"actividadesAdmin\", \"idJefeDDA\", \"idSubdirector\"]}'),
+(182, 'Horario Posgrado (1.1.3)', 'Evidencia de asignaturas de posgrado (formato horario).', '{\"campos\": [\"horasPreparacion\", \"actividadesApoyo\", \"actividadesAdmin\", \"idJefeDDA\", \"idSubdirector\"]}'),
+(183, 'Estudiantes Atendidos (1.1.4)', 'Evidencia de estudiantes atendidos ', '{\"campos\": [\"expediente\", \"anio\", \"idJefeEscolares\"]}'),
+(190, 'Comprobante de Pago (Talón)', 'Recibo de nómina oficial (02).', '{\"campos\": [\"periodoPago\", \"numEmpleado\", \"fechaEmision\", \"percepciones\", \"deducciones\"]}'),
+(195, 'Cédula Profesional Doctorado (1.4.9.1)', 'Evidencia de grado de doctorado.', '{\"campos\": [\"numeroCedula\", \"nombrePrograma\", \"clavePrograma\", \"institucion\", \"claveInstitucion\", \"fechaExpedicion\", \"horaExpedicion\", \"cadenaOriginal\", \"selloDigital\", \"firmaElectronica\"]}'),
+(196, 'Cédula Profesional Maestría (1.4.9.2)', 'Evidencia de grado de maestría.', '{\"campos\": [\"numeroCedula\", \"nombrePrograma\", \"clavePrograma\", \"institucion\", \"claveInstitucion\", \"fechaExpedicion\", \"horaExpedicion\", \"cadenaOriginal\", \"selloDigital\", \"firmaElectronica\"]}'),
+(200, 'Propuesta Programa de Estudio (1.4.8.3)', 'Elaboración de propuesta para apertura de programas.', '{\"campos\": [\"oficio\", \"nombreProyecto\", \"fechaInicio\", \"fechaFin\", \"actividades\", \"idJefeDepto\", \"idPresidenteAcademia\", \"idSubdirectorAcademico\"]}'),
+(210, 'Oficio Sabático/Beca (08)', 'Documento de autorización de sabático o beca comisión.', '{\"campos\": [\"numOficio\", \"idJefeDepto\", \"idPresidenteAcademia\", \"idSubdirectorAcademico\"]}'),
+(215, 'Licencia por Gravidez (09)', 'Oficio de autorización de licencia por gravidez.', '{\"campos\": [\"numOficio\", \"fechaInicio\", \"fechaFin\", \"idJefeRH\", \"idDirector\"]}'),
+(216, 'Cédula Profesional (Req. 10)', 'Evidencia de cédula profesional (Requisito 10).', '{\"campos\": [\"numeroCedula\", \"nombrePrograma\", \"clavePrograma\", \"institucion\", \"claveInstitucion\", \"fechaExpedicion\", \"horaExpedicion\", \"cadenaOriginal\", \"selloDigital\", \"firmaElectronica\", \"nivel\"]}'),
+(220, 'Liberación de Actividades (11)', 'Constancia de cumplimiento de actividades docentes.', '{\"campos\": [\"semestre\", \"estadoLiberacion\", \"lugarFecha\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(230, 'Liberación Actividades Académicas (12)', 'Constancia de cumplimiento de actividades de academia.', '{\"campos\": [\"semestre\", \"lugarFecha\", \"otrosActividad\", \"idPresidenteAcademia\", \"idJefeDepto\"]}'),
+(240, 'Reporte de Investigación (13)', 'Reporte de proyectos de investigación en proceso o terminados.', '{\"campos\": [\"semestre\", \"lugarFecha\", \"proyectos\", \"idCoordinadorInvestigacion\"]}'),
+(250, 'Evaluación Desempeño Docente (14)', 'Resultado de la evaluación estudiantil (14).', '{\"campos\": [\"periodoEvaluado\", \"calificacionFinal\", \"desempeno\", \"resultados\", \"idJefeDDA\", \"idSubdirector\"]}'),
+(312, 'Acta Examen Especialización (1.3.1.2)', 'Variante de Exención para Especialización', '{\"campos\": [\"nombreEstudiante\", \"numControl\", \"carrera\", \"opcionTitulacion\", \"fechaActa\", \"idPresidente\", \"idSecretario\", \"idVocal\"]}'),
+(313, 'Acta Examen Maestría (1.3.1.3)', 'Variante de Exención para Maestría', '{\"campos\": [\"nombreEstudiante\", \"numControl\", \"carrera\", \"opcionTitulacion\", \"fechaActa\", \"idPresidente\", \"idSecretario\", \"idVocal\"]}'),
+(314, 'Constancia Codirección Maestría (1.3.1.4)', 'Codirección de tesis maestría.', '{\"campos\": [\"nombreTesista\", \"tituloTesis\", \"fechaExamen\", \"idDirector\", \"idCodirector\"]}'),
+(315, 'Acta Examen Doctorado (1.3.1.5)', 'Variante de Exención para Doctorado', '{\"campos\": [\"nombreEstudiante\", \"numControl\", \"carrera\", \"opcionTitulacion\", \"fechaActa\", \"idPresidente\", \"idSecretario\", \"idVocal\"]}'),
+(316, 'Constancia Codirección Doctorado (1.3.1.6)', 'Codirección de tesis doctorado.', '{\"campos\": [\"nombreTesista\", \"tituloTesis\", \"fechaExamen\", \"idDirector\", \"idCodirector\"]}'),
+(321, 'Sinodal Técnico Superior (1.3.2.1)', 'Participación como sinodal nivel TSU.', '{\"campos\": [\"numOficio\", \"folioActa\", \"fechaExamen\", \"nombreEstudiante\", \"carrera\", \"rol\", \"idJefeEscolares\"]}'),
+(322, 'Sinodal Licenciatura (1.3.2.2)', 'Participación como sinodal nivel Licenciatura.', '{\"campos\": [\"numOficio\", \"folioActa\", \"fechaExamen\", \"nombreEstudiante\", \"carrera\", \"rol\", \"idJefeEscolares\"]}'),
+(323, 'Sinodal Especialización (1.3.2.3)', 'Participación como sinodal nivel Especialización.', '{\"campos\": [\"numOficio\", \"folioActa\", \"fechaExamen\", \"nombreEstudiante\", \"carrera\", \"rol\", \"idJefeEscolares\"]}'),
+(324, 'Sinodal Maestría (1.3.2.4)', 'Participación como sinodal nivel Maestría.', '{\"campos\": [\"numOficio\", \"folioActa\", \"fechaExamen\", \"nombreEstudiante\", \"carrera\", \"rol\", \"idJefeEscolares\"]}'),
+(325, 'Sinodal Doctorado (1.3.2.5)', 'Participación como sinodal nivel Doctorado.', '{\"campos\": [\"numOficio\", \"folioActa\", \"fechaExamen\", \"nombreEstudiante\", \"carrera\", \"rol\", \"idJefeEscolares\"]}'),
+(410, 'Asesoría Ciencias Básicas (1.4.1)', 'Constancia de asesoría en ciencias básicas.', '{\"campos\": [\"numOficio\", \"asignatura\", \"totalAlumnos\", \"periodo\", \"idJefeCienciasBasicas\", \"idSubdirector\"]}'),
+(421, 'Proyectos Locales/Regionales (1.4.2.1)', 'Constancia de participación en proyectos de alcance local o regional.', '{\"campos\": [\"periodo\", \"proyectos\", \"idJefeDepto\", \"idSubdirector\", \"idJefeInvestigacion\"]}'),
+(422, 'Proyectos Nacionales (1.4.2.2)', 'Constancia de participación en proyectos de alcance nacional.', '{\"campos\": [\"periodo\", \"proyectos\", \"idJefeDepto\", \"idSubdirector\", \"idJefeInvestigacion\"]}'),
+(423, 'Proyectos Internacionales (1.4.2.3)', 'Constancia de participación en proyectos de alcance internacional.', '{\"campos\": [\"periodo\", \"proyectos\", \"idJefeDepto\", \"idSubdirector\", \"idJefeInvestigacion\"]}'),
+(431, 'Asesoría Creatividad/Innovación (1.4.3.1)', 'Constancia de asesoría en proyectos de creatividad.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreProyecto\", \"estudiantes\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(432, 'Asesoría Diseño Prototipos/Software (1.4.3.2)', 'Constancia de asesoría en diseño.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreProyecto\", \"estudiantes\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(433, 'Asesoría Desarrollo Prototipos/Software (1.4.3.3)', 'Constancia de asesoría en desarrollo.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreProyecto\", \"estudiantes\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(434, 'Asesoría Diseño/Desarrollo Equipo (1.4.3.4)', 'Constancia de asesoría en equipo.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreProyecto\", \"estudiantes\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(435, 'Asesoría Servicio Social (1.4.3.5)', 'Constancia de asesoría en servicio social.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreProyecto\", \"estudiantes\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(436, 'Asesoría Residencia Profesional (1.4.3.6)', 'Constancia de asesoría en residencia profesional.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreProyecto\", \"estudiantes\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(441, 'Coord. General Local (1.4.4.1)', 'Coordinador General Local de concurso.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreConcurso\", \"funcion\", \"actividades\", \"idJefeDepto\", \"idSubdirector\", \"idJefeCentroInfo\"]}'),
+(442, 'Coord. General Regional (1.4.4.2)', 'Coordinador General Regional.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreConcurso\", \"funcion\", \"actividades\", \"idJefeDepto\", \"idSubdirector\", \"idJefeCentroInfo\"]}'),
+(443, 'Coord. General Nacional/Int (1.4.4.3)', 'Coordinador General Nacional/Internacional.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreConcurso\", \"funcion\", \"actividades\", \"idJefeDepto\", \"idSubdirector\", \"idJefeCentroInfo\"]}'),
+(444, 'Colaborador Local (1.4.4.4)', 'Colaborador Local de concurso.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreConcurso\", \"funcion\", \"actividades\", \"idJefeDepto\", \"idSubdirector\", \"idJefeCentroInfo\"]}'),
+(445, 'Colaborador Regional (1.4.4.5)', 'Colaborador Regional.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreConcurso\", \"funcion\", \"actividades\", \"idJefeDepto\", \"idSubdirector\", \"idJefeCentroInfo\"]}'),
+(446, 'Colaborador Nacional/Int (1.4.4.6)', 'Colaborador Nacional/Internacional.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreConcurso\", \"funcion\", \"actividades\", \"idJefeDepto\", \"idSubdirector\", \"idJefeCentroInfo\"]}'),
+(451, 'Jurado Local (1.4.5.1)', 'Participación como Jurado Local.', '{\"campos\": [\"numOficio\", \"periodo\", \"evento\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(452, 'Jurado Estatal/Regional (1.4.5.2)', 'Participación como Jurado Regional.', '{\"campos\": [\"numOficio\", \"periodo\", \"evento\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(453, 'Jurado Nacional (1.4.5.3)', 'Participación como Jurado Nacional.', '{\"campos\": [\"numOficio\", \"periodo\", \"evento\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(454, 'Jurado Internacional (1.4.5.4)', 'Participación como Jurado Internacional.', '{\"campos\": [\"numOficio\", \"periodo\", \"evento\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(461, 'Comité Evaluación Local (1.4.6.1)', 'Participación en comités locales.', '{\"campos\": [\"numOficio\", \"periodo\", \"evaluaciones\", \"idDirector\", \"idJefeDepto\"]}'),
+(462, 'Comité Evaluación Nacional (1.4.6.2)', 'Participación en comités nacionales.', '{\"campos\": [\"numOficio\", \"periodo\", \"evaluaciones\", \"idDirector\", \"idJefeDepto\"]}'),
+(463, 'Comité Evaluación Internacional (1.4.6.3)', 'Participación en comités internacionales.', '{\"campos\": [\"numOficio\", \"periodo\", \"evaluaciones\", \"idDirector\", \"idJefeDepto\"]}'),
+(471, 'Auditor Interno Local (1.4.7.1)', 'Participación como Auditor Interno en la institución.', '{\"campos\": [\"numOficio\", \"periodo\", \"tipoAuditoria\", \"funcion\", \"lugar\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(472, 'Auditor Interno Externo (1.4.7.2)', 'Participación como Auditor Interno fuera de la institución.', '{\"campos\": [\"numOficio\", \"periodo\", \"tipoAuditoria\", \"funcion\", \"lugar\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(473, 'Auditor Líder Local (1.4.7.3)', 'Participación como Auditor Líder en la institución.', '{\"campos\": [\"numOficio\", \"periodo\", \"tipoAuditoria\", \"funcion\", \"lugar\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(474, 'Auditor Líder Externo (1.4.7.4)', 'Participación como Auditor Líder fuera de la institución.', '{\"campos\": [\"numOficio\", \"periodo\", \"tipoAuditoria\", \"funcion\", \"lugar\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(481, 'Desarrollo Curricular Local (1.4.8.1.1)', 'Diseño o seguimiento curricular nivel local.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombrePrograma\", \"actividad\", \"idDirector\"]}'),
+(482, 'Diseño Módulos Especialidad (1.4.8.2)', 'Constancia de diseño de módulos de especialidad.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreModulo\", \"carrera\", \"idJefeDepto\", \"idSubdirector\"]}'),
+(483, 'Desarrollo Curricular Nacional (1.4.8.1.2)', 'Diseño o seguimiento curricular nivel nacional.', '{"campos": ["numOficio", "periodo", "nombrePrograma", "actividad", "idDirectorDDIE"]}');
+
+-- (No hay FK para tipodocumento, es tabla independiente)
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuario`
+--
+
+CREATE TABLE `usuario` (
+  `idUsuario` int(11) NOT NULL,
+  `nombreUsuario` varchar(50) NOT NULL,
+  `apePatUsuario` varchar(50) DEFAULT NULL,
+  `apeMatUsuario` varchar(50) DEFAULT NULL,
+  `telefono` char(10) DEFAULT NULL,
+  `correoUsuario` varchar(100) NOT NULL,
+  `contrasenaUsuario` varchar(150) NOT NULL,
+  `estatus` tinyint(4) NOT NULL DEFAULT 1,
+  `idRol` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`idUsuario`, `nombreUsuario`, `apePatUsuario`, `apeMatUsuario`, `telefono`, `correoUsuario`, `contrasenaUsuario`, `estatus`, `idRol`) VALUES
+(1, 'Felipe', 'Muñiz', 'Ramos', '6671234501', 'felipe_muniz@itculiacan.edu.mx', 'Felipe123', 1, 2),
+(2, 'Fernando', 'Gámez', 'Román', '6671234502', 'fernando_gamez@itculiacan.edu.mx', 'Fernando123', 1, 1),
+(3, 'Bertha', 'Patrón', 'Arellano', '6675076066', 'bertha_patron@itculiacan.edu.mx', '$2b$10$/CwbgCSw21y3KQRk0TRfMeAO.tOpv2Wds1zFqYUfyUfhNwckSkRbG', 1, 3),
+(4, 'Martha', 'Valenzuela', 'Tirado', '6671234504', 'martha_valenzuela@itculiacan.edu.mx', 'Martha123', 1, 2),
+(5, 'Martín', 'Félix', '', '6671234505', 'martin_felix@itculiacan.edu.mx', 'Martín123', 1, 2),
+(6, 'Martín', 'Nevárez', 'Rivas', '6671234506', 'martinevarez@itculiacan.edu.mx', 'Martín123', 1, 2),
+(7, 'Mirna', 'Quevedo', 'Camacho', '6671234507', 'mirna_quevedo@itculiacan.edu.mx', 'Mirna123', 1, 2),
+(8, 'Víctor', 'Bátiz', 'Beltrán', '6671234508', 'Vbatiz@itculiacan.edu.mx', 'Víctor123', 1, 2),
+(9, 'Wendy', 'Astorga', 'Pacheco', '6671234509', 'wendy_astorga@itculiacan.edu.mx', 'Wendy123', 1, 2),
+(10, 'Aldo', 'Uriarte', 'Portillo', '6671234510', 'auriarte@itculiacan.edu.mx', 'Aldo123', 1, 2),
+(11, 'Alejandra', 'García', 'Sandoval', '6671234511', 'alejandra.garcia@itculiacan.edu.mx', 'Alejandra123', 0, 2),
+(12, 'Noel', 'García', 'Inzunza', '6671234512', 'noel_garcia@itculiacan.edu.mx', 'Noel123', 1, 2),
+(13, 'Nora', 'Cancela', 'García', '6671234513', 'cancela.garcia@itculiacan.edu.mx', 'Nora123', 1, 2),
+(14, 'Norma', 'Godoy', 'Castro', '6671234514', 'rebecagodoy@itculiacan.edu.mx', 'Norma123', 1, 2),
+(15, 'Norman', 'Esparza', 'Soto', '6671234515', 'SalvadorElenes@itculiacan.edu.mx', 'Norman123', 1, 2),
+(16, 'Pedro', 'Villa', 'Casas', '6671234516', 'pevica@itculiacan.edu.mx', 'Pedro123', 1, 2),
+(17, 'Ramón', 'Zatarain', 'Cabada', '6671234517', 'rzatarain@itculiacan.edu.mx', 'Ramón123', 1, 2),
+(18, 'Ricardo', 'García', 'Osuna', '6671234518', 'ricardo_garcia@itculiacan.edu.mx', 'Ricardo123', 1, 2),
+(19, 'Ricardo', 'Quintero', 'Meza', '6671234519', 'rquintero@itculiacan.edu.mx', 'Ricardo123', 1, 2),
+(20, 'Gualberto', 'Leyva', 'Gutiérrez', '6671234520', 'gualberto_leyva@itculiacan.edu.mx', 'Gualberto123', 1, 2),
+(21, 'Héctor', 'Rodríguez', 'Rángel', '6671234521', 'hrodriguez@itculiacan.edu.mx', 'Héctor123', 1, 2),
+(22, 'Marco', 'Rodríguez', 'Avilés', '6671234522', 'ramarco@itculiacan.edu.mx', 'Marco123', 1, 2),
+(23, 'María', 'Martínez', 'Amaya', '6671234523', 'aracely_martinez@itculiacan.edu.mx', 'María123', 0, 2),
+(24, 'María', 'González', 'Álvarez', '6671234524', 'rgonzalez@itculiacan.edu.mx', 'María123', 1, 2),
+(25, 'María', 'Cárdenas', 'Mosqueda', '6671234525', 'mecmosqueda@itculiacan.edu.mx', 'María123', 1, 2),
+(26, 'Joaquín', 'Salazar', 'Araujo', '6671234526', 'idyjrsg@itculiacan.edu.mx', 'Joaquín123', 1, 2),
+(27, 'Jorge', 'Moya', 'Palazuelos', '6671234527', 'jmoya@itculiacan.edu.mx', 'Jorge123', 1, 2),
+(28, 'Jorge', 'Leal', 'Rendón', '6671234528', 'Jorge_leal@itculiacan.edu.mx', 'Jorge123', 1, 2),
+(29, 'Carlos', 'Sandoval', 'Castellanos', '6671234529', 'carlos_sandoval@itculiacan.edu.mx', 'Carlos123', 1, 2),
+(30, 'César', 'Sánchez', 'Beltrán', '6671234530', 'cesar_sanchez@itculiacan.edu.mx', 'César123', 1, 2),
+(31, 'Jesslie', 'Rodríguez', 'Rodríguez', '6671234531', 'Jesslie_rodriguez@itculiacan.edu.mx', 'Jesslie123', 1, 2),
+(32, 'Gabriel', 'López', 'Escárrega', '6671234532', 'glopez@itculiacan.edu.mx', 'Gabriel123', 1, 2),
+(33, 'Francisca', 'Piña', 'Zazueta', '6671234533', 'francis.pina@itculiacan.edu.mx', 'Francisca123', 1, 4),
+(34, 'María', 'Sánchez', 'López', '6675076061', 'maria_sanchez@itculiacan.edu.mx', '$2b$10$stmgtPZ6H.hgd9VkTe/Vwerp20fXpFaVQ4nClmXTMviOZpvBhMM/y', 1, 3);
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `actividadInstitucional`
+--
+ALTER TABLE `actividadInstitucional`
+  ADD PRIMARY KEY (`idActividadInstitucional`),
+  ADD KEY `idx_ai_tipodoc` (`idTipoDocumento`);
+
+--
+-- Indices de la tabla `aula`
+--
+ALTER TABLE `aula`
+  ADD PRIMARY KEY (`idAula`);
+
+--
+-- Indices de la tabla `carrera`
+--
+ALTER TABLE `carrera`
+  ADD PRIMARY KEY (`idCarrera`);
+
+--
+-- Indices de la tabla `departamento`
+--
+ALTER TABLE `departamento`
+  ADD PRIMARY KEY (`idDepartamento`),
+  ADD KEY `idx_dep_encargado` (`encargadoDepartamento`);
+
+--
+-- Indices de la tabla `docente`
+--
+ALTER TABLE `docente`
+  ADD PRIMARY KEY (`idDocente`),
+  ADD KEY `idx_docente_usuario` (`idUsuario`),
+  ADD KEY `idx_docente_nivel` (`idNivelEstudio`),
+  ADD KEY `idx_docente_dep` (`idDepartamento`),
+  ADD KEY `idx_docente_plaza` (`idPlaza`);
+
+--
+-- Indices de la tabla `docenteActividad`
+--
+ALTER TABLE `docenteActividad`
+  ADD PRIMARY KEY (`idDocenteActividad`),
+  ADD KEY `idx_da_act` (`idActividadInstitucional`),
+  ADD KEY `idx_da_doc` (`idDocente`),
+  ADD KEY `idx_da_validado` (`validadoPor`);
+
+--
+-- Indices de la tabla `documento`
+--
+ALTER TABLE `documento`
+  ADD PRIMARY KEY (`idDocumento`),
+  ADD KEY `idx_documento_da` (`idDocenteActividad`);
+
+--
+-- Indices de la tabla `grupo`
+--
+ALTER TABLE `grupo`
+  ADD PRIMARY KEY (`idGrupo`),
+  ADD KEY `idx_grupo_docente` (`idDocente`),
+  ADD KEY `idx_grupo_materia` (`idMateria`),
+  ADD KEY `idx_grupo_aula` (`idAula`);
+
+--
+-- Indices de la tabla `materia`
+--
+ALTER TABLE `materia`
+  ADD PRIMARY KEY (`idMateria`),
+  ADD KEY `idx_materia_departamento` (`idDepartamento`);
+
+--
+-- Indices de la tabla `nivelEstudio`
+--
+ALTER TABLE `nivelEstudio`
+  ADD PRIMARY KEY (`idNivelEstudio`);
+
+--
+-- Indices de la tabla `plaza`
+--
+ALTER TABLE `plaza`
+  ADD PRIMARY KEY (`idPlaza`);
+
+--
+-- Indices de la tabla `rol`
+--
+ALTER TABLE `rol`
+  ADD PRIMARY KEY (`idRol`);
+
+--
+-- Indices de la tabla `tipoDocumento`
+--
+ALTER TABLE `tipoDocumento`
+  ADD PRIMARY KEY (`idTipoDocumento`);
+
+--
+-- Indices de la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  ADD PRIMARY KEY (`idUsuario`),
+  ADD UNIQUE KEY `correoUsuario` (`correoUsuario`),
+  ADD KEY `idx_usuario_rol` (`idRol`);
+
+--
+-- Restricciones de integridad referencial (Foreign Keys)
+--
+
+--
+-- Restricciones para la tabla `actividadInstitucional`
+--
+ALTER TABLE `actividadInstitucional`
+  ADD CONSTRAINT `fk_actividadinst_tipodoc` 
+  FOREIGN KEY (`idTipoDocumento`) 
+  REFERENCES `tipoDocumento` (`idTipoDocumento`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE;
+
+--
+-- Restricciones para la tabla `departamento`
+--
+ALTER TABLE `departamento`
+  ADD CONSTRAINT `fk_departamento_encargado` 
+  FOREIGN KEY (`encargadoDepartamento`) 
+  REFERENCES `docente` (`idDocente`) 
+  ON DELETE SET NULL 
+  ON UPDATE CASCADE;
+
+--
+-- Restricciones para la tabla `docente`
+--
+ALTER TABLE `docente`
+  ADD CONSTRAINT `fk_docente_usuario` 
+  FOREIGN KEY (`idUsuario`) 
+  REFERENCES `usuario` (`idUsuario`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_docente_nivel` 
+  FOREIGN KEY (`idNivelEstudio`) 
+  REFERENCES `nivelEstudio` (`idNivelEstudio`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_docente_departamento` 
+  FOREIGN KEY (`idDepartamento`) 
+  REFERENCES `departamento` (`idDepartamento`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_docente_plaza` 
+  FOREIGN KEY (`idPlaza`) 
+  REFERENCES `plaza` (`idPlaza`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE;
+
+--
+-- Restricciones para la tabla `docenteActividad`
+--
+ALTER TABLE `docenteActividad`
+  ADD CONSTRAINT `fk_docenteact_actividad` 
+  FOREIGN KEY (`idActividadInstitucional`) 
+  REFERENCES `actividadInstitucional` (`idActividadInstitucional`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_docenteact_docente` 
+  FOREIGN KEY (`idDocente`) 
+  REFERENCES `docente` (`idDocente`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_docenteact_validador` 
+  FOREIGN KEY (`validadoPor`) 
+  REFERENCES `docente` (`idDocente`) 
+  ON DELETE SET NULL 
+  ON UPDATE CASCADE;
+
+--
+-- Restricciones para la tabla `documento`
+--
+ALTER TABLE `documento`
+  ADD CONSTRAINT `fk_documento_docenteact` 
+  FOREIGN KEY (`idDocenteActividad`) 
+  REFERENCES `docenteActividad` (`idDocenteActividad`) 
+  ON DELETE CASCADE 
+  ON UPDATE CASCADE;
+
+--
+-- Restricciones para la tabla `grupo`
+--
+ALTER TABLE `grupo`
+  ADD CONSTRAINT `fk_grupo_docente` 
+  FOREIGN KEY (`idDocente`) 
+  REFERENCES `docente` (`idDocente`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_grupo_materia` 
+  FOREIGN KEY (`idMateria`) 
+  REFERENCES `materia` (`idMateria`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_grupo_aula` 
+  FOREIGN KEY (`idAula`) 
+  REFERENCES `aula` (`idAula`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE;
+
+--
+-- Restricciones para la tabla `materia`
+--
+ALTER TABLE `materia`
+  ADD CONSTRAINT `fk_materia_departamento` 
+  FOREIGN KEY (`idDepartamento`) 
+  REFERENCES `departamento` (`idDepartamento`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE;
+
+--
+-- Restricciones para la tabla `usuario`
+--
+ALTER TABLE `usuario`
+  ADD CONSTRAINT `fk_usuario_rol` 
+  FOREIGN KEY (`idRol`) 
+  REFERENCES `rol` (`idRol`) 
+  ON DELETE RESTRICT 
+  ON UPDATE CASCADE;
+
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
