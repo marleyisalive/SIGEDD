@@ -3,7 +3,7 @@ export interface docenteactividad {
   idDocenteActividad: number;
   idActividadInstitucional: number;
   idDocente: number;
-  datosCapturados: any; 
+  datosCapturados: any;
   fechaRegistro?: Date | null;
   validadoPor?: number | null;
   fechaValidacion?: Date | null;

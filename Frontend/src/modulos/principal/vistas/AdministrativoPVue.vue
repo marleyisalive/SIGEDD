@@ -75,14 +75,19 @@
     </div>
   </div>
 </template>
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { getNombreCompleto, logout } from "@/utils/auth";
 
 const router = useRouter();
 
 // Nombre del administrativo
-const usuario = ref("Nombre Administrativo");
+const usuario = ref("Usuario");
+
+onMounted(() => {
+  usuario.value = getNombreCompleto();
+});
 
 // Registros del historial
 const documentos = ref([
@@ -125,7 +130,8 @@ const validarDocentes = () => {
 
 // Salir
 const salir = () => {
-  router.push("/login");
+  logout();
+  router.push("/inicio");
 };
 </script>
 <style scoped>

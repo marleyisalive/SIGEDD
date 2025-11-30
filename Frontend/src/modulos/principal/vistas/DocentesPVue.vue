@@ -1,9 +1,12 @@
 <template>
   <div class="contenedor-principal">
-
     <!-- ENCABEZADO CON LOGO Y BIENVENIDA -->
     <div class="encabezado">
-      <img src="../../../assets/sigedd-logo.png" class="logo-sigedd" alt="logo" />
+      <img
+        src="../../../assets/sigedd-logo.png"
+        class="logo-sigedd"
+        alt="logo"
+      />
 
       <h2 class="bienvenida">
         Bienvenid@, <span class="nombre-usuario">{{ usuario }}</span>
@@ -12,8 +15,14 @@
 
     <!-- BOTONES PRINCIPALES -->
     <div class="botones">
-      <button class="btn btn-azul">Documentos <br /> Listos</button>
-      <button class="btn btn-verde">Generar <br /> Documentos</button>
+      <button class="btn btn-azul">
+        Documentos <br />
+        Listos
+      </button>
+      <button class="btn btn-verde">
+        Generar <br />
+        Documentos
+      </button>
     </div>
 
     <!-- HISTORIAL -->
@@ -37,7 +46,9 @@
         <tbody>
           <!-- Si NO hay documentos -->
           <tr v-if="documentos.length === 0">
-            <td colspan="8" class="sin-documentos">No hay documentos generados todavía</td>
+            <td colspan="8" class="sin-documentos">
+              No hay documentos generados todavía
+            </td>
           </tr>
 
           <!-- Si hay documentos -->
@@ -51,22 +62,24 @@
             <td>{{ doc.fechaEnvio }}</td>
             <td>{{ doc.fechaValidacion }}</td>
           </tr>
-
         </tbody>
       </table>
     </div>
-
   </div>
 </template>
 
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import { getNombreCompleto } from "@/utils/auth";
 
-<script setup>
-import { ref } from "vue";
+// Obtener nombre del usuario desde localStorage
+const usuario = ref("Usuario");
 
-// ← Aquí asignas el nombre que venga del login
-const usuario = ref("Nombre del Usuario");
+onMounted(() => {
+  usuario.value = getNombreCompleto();
+});
 
-// ← Tabla dinámica 
+// ← Tabla dinámica
 const documentos = ref([]);
 
 // OPCIONAL: para probar, agrega elementos así:
@@ -80,18 +93,17 @@ const documentos = ref([]);
 //   fechaEnvio: "10/12/25",
 //   fechaValidacion: "-"
 // });
-
 </script>
 
-
 <style scoped>
-:global(:root){
-  --azul-oscuro: #0F3B75;
-  --azul-claro: #D9EAF7;
-  --verde: #4CAF50;
+:global(:root) {
+  --azul-oscuro: #0f3b75;
+  --azul-claro: #d9eaf7;
+  --verde: #4caf50;
   --texto-oscuro: #1a1a1a;
 
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu,
+    Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 /* FONDO GENERAL */
@@ -112,7 +124,6 @@ const documentos = ref([]);
 
 .logo-sigedd {
   width: 560px;
-  
 }
 
 .bienvenida {
@@ -177,7 +188,6 @@ const documentos = ref([]);
   opacity: 0.8;
 }
 
-
 /* TABLA */
 .tabla-historial {
   width: 100%;
@@ -188,12 +198,12 @@ const documentos = ref([]);
 .tabla-historial th {
   text-align: left;
   padding: 12px;
-  border-bottom: 2px solid rgba(255,255,255,0.2);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .tabla-historial td {
   padding: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tabla-historial tr:last-child td {

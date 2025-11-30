@@ -1,23 +1,26 @@
 <template>
   <div class="login-container">
-
     <div class="login-card">
-      <img src="../../../assets/sigedd-logo.png" class="logo" alt="SIGEDD">
+      <img src="../../../assets/sigedd-logo.png" class="logo" alt="SIGEDD" />
 
       <h2 class="titulo">Iniciar Sesión</h2>
 
       <div class="form-group">
         <label>Correo electrónico</label>
-        <input type="text" v-model="email" placeholder="correo@itculiacan.edu.mx">
+        <input
+          type="text"
+          v-model="email"
+          placeholder="correo@itculiacan.edu.mx"
+        />
       </div>
 
       <div class="form-group">
         <label>Contraseña</label>
-        <input type="password" v-model="password" placeholder="********">
+        <input type="password" v-model="password" placeholder="********" />
       </div>
 
       <button class="btn-iniciar" @click="iniciarSesion">Iniciar Sesión</button>
-      <p v-if="error" style="color:crimson; margin-top:8px">{{ error }}</p>
+      <p v-if="error" style="color: crimson; margin-top: 8px">{{ error }}</p>
 
       <!-- Bootstrap modal para notificaciones importantes -->
       <div
@@ -31,25 +34,28 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">{{ modalTitle }}</h5>
-              <button type="button" class="btn-close" @click="hideModal" aria-label="Close"></button>
+              <button
+                type="button"
+                class="btn-close"
+                @click="hideModal"
+                aria-label="Close"
+              ></button>
             </div>
             <div class="modal-body">
               <p>{{ modalBody }}</p>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" @click="hideModal">Aceptar</button>
+              <button type="button" class="btn btn-primary" @click="hideModal">
+                Aceptar
+              </button>
             </div>
           </div>
         </div>
       </div>
 
       <a class="olvide">¿Olvidaste tu contraseña?</a>
-     </div>
-
-
-
-
-   </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -79,7 +85,10 @@ export default {
         const res = await fetch("http://localhost:3001/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ correoUsuario: this.email, contrasena: this.password }),
+          body: JSON.stringify({
+            correoUsuario: this.email,
+            contrasena: this.password,
+          }),
         });
 
         const body = await res.json();
@@ -107,9 +116,15 @@ export default {
         localStorage.setItem("token", token);
         localStorage.setItem("usuario", JSON.stringify(usuario));
 
+        // Forzar actualización del sidebar disparando evento personalizado
+        window.dispatchEvent(new Event("user-logged-in"));
+
+        // Pequeño delay para asegurar que el localStorage se actualice
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
         // Redirección según rol: 1=Administrador, 2=Docente, 3=Validador
         if (usuario.idRol === 1) {
-          this.$router.push({ path: "/" });
+          this.$router.push({ path: "/AdministradorP" });
         } else if (usuario.idRol === 2) {
           this.$router.push({ path: "/DocentesP" });
         } else if (usuario.idRol === 3) {
@@ -120,7 +135,8 @@ export default {
       } catch (err) {
         console.error(err);
         // Mostrar mensaje más útil para depuración local
-        this.error = "No fue posible iniciar sesión. Comprueba backend (ver consola).";
+        this.error =
+          "No fue posible iniciar sesión. Comprueba backend (ver consola).";
       } finally {
         this.loading = false;
       }
@@ -165,80 +181,76 @@ export default {
 </script>
 
 <style scoped>
-  /* Contenedor principal sin scroll */
-  .login-container {
-    width: 100%;
-    height: 100vh;
-    overflow: hidden; /* 🔥 evita el scroll */
+/* Contenedor principal sin scroll */
+.login-container {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden; /* 🔥 evita el scroll */
 
-    background: linear-gradient(
-      to bottom,
-      #0f3b77 55%, 
-      #d7ecff 55%
-    );
+  background: linear-gradient(to bottom, #0f3b77 55%, #d7ecff 55%);
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px; /* 🔥 da margen para que no pegue el card */
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px; /* 🔥 da margen para que no pegue el card */
+}
 
-  /* Card más pequeña */
-  .login-card {
-    width: 360px; /* 🔥 antes 420px */
-    background: white;
-    padding: 28px 32px; /* 🔥 más compacto */
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
-    text-align: center;
-  }
+/* Card más pequeña */
+.login-card {
+  width: 360px; /* 🔥 antes 420px */
+  background: white;
+  padding: 28px 32px; /* 🔥 más compacto */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  text-align: center;
+}
 
-  /* Logo más pequeño */
-  .logo {
-    width: 240px; /* 🔥 antes 300px */
-    margin-bottom: -20px;
-  }
+/* Logo más pequeño */
+.logo {
+  width: 240px; /* 🔥 antes 300px */
+  margin-bottom: -20px;
+}
 
-  /* Título */
-  .titulo {
-    margin-bottom: 20px;
-    color: #0f3b77;
-  }
+/* Título */
+.titulo {
+  margin-bottom: 20px;
+  color: #0f3b77;
+}
 
-  /* Inputs */
-  .form-group {
-    text-align: left;
-    margin-bottom: 16px;
-    color: #0f3b77;
-  }
+/* Inputs */
+.form-group {
+  text-align: left;
+  margin-bottom: 16px;
+  color: #0f3b77;
+}
 
-  input {
-    width: 100%;
-    padding: 9px;
-    margin-top: 5px;
-    background: #f4f5f7;
-    border-radius: 4px;
-    border: none;
-  }
+input {
+  width: 100%;
+  padding: 9px;
+  margin-top: 5px;
+  background: #f4f5f7;
+  border-radius: 4px;
+  border: none;
+}
 
-  /* Botón */
-  .btn-iniciar {
-    width: 100%;
-    background: #0f3b77;
-    padding: 10px;
-    border-radius: 4px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 8px;
-  }
+/* Botón */
+.btn-iniciar {
+  width: 100%;
+  background: #0f3b77;
+  padding: 10px;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
+}
 
-  /* Olvidé mi contraseña */
-  .olvide {
-    display: block;
-    margin-top: 14px;
-    font-size: 0.9em;
-    color: #0f3b77;
-    cursor: pointer;
-  }
+/* Olvidé mi contraseña */
+.olvide {
+  display: block;
+  margin-top: 14px;
+  font-size: 0.9em;
+  color: #0f3b77;
+  cursor: pointer;
+}
 </style>

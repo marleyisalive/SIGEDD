@@ -1,7 +1,5 @@
 // Importaciones necesarias
-import {
-  docenteactividad
-} from "../types/typesDocenteActividad"; // Asegúrate de que la ruta sea correcta
+import { docenteactividad } from "../types/typesDocenteActividad"; // Asegúrate de que la ruta sea correcta
 import { createPool } from "mysql2/promise";
 
 // Reutiliza la configuración de la conexión (idealmente esto debería estar en un archivo de configuración compartido)
@@ -32,12 +30,12 @@ export const obtenerTodasDocenteActividad = async () => {
         ai.nombre AS nombreActividad,  -- NECESARIO para que salga el nombre en la tabla
         ai.idTipoDocumento,
         td.nombre as nombreTipo        -- NECESARIO para que salga el badge gris
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
       JOIN tipodocumento td ON ai.idTipoDocumento = td.idTipoDocumento
       ORDER BY da.fechaRegistro DESC
     `;
-    
+
     const [results] = await conexion.query(query);
     return results;
   } catch (err) {
@@ -45,6 +43,40 @@ export const obtenerTodasDocenteActividad = async () => {
     return [];
   }
 };
+
+/**
+ * Obtiene las actividades de un docente específico por su idUsuario.
+ * @param idUsuario El ID del usuario del docente.
+ * @returns Un array de objetos DocenteActividad o un objeto de error.
+ */
+export const obtenerActividadesPorUsuario = async (idUsuario: number) => {
+  try {
+    const query = `
+      SELECT 
+        da.idDocenteActividad,
+        da.idActividadInstitucional,
+        da.idDocente,
+        da.fechaRegistro,
+        ai.nombre AS nombreActividad,
+        ai.idTipoDocumento,
+        td.nombre as nombreTipo
+      FROM docenteActividad da
+      JOIN docente d ON da.idDocente = d.idDocente
+      JOIN usuario u ON d.idUsuario = u.idUsuario
+      JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
+      JOIN tipodocumento td ON ai.idTipoDocumento = td.idTipoDocumento
+      WHERE u.idUsuario = ?
+      ORDER BY da.fechaRegistro DESC
+    `;
+
+    const [results] = await conexion.query(query, [idUsuario]);
+    return results;
+  } catch (err) {
+    console.error("Error al obtener actividades por usuario:", err);
+    return [];
+  }
+};
+
 /**
  * Encuentra una relación docente-actividad por su clave primaria compuesta.
  * @param idDocente El ID del docente.
@@ -89,7 +121,7 @@ export const agregarDocenteActividad = async (
         nuevaDocenteActividad.datosCapturados,
         nuevaDocenteActividad.fechaRegistro,
         nuevaDocenteActividad.validadoPor,
-        nuevaDocenteActividad.fechaValidacion
+        nuevaDocenteActividad.fechaValidacion,
       ]
     );
     return results;
@@ -112,7 +144,9 @@ export const agregarDocenteActividad = async (
   }
 };
 
-export const actualizarDocenteActividad = async (modificado:docenteactividad) => {
+export const actualizarDocenteActividad = async (
+  modificado: docenteactividad
+) => {
   try {
     const [results] = await conexion.query(
       "UPDATE documento SET idDocenteActividad = ?, datosCapturados = ?, fechaRegistro = ?, validadoPor = ?, fechaValidacion = ? WHERE idActividadInstitucional = ?, idDocente = ? ",
@@ -123,7 +157,7 @@ export const actualizarDocenteActividad = async (modificado:docenteactividad) =>
         modificado.validadoPor,
         modificado.fechaValidacion,
         modificado.idActividadInstitucional,
-        modificado.idDocente
+        modificado.idDocente,
       ]
     );
     return results;
@@ -152,9 +186,6 @@ export const eliminarDocenteActividad = async (
   }
 };
 
-
-
-
 /**
  * Función auxiliar (privada) para obtener nombres de firmantes
  */
@@ -180,7 +211,7 @@ const obtenerNombreFuncionario = async (idUsuario: number) => {
 export const encontrarDocenteActividadPorId = async (id: number) => {
   try {
     const [results] = await conexion.query(
-      "SELECT * FROM docenteactividad WHERE idDocenteActividad = ?",
+      "SELECT * FROM docenteActividad WHERE idDocenteActividad = ?",
       [id]
     );
     return results;
@@ -189,8 +220,6 @@ export const encontrarDocenteActividadPorId = async (id: number) => {
     return { error: "No se pudo obtener el registro por id." };
   }
 };
-
-
 
 // 01
 
@@ -201,7 +230,7 @@ export const obtenerDatosConstanciaRH = async (idDocenteActividad: number) => {
         da.datosCapturados,
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       WHERE da.idDocenteActividad = ?
@@ -211,18 +240,32 @@ export const obtenerDatosConstanciaRH = async (idDocenteActividad: number) => {
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fecha actual para el pie de página
-    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    const meses = [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre",
+    ];
     const f = new Date(); // O usa base.fechaRegistro si prefieres la fecha de creación
-    
+
     // Convertimos a texto (ej: "nueve", "Junio", "dos mil veinticinco")
-    // Nota: Para "nueve" y "dos mil" exactos necesitarías una librería 'numero-a-letras', 
+    // Nota: Para "nueve" y "dos mil" exactos necesitarías una librería 'numero-a-letras',
     // aquí usaré números para simplificar o el dato directo.
-    const diaTexto = f.getDate().toString(); 
+    const diaTexto = f.getDate().toString();
     const mesTexto = meses[f.getMonth()];
     const anioTexto = f.getFullYear().toString();
 
@@ -230,8 +273,9 @@ export const obtenerDatosConstanciaRH = async (idDocenteActividad: number) => {
     const nombreJefeRH = await obtenerNombreFuncionario(json.idJefeRH);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
-      
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+
       // Datos variables del texto
       oficio: json.numOficio || "S/N",
       filiacion: json.filiacion || "---",
@@ -240,16 +284,15 @@ export const obtenerDatosConstanciaRH = async (idDocenteActividad: number) => {
       fechaEfectos: json.fechaEfectos || "---",
       periodoInicio: json.periodoInicio || "---",
       periodoFin: json.periodoFin || "---",
-      
-      // Datos para el pie
-      diaTexto, 
-      mesTexto, 
-      anioTexto,
-      
-      // Firma
-      nombreJefeRH
-    };
 
+      // Datos para el pie
+      diaTexto,
+      mesTexto,
+      anioTexto,
+
+      // Firma
+      nombreJefeRH,
+    };
   } catch (err) {
     console.error("Error servicio RH:", err);
     throw err;
@@ -258,14 +301,16 @@ export const obtenerDatosConstanciaRH = async (idDocenteActividad: number) => {
 
 // 04
 
-export const obtenerDatosOficioGenerico = async (idDocenteActividad: number) => {
+export const obtenerDatosOficioGenerico = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -276,46 +321,63 @@ export const obtenerDatosOficioGenerico = async (idDocenteActividad: number) => 
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Helper fechas
     const formatearFecha = (fechaStr: string) => {
-        if(!fechaStr) return "---";
-        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-        const f = new Date(fechaStr);
-        const fCorrecta = new Date(f.getTime() + f.getTimezoneOffset() * 60000);
-        return `${fCorrecta.getDate()} de ${meses[fCorrecta.getMonth()]} de ${fCorrecta.getFullYear()}`;
+      if (!fechaStr) return "---";
+      const meses = [
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
+      ];
+      const f = new Date(fechaStr);
+      const fCorrecta = new Date(f.getTime() + f.getTimezoneOffset() * 60000);
+      return `${fCorrecta.getDate()} de ${
+        meses[fCorrecta.getMonth()]
+      } de ${fCorrecta.getFullYear()}`;
     };
 
     const nombreJefeDDA = await obtenerNombreFuncionario(json.idJefeDDA);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
-      departamento: base.nombreDepartamento, 
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      departamento: base.nombreDepartamento,
       oficio: json.oficio || "S/N",
       nombreCurso: json.nombreCurso || "Curso de Actualización",
       fechaInicio: formatearFecha(json.fechaInicio),
       fechaFin: formatearFecha(json.fechaFin),
-      nombreJefeDDA
+      nombreJefeDDA,
     };
-
   } catch (err) {
     console.error("Error servicio Oficio Genérico:", err);
     throw err;
   }
 };
 
-
-export const obtenerDatosCartaExclusividad = async (idDocenteActividad: number) => {
+export const obtenerDatosCartaExclusividad = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       WHERE da.idDocenteActividad = ?
@@ -325,23 +387,39 @@ export const obtenerDatosCartaExclusividad = async (idDocenteActividad: number) 
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fecha larga (Ej: 9 de Junio de 2025)
-    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    const meses = [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre",
+    ];
     const f = new Date(); // Fecha actual para la firma
-    const fechaEscrita = `${f.getDate()} de ${meses[f.getMonth()]} de ${f.getFullYear()}`;
+    const fechaEscrita = `${f.getDate()} de ${
+      meses[f.getMonth()]
+    } de ${f.getFullYear()}`;
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       // Datos específicos
       filiacion: json.filiacion || "---",
       clavePresupuestal: json.clavePresupuestal || "---",
-      fechaEscrita
+      fechaEscrita,
     };
-
   } catch (err) {
     console.error("Error servicio Exclusividad:", err);
     throw err;
@@ -357,7 +435,7 @@ export const obtenerDatosConstanciaCVU = async (idDocenteActividad: number) => {
         da.datosCapturados,
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       WHERE da.idDocenteActividad = ?
@@ -367,25 +445,44 @@ export const obtenerDatosConstanciaCVU = async (idDocenteActividad: number) => {
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    
+
     // Header: 11/JUNIO/2025
-    const fechaHeader = `${f.getDate()}/${(meses[f.getMonth()] || "").toUpperCase()}/${f.getFullYear()}`;
-    
+    const fechaHeader = `${f.getDate()}/${(
+      meses[f.getMonth()] || ""
+    ).toUpperCase()}/${f.getFullYear()}`;
+
     // Texto: diez días del mes de junio del año dos mil veinticinco
-    const fechaTexto = `${f.getDate()} días del mes de ${meses[f.getMonth()] || ""} del año ${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} días del mes de ${
+      meses[f.getMonth()] || ""
+    } del año ${f.getFullYear()}`;
 
     // Firmante
     const nombreJefeDDA = await obtenerNombreFuncionario(json.idJefeDDA);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       fechaHeader,
       fechaTexto,
       // Datos específicos
@@ -393,9 +490,8 @@ export const obtenerDatosConstanciaCVU = async (idDocenteActividad: number) => {
       registro: json.registroCVU || "---",
       anio: json.anioCVU || new Date().getFullYear(),
       // Firma
-      nombreJefeDDA
+      nombreJefeDDA,
     };
-
   } catch (err) {
     console.error("Error servicio CVU:", err);
     throw err;
@@ -404,7 +500,9 @@ export const obtenerDatosConstanciaCVU = async (idDocenteActividad: number) => {
 
 // 07
 
-export const obtenerDatosConstanciaAlumnos = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaAlumnos = async (
+  idDocenteActividad: number
+) => {
   try {
     // 1. Obtener datos generales de la actividad y el docente
     const queryDocente = `
@@ -413,19 +511,22 @@ export const obtenerDatosConstanciaAlumnos = async (idDocenteActividad: number) 
         da.datosCapturados,
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       WHERE da.idDocenteActividad = ?
     `;
 
-    const [rows]: any = await conexion.query(queryDocente, [idDocenteActividad]);
+    const [rows]: any = await conexion.query(queryDocente, [
+      idDocenteActividad,
+    ]);
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     const anioReporte = json.anio || new Date().getFullYear().toString();
 
@@ -444,36 +545,59 @@ export const obtenerDatosConstanciaAlumnos = async (idDocenteActividad: number) 
       ORDER BY g.periodo, m.nombre
     `;
 
-    const [grupos]: any = await conexion.query(queryGrupos, [base.idDocente, `%${anioReporte}%`]);
+    const [grupos]: any = await conexion.query(queryGrupos, [
+      base.idDocente,
+      `%${anioReporte}%`,
+    ]);
 
     // 3. Mapeamos los resultados al formato que espera el Frontend
     const listaMaterias = grupos.map((g: any) => ({
-        periodo: g.periodo,
-        nivel: "LICENCIATURA", // Valor por defecto o podrías traerlo de la tabla 'carrera' si haces más joins
-        clave: g.clave,
-        nombre: g.nombre,
-        alumnos: g.numeroAlumnos
+      periodo: g.periodo,
+      nivel: "LICENCIATURA", // Valor por defecto o podrías traerlo de la tabla 'carrera' si haces más joins
+      clave: g.clave,
+      nombre: g.nombre,
+      alumnos: g.numeroAlumnos,
     }));
 
     // Calcular total
-    const totalAlumnos = listaMaterias.reduce((acc: number, m: any) => acc + m.alumnos, 0);
+    const totalAlumnos = listaMaterias.reduce(
+      (acc: number, m: any) => acc + m.alumnos,
+      0
+    );
 
     // Fechas y Firmas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaTexto = `${f.getDate()} de ${meses[f.getMonth()]} de ${f.getFullYear()}`;
-    
-    const nombreJefeEscolares = await obtenerNombreFuncionario(json.idJefeEscolares);
+    const fechaTexto = `${f.getDate()} de ${
+      meses[f.getMonth()]
+    } de ${f.getFullYear()}`;
+
+    const nombreJefeEscolares = await obtenerNombreFuncionario(
+      json.idJefeEscolares
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       fechaTexto,
       expediente: json.expediente || "---",
       materias: listaMaterias, // Ahora viene directo de la BD
       totalAlumnos,
-      nombreJefeEscolares
+      nombreJefeEscolares,
     };
-
   } catch (err) {
     console.error("Error servicio Alumnos (BD):", err);
     throw err;
@@ -482,7 +606,9 @@ export const obtenerDatosConstanciaAlumnos = async (idDocenteActividad: number) 
 
 // 1.1.1
 
-export const obtenerDatosHorarioActividades = async (idDocenteActividad: number) => {
+export const obtenerDatosHorarioActividades = async (
+  idDocenteActividad: number
+) => {
   try {
     // 1. Datos Docente y JSON
     const queryBase = `
@@ -491,17 +617,22 @@ export const obtenerDatosHorarioActividades = async (idDocenteActividad: number)
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         doc.filiacion as rfc, doc.idPlaza
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
       WHERE da.idDocenteActividad = ?
     `;
-    const [rowsBase]: any = await conexion.query(queryBase, [idDocenteActividad]);
+    const [rowsBase]: any = await conexion.query(queryBase, [
+      idDocenteActividad,
+    ]);
     if (rowsBase.length === 0) return null;
-    
+
     const base = rowsBase[0];
-    const json = typeof base.datosCapturados === 'string' ? JSON.parse(base.datosCapturados) : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // 2. Datos de Grupos (Carga Académica)
     // NOTA: Aquí estoy simulando el periodo "ENE-JUN 2024". En prod, deberías sacarlo de la actividad.
@@ -523,19 +654,19 @@ export const obtenerDatosHorarioActividades = async (idDocenteActividad: number)
     // 3. Procesamiento de Totales
     let totalHorasClase = 0;
     const cargaAcademica = grupos.map((g: any) => {
-        // Cálculo simple de horas basado en el string (ej: "10:00 - 11:00" = 1 hr)
-        // Esto es una estimación. Lo ideal es tener un campo 'horasSemana' en la BD.
-        const horas = 5; // Valor dummy por defecto si no puedes calcularlo del string
-        totalHorasClase += horas;
-        return {
-            asignatura: g.materia,
-            grupo: "A", // Si tienes grupo en la BD, úsalo
-            estudiantes: g.numeroAlumnos,
-            aula: g.aula,
-            carrera: g.nombreCarrera || "Sistemas",
-            horario: g.horario, // "10:00 - 11:00"
-            horasSemana: horas
-        };
+      // Cálculo simple de horas basado en el string (ej: "10:00 - 11:00" = 1 hr)
+      // Esto es una estimación. Lo ideal es tener un campo 'horasSemana' en la BD.
+      const horas = 5; // Valor dummy por defecto si no puedes calcularlo del string
+      totalHorasClase += horas;
+      return {
+        asignatura: g.materia,
+        grupo: "A", // Si tienes grupo en la BD, úsalo
+        estudiantes: g.numeroAlumnos,
+        aula: g.aula,
+        carrera: g.nombreCarrera || "Sistemas",
+        horario: g.horario, // "10:00 - 11:00"
+        horasSemana: horas,
+      };
     });
 
     const horasPrep = json.horasPreparacion || 0;
@@ -544,23 +675,32 @@ export const obtenerDatosHorarioActividades = async (idDocenteActividad: number)
     // Totales Apoyo y Admin
     const apoyo = json.actividadesApoyo || [];
     const admin = json.actividadesAdmin || [];
-    
-    const totalApoyo = apoyo.reduce((acc: number, i: any) => acc + (parseInt(i.total) || 0), 0);
-    const totalAdmin = admin.reduce((acc: number, i: any) => acc + (parseInt(i.total) || 0), 0);
+
+    const totalApoyo = apoyo.reduce(
+      (acc: number, i: any) => acc + (parseInt(i.total) || 0),
+      0
+    );
+    const totalAdmin = admin.reduce(
+      (acc: number, i: any) => acc + (parseInt(i.total) || 0),
+      0
+    );
     const granTotal = subtotalDocencia + totalApoyo + totalAdmin;
 
     // Firmas
     const nombreJefeDDA = await obtenerNombreFuncionario(json.idJefeDDA);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirector);
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirector
+    );
 
     return {
       encabezado: {
-          nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
-          departamento: base.nombreDepartamento,
-          rfc: base.rfc || "XAXX010101000",
-          plaza: "E3815 - TITULAR B", // Puedes sacarlo de la tabla plaza
-          ingresoSEP: "01/09/2010",   // Datos simulados o agregar al JSON
-          periodo: "ENE-JUN 2024"
+        nombreDocente:
+          `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+        departamento: base.nombreDepartamento,
+        rfc: base.rfc || "XAXX010101000",
+        plaza: "E3815 - TITULAR B", // Puedes sacarlo de la tabla plaza
+        ingresoSEP: "01/09/2010", // Datos simulados o agregar al JSON
+        periodo: "ENE-JUN 2024",
       },
       cargaAcademica,
       horasPreparacion: horasPrep,
@@ -571,17 +711,15 @@ export const obtenerDatosHorarioActividades = async (idDocenteActividad: number)
       subtotalAdmin: totalAdmin,
       granTotal,
       firmas: {
-          jefeDDA: nombreJefeDDA,
-          subdirector: nombreSubdirector
-      }
+        jefeDDA: nombreJefeDDA,
+        subdirector: nombreSubdirector,
+      },
     };
-
   } catch (err) {
     console.error("Error servicio Horario:", err);
     throw err;
   }
 };
-
 
 /**
  * Obtiene los datos procesados específicamente para la Constancia PIT (Tipo 10)
@@ -596,7 +734,7 @@ export const obtenerDatosConstanciaPIT = async (idDocenteActividad: number) => {
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         ai.periodo
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -609,42 +747,46 @@ export const obtenerDatosConstanciaPIT = async (idDocenteActividad: number) => {
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    
+
     // Parsear el JSON guardado en la BD
-    const jsonDatos = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const jsonDatos =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Resolver nombres de los jefes (firmantes) usando la función auxiliar
     const nombreJefeDDA = await obtenerNombreFuncionario(jsonDatos.idJefeDDA);
-    const nombreSubdirector = await obtenerNombreFuncionario(jsonDatos.idSubdirectorAcademico);
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      jsonDatos.idSubdirectorAcademico
+    );
 
     // Retornar objeto limpio para el Frontend
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
       fecha: base.fechaRegistro || new Date(),
-      periodo: base.periodo, 
+      periodo: base.periodo,
       carrera: jsonDatos.carrera || "INGENIERÍA EN SISTEMAS COMPUTACIONALES",
       totalTutorados: jsonDatos.totalTutorados || 0,
-      detalleTutorias: jsonDatos.detalleTutorias || [], 
+      detalleTutorias: jsonDatos.detalleTutorias || [],
       firmaJefeDDA: nombreJefeDDA,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error en servicio PIT:", err);
     throw err;
   }
-  
 };
 
 // 1.1.6 Acreditación (Tipo 20)
-export const obtenerDatosConstanciaAcreditacion = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaAcreditacion = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT da.datosCapturados
-      FROM docenteactividad da
+      FROM docenteActividad da
       WHERE da.idDocenteActividad = ?
     `;
 
@@ -652,21 +794,24 @@ export const obtenerDatosConstanciaAcreditacion = async (idDocenteActividad: num
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Helper simple para fechas en español
     const fmt = (fechaStr: string) => {
-        if(!fechaStr) return "---";
-        const f = new Date(fechaStr);
-        // Ajuste de zona horaria simple para evitar desfases de día
-        const userTimezoneOffset = f.getTimezoneOffset() * 60000;
-        const fechaCorregida = new Date(f.getTime() + userTimezoneOffset);
-        
-        return fechaCorregida.toLocaleDateString('es-MX', { 
-            year: 'numeric', month: 'long', day: 'numeric' 
-        });
+      if (!fechaStr) return "---";
+      const f = new Date(fechaStr);
+      // Ajuste de zona horaria simple para evitar desfases de día
+      const userTimezoneOffset = f.getTimezoneOffset() * 60000;
+      const fechaCorregida = new Date(f.getTime() + userTimezoneOffset);
+
+      return fechaCorregida.toLocaleDateString("es-MX", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
     };
 
     return {
@@ -675,9 +820,8 @@ export const obtenerDatosConstanciaAcreditacion = async (idDocenteActividad: num
       vigenciaInicio: fmt(json.fechaInicioVigencia),
       vigenciaFin: fmt(json.fechaFinVigencia),
       numRegistro: json.numRegistro || "S/N",
-      fechaExpedicion: fmt(json.fechaExpedicion)
+      fechaExpedicion: fmt(json.fechaExpedicion),
     };
-
   } catch (err) {
     console.error("Error servicio Acreditación:", err);
     throw err;
@@ -685,7 +829,9 @@ export const obtenerDatosConstanciaAcreditacion = async (idDocenteActividad: num
 };
 
 // 1.1.7 Complementaria (Tipo 30)
-export const obtenerDatosConstanciaComplementaria = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaComplementaria = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -693,7 +839,7 @@ export const obtenerDatosConstanciaComplementaria = async (idDocenteActividad: n
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         ai.periodo
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
@@ -704,24 +850,49 @@ export const obtenerDatosConstanciaComplementaria = async (idDocenteActividad: n
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Helper de fechas (puedes reutilizar el que ya tengas o este)
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const fechaObj = new Date(base.fechaRegistro);
-    const fechaTexto = `${fechaObj.getDate()} de ${meses[fechaObj.getMonth()]} del año ${fechaObj.getFullYear()}`;
+    const fechaTexto = `${fechaObj.getDate()} de ${
+      meses[fechaObj.getMonth()]
+    } del año ${fechaObj.getFullYear()}`;
     // Formato corto para el header (ej. 18/junio/2025)
-    const fechaHeader = `${fechaObj.getDate()}/${meses[fechaObj.getMonth()]}/${fechaObj.getFullYear()}`;
+    const fechaHeader = `${fechaObj.getDate()}/${
+      meses[fechaObj.getMonth()]
+    }/${fechaObj.getFullYear()}`;
 
     // Resolver nombres de firmantes
-    const nombreJefeDepto = await obtenerNombreFuncionario(json.idJefeDepartamento);
-    const nombreJefeCentro = await obtenerNombreFuncionario(json.idJefeCentroInformacion);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirectorAcademico);
+    const nombreJefeDepto = await obtenerNombreFuncionario(
+      json.idJefeDepartamento
+    );
+    const nombreJefeCentro = await obtenerNombreFuncionario(
+      json.idJefeCentroInformacion
+    );
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirectorAcademico
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       periodo: base.periodo,
       fechaTexto: fechaTexto,
       fechaHeader: fechaHeader,
@@ -733,9 +904,8 @@ export const obtenerDatosConstanciaComplementaria = async (idDocenteActividad: n
       // Firmas
       firmaJefeDepto: nombreJefeDepto,
       firmaJefeCentro: nombreJefeCentro,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Complementaria:", err);
     throw err;
@@ -751,7 +921,7 @@ export const obtenerDatosConstanciaRED = async (idDocenteActividad: number) => {
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         ai.periodo
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
@@ -762,28 +932,51 @@ export const obtenerDatosConstanciaRED = async (idDocenteActividad: number) => {
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Helpers de fecha
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    
+
     // Formato Header: 13/junio/2025
-    const fechaHeader = `${f.getDate()}/${meses[f.getMonth()]}/${f.getFullYear()}`;
-    
+    const fechaHeader = `${f.getDate()}/${
+      meses[f.getMonth()]
+    }/${f.getFullYear()}`;
+
     // Formato Texto: a los trece días del mes de junio del año dos mil veinticinco
     // (Simplificado para el ejemplo, pero puedes usar una librería de números a letras si es estricto)
-    const fechaTexto = `${f.getDate()} días del mes de ${meses[f.getMonth()]} del año ${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} días del mes de ${
+      meses[f.getMonth()]
+    } del año ${f.getFullYear()}`;
 
     // Resolver Nombres de Firmantes
     const nombreJefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
-    const nombrePdteAcademia = await obtenerNombreFuncionario(json.idPresidenteAcademia);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirectorAcademico);
+    const nombrePdteAcademia = await obtenerNombreFuncionario(
+      json.idPresidenteAcademia
+    );
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirectorAcademico
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       periodo: base.periodo, // Ej: AGO-DIC 2024
       fechaHeader,
       fechaTexto,
@@ -794,9 +987,8 @@ export const obtenerDatosConstanciaRED = async (idDocenteActividad: number) => {
       // Firmas
       firmaJefeDepto: nombreJefeDepto,
       firmaPdteAcademia: nombrePdteAcademia,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio RED:", err);
     throw err;
@@ -805,14 +997,16 @@ export const obtenerDatosConstanciaRED = async (idDocenteActividad: number) => {
 
 // 1.2.1.3
 
-export const obtenerDatosConstanciaEstrategia = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaEstrategia = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       WHERE da.idDocenteActividad = ?
@@ -822,23 +1016,46 @@ export const obtenerDatosConstanciaEstrategia = async (idDocenteActividad: numbe
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaHeader = `${f.getDate()}/${meses[f.getMonth()]}/${f.getFullYear()}`;
-    const fechaTexto = `${f.getDate()} días del mes de ${meses[f.getMonth()]} del año ${f.getFullYear()}`;
+    const fechaHeader = `${f.getDate()}/${
+      meses[f.getMonth()]
+    }/${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} días del mes de ${
+      meses[f.getMonth()]
+    } del año ${f.getFullYear()}`;
 
     // Nombres Firmantes
     const nombreJefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
-    const nombrePdteAcademia = await obtenerNombreFuncionario(json.idPresidenteAcademia);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirectorAcademico);
+    const nombrePdteAcademia = await obtenerNombreFuncionario(
+      json.idPresidenteAcademia
+    );
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirectorAcademico
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       fechaHeader,
       fechaTexto,
       // Datos JSON
@@ -851,9 +1068,8 @@ export const obtenerDatosConstanciaEstrategia = async (idDocenteActividad: numbe
       // Firmas
       firmaJefeDepto: nombreJefeDepto,
       firmaPdteAcademia: nombrePdteAcademia,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Estrategia:", err);
     throw err;
@@ -862,8 +1078,9 @@ export const obtenerDatosConstanciaEstrategia = async (idDocenteActividad: numbe
 
 // 1.3.1.x
 
-
-export const obtenerDatosConstanciaExencion = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaExencion = async (
+  idDocenteActividad: number
+) => {
   try {
     // 1. Modificamos la consulta para traer también el idTipoDocumento
     const query = `
@@ -871,7 +1088,7 @@ export const obtenerDatosConstanciaExencion = async (idDocenteActividad: number)
         da.datosCapturados, 
         da.fechaRegistro,
         ai.idTipoDocumento -- NECESARIO PARA SABER EL TÍTULO
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
       WHERE da.idDocenteActividad = ?
     `;
@@ -879,30 +1096,48 @@ export const obtenerDatosConstanciaExencion = async (idDocenteActividad: number)
     const [rows]: any = await conexion.query(query, [idDocenteActividad]);
     if (rows.length === 0) return null;
 
-    const json = typeof rows[0].datosCapturados === 'string' 
-      ? JSON.parse(rows[0].datosCapturados) 
-      : rows[0].datosCapturados;
+    const json =
+      typeof rows[0].datosCapturados === "string"
+        ? JSON.parse(rows[0].datosCapturados)
+        : rows[0].datosCapturados;
 
     const tipo = rows[0].idTipoDocumento;
 
     // 2. Determinar el Título del Documento según el ID
     let tituloDocumento = "CONSTANCIA DE EXENCIÓN DE EXAMEN PROFESIONAL"; // Default (90)
-    
-    if (tipo === 312) tituloDocumento = "CONSTANCIA DE EXAMEN DE ESPECIALIZACIÓN";
+
+    if (tipo === 312)
+      tituloDocumento = "CONSTANCIA DE EXAMEN DE ESPECIALIZACIÓN";
     else if (tipo === 313) tituloDocumento = "CONSTANCIA DE EXAMEN DE MAESTRÍA";
-    else if (tipo === 315) tituloDocumento = "CONSTANCIA DE EXAMEN DE DOCTORADO";
-    
+    else if (tipo === 315)
+      tituloDocumento = "CONSTANCIA DE EXAMEN DE DOCTORADO";
+
     // Helpers fecha... (igual que antes)
-    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-    
-    let dia = "---", mes = "---", anio = "---";
+    const meses = [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre",
+    ];
+
+    let dia = "---",
+      mes = "---",
+      anio = "---";
     if (json.fechaActa) {
-        const f = new Date(json.fechaActa);
-        const userTimezoneOffset = f.getTimezoneOffset() * 60000;
-        const fechaCorrecta = new Date(f.getTime() + userTimezoneOffset);
-        dia = fechaCorrecta.getDate().toString();
-        mes = meses[fechaCorrecta.getMonth()] || "";
-        anio = fechaCorrecta.getFullYear().toString();
+      const f = new Date(json.fechaActa);
+      const userTimezoneOffset = f.getTimezoneOffset() * 60000;
+      const fechaCorrecta = new Date(f.getTime() + userTimezoneOffset);
+      dia = fechaCorrecta.getDate().toString();
+      mes = meses[fechaCorrecta.getMonth()] || "";
+      anio = fechaCorrecta.getFullYear().toString();
     }
 
     // Firmas
@@ -917,15 +1152,16 @@ export const obtenerDatosConstanciaExencion = async (idDocenteActividad: number)
       numControl: json.numControl || "---",
       carrera: json.carrera || "---",
       opcionTitulacion: json.opcionTitulacion || "---",
-      dia, mes, anio,
+      dia,
+      mes,
+      anio,
       presidente,
       cedulaPresidente: "402002",
       secretario,
       cedulaSecretario: "5168880",
       vocal,
-      cedulaVocal: "4982828"
+      cedulaVocal: "4982828",
     };
-
   } catch (err) {
     console.error("Error servicio Exención:", err);
     throw err;
@@ -941,7 +1177,7 @@ export const obtenerDatosCodireccion = async (idDocenteActividad: number) => {
         da.datosCapturados, 
         da.fechaRegistro,
         ai.idTipoDocumento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
       WHERE da.idDocenteActividad = ?
     `;
@@ -949,26 +1185,43 @@ export const obtenerDatosCodireccion = async (idDocenteActividad: number) => {
     const [rows]: any = await conexion.query(query, [idDocenteActividad]);
     if (rows.length === 0) return null;
 
-    const json = typeof rows[0].datosCapturados === 'string' 
-      ? JSON.parse(rows[0].datosCapturados) 
-      : rows[0].datosCapturados;
+    const json =
+      typeof rows[0].datosCapturados === "string"
+        ? JSON.parse(rows[0].datosCapturados)
+        : rows[0].datosCapturados;
 
     const tipo = rows[0].idTipoDocumento;
 
     // Título dinámico
     let tituloDocumento = "CONSTANCIA DE CODIRECCIÓN DE TESIS DE MAESTRÍA";
-    if (tipo === 316) tituloDocumento = "CONSTANCIA DE CODIRECCIÓN DE TESIS DE DOCTORADO";
+    if (tipo === 316)
+      tituloDocumento = "CONSTANCIA DE CODIRECCIÓN DE TESIS DE DOCTORADO";
 
     // Fecha
-    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-    let dia = "---", mes = "---", anio = "---";
+    const meses = [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre",
+    ];
+    let dia = "---",
+      mes = "---",
+      anio = "---";
     if (json.fechaExamen) {
-        const f = new Date(json.fechaExamen);
-        const userTimezoneOffset = f.getTimezoneOffset() * 60000;
-        const fechaCorrecta = new Date(f.getTime() + userTimezoneOffset);
-        dia = fechaCorrecta.getDate().toString();
-        mes = meses[fechaCorrecta.getMonth()] || "";
-        anio = fechaCorrecta.getFullYear().toString();
+      const f = new Date(json.fechaExamen);
+      const userTimezoneOffset = f.getTimezoneOffset() * 60000;
+      const fechaCorrecta = new Date(f.getTime() + userTimezoneOffset);
+      dia = fechaCorrecta.getDate().toString();
+      mes = meses[fechaCorrecta.getMonth()] || "";
+      anio = fechaCorrecta.getFullYear().toString();
     }
 
     // Firmas
@@ -978,29 +1231,30 @@ export const obtenerDatosCodireccion = async (idDocenteActividad: number) => {
     // RETORNO ADAPTADO A ConstanciaExencionVue
     return {
       tituloDocumento,
-      
+
       // Mapeamos 'nombreTesista' a 'nombreEstudiante'
       nombreEstudiante: json.nombreTesista || "---",
-      
+
       numControl: json.numControl || "---",
       carrera: tipo === 316 ? "DOCTORADO EN CIENCIAS" : "MAESTRÍA EN CIENCIAS",
-      
-      // Mapeamos el título de la tesis a 'opcionTitulacion' para que salga en el bloque central
-      opcionTitulacion: `Tesis titulada: "${json.tituloTesis || '---'}"`,
-      
-      dia, mes, anio,
-      
-      // Mapeamos las firmas a los espacios de Presidente/Secretario
-      presidente: director,      // Director -> Espacio Presidente
-      cedulaPresidente: "Director", // Etiqueta
-      
-      secretario: codirector,    // Codirector -> Espacio Secretario
-      cedulaSecretario: "Codirector",
-      
-      vocal: "",                 // Sin tercer firma
-      cedulaVocal: ""
-    };
 
+      // Mapeamos el título de la tesis a 'opcionTitulacion' para que salga en el bloque central
+      opcionTitulacion: `Tesis titulada: "${json.tituloTesis || "---"}"`,
+
+      dia,
+      mes,
+      anio,
+
+      // Mapeamos las firmas a los espacios de Presidente/Secretario
+      presidente: director, // Director -> Espacio Presidente
+      cedulaPresidente: "Director", // Etiqueta
+
+      secretario: codirector, // Codirector -> Espacio Secretario
+      cedulaSecretario: "Codirector",
+
+      vocal: "", // Sin tercer firma
+      cedulaVocal: "",
+    };
   } catch (err) {
     console.error("Error servicio Codirección:", err);
     throw err;
@@ -1009,14 +1263,16 @@ export const obtenerDatosCodireccion = async (idDocenteActividad: number) => {
 
 // 1.2.1.4
 
-export const obtenerDatosConstanciaProductos = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaProductos = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       WHERE da.idDocenteActividad = ?
@@ -1026,28 +1282,51 @@ export const obtenerDatosConstanciaProductos = async (idDocenteActividad: number
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    
-    const fechaHeader = `${f.getDate()}/${meses[f.getMonth()]}/${f.getFullYear()}`;
+
+    const fechaHeader = `${f.getDate()}/${
+      meses[f.getMonth()]
+    }/${f.getFullYear()}`;
     const dia = f.getDate().toString();
     const mes = meses[f.getMonth()];
     const anio = f.getFullYear().toString();
 
     // Firmas
     const nombreJefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
-    const nombrePdteAcademia = await obtenerNombreFuncionario(json.idPresidenteAcademia);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirectorAcademico);
+    const nombrePdteAcademia = await obtenerNombreFuncionario(
+      json.idPresidenteAcademia
+    );
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirectorAcademico
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       fechaHeader,
-      dia, mes, anio,
+      dia,
+      mes,
+      anio,
       // Datos Específicos del Formato 1.2.1.4
       numOficio: json.numOficio || "S/N",
       asignatura: json.asignatura || "---",
@@ -1058,9 +1337,8 @@ export const obtenerDatosConstanciaProductos = async (idDocenteActividad: number
       // Firmas
       firmaJefeDepto: nombreJefeDepto,
       firmaPdteAcademia: nombrePdteAcademia,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Productos:", err);
     throw err;
@@ -1069,14 +1347,16 @@ export const obtenerDatosConstanciaProductos = async (idDocenteActividad: number
 
 // 1.2.2.1
 
-export const obtenerDatosOficioComision = async (idDocenteActividad: number) => {
+export const obtenerDatosOficioComision = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1087,24 +1367,41 @@ export const obtenerDatosOficioComision = async (idDocenteActividad: number) => 
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Helpers de fecha
     const formatearFecha = (fechaStr: string) => {
-        if(!fechaStr) return "---";
-        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-        const f = new Date(fechaStr);
-        const fCorrecta = new Date(f.getTime() + f.getTimezoneOffset() * 60000);
-        return `${fCorrecta.getDate()} de ${meses[fCorrecta.getMonth()]} de ${fCorrecta.getFullYear()}`;
+      if (!fechaStr) return "---";
+      const meses = [
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
+      ];
+      const f = new Date(fechaStr);
+      const fCorrecta = new Date(f.getTime() + f.getTimezoneOffset() * 60000);
+      return `${fCorrecta.getDate()} de ${
+        meses[fCorrecta.getMonth()]
+      } de ${fCorrecta.getFullYear()}`;
     };
 
     const nombreJefeDDA = await obtenerNombreFuncionario(json.idJefeDDA);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
-      departamento: base.nombreDepartamento, 
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      departamento: base.nombreDepartamento,
       // Datos JSON
       oficio: json.oficio || "S/N",
       nombreCurso: json.nombreCurso || "---",
@@ -1112,9 +1409,8 @@ export const obtenerDatosOficioComision = async (idDocenteActividad: number) => 
       fechaInicio: formatearFecha(json.fechaInicio),
       fechaFin: formatearFecha(json.fechaFin),
       // Firma
-      nombreJefeDDA
+      nombreJefeDDA,
     };
-
   } catch (err) {
     console.error("Error servicio Comisión:", err);
     throw err;
@@ -1123,14 +1419,16 @@ export const obtenerDatosOficioComision = async (idDocenteActividad: number) => 
 
 // 1.2.2.2
 
-export const obtenerDatosOficioComisionTecNM = async (idDocenteActividad: number) => {
+export const obtenerDatosOficioComisionTecNM = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1141,33 +1439,49 @@ export const obtenerDatosOficioComisionTecNM = async (idDocenteActividad: number
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Helper fechas
     const formatearFecha = (fechaStr: string) => {
-        if(!fechaStr) return "---";
-        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-        const f = new Date(fechaStr);
-        const fCorrecta = new Date(f.getTime() + f.getTimezoneOffset() * 60000);
-        return `${fCorrecta.getDate()} de ${meses[fCorrecta.getMonth()]} de ${fCorrecta.getFullYear()}`;
+      if (!fechaStr) return "---";
+      const meses = [
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
+      ];
+      const f = new Date(fechaStr);
+      const fCorrecta = new Date(f.getTime() + f.getTimezoneOffset() * 60000);
+      return `${fCorrecta.getDate()} de ${
+        meses[fCorrecta.getMonth()]
+      } de ${fCorrecta.getFullYear()}`;
     };
 
     const nombreJefeDDA = await obtenerNombreFuncionario(json.idJefeDDA);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
-      departamento: base.nombreDepartamento, 
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      departamento: base.nombreDepartamento,
       // Datos JSON
       oficio: json.oficio || "S/N",
       nombreCurso: json.nombreCurso || "---",
       fechaInicio: formatearFecha(json.fechaInicio),
       fechaFin: formatearFecha(json.fechaFin),
       // Firma
-      nombreJefeDDA
+      nombreJefeDDA,
     };
-
   } catch (err) {
     console.error("Error servicio Comisión TecNM:", err);
     throw err;
@@ -1176,14 +1490,16 @@ export const obtenerDatosOficioComisionTecNM = async (idDocenteActividad: number
 
 // 1.2.2.3
 
-export const obtenerDatosOficioPensamientoCritico = async (idDocenteActividad: number) => {
+export const obtenerDatosOficioPensamientoCritico = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1194,34 +1510,52 @@ export const obtenerDatosOficioPensamientoCritico = async (idDocenteActividad: n
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Helper fechas
     const formatearFecha = (fechaStr: string) => {
-        if(!fechaStr) return "---";
-        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-        const f = new Date(fechaStr);
-        const fCorrecta = new Date(f.getTime() + f.getTimezoneOffset() * 60000);
-        return `${fCorrecta.getDate()} de ${meses[fCorrecta.getMonth()]} de ${fCorrecta.getFullYear()}`;
+      if (!fechaStr) return "---";
+      const meses = [
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
+      ];
+      const f = new Date(fechaStr);
+      const fCorrecta = new Date(f.getTime() + f.getTimezoneOffset() * 60000);
+      return `${fCorrecta.getDate()} de ${
+        meses[fCorrecta.getMonth()]
+      } de ${fCorrecta.getFullYear()}`;
     };
 
     const nombreJefeDDA = await obtenerNombreFuncionario(json.idJefeDDA);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
-      departamento: base.nombreDepartamento, 
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      departamento: base.nombreDepartamento,
       // Datos JSON
       oficio: json.oficio || "S/N",
       // Si no viene nombreCurso en el JSON, usamos el texto fijo de la imagen por defecto
-      nombreCurso: json.nombreCurso || "Diplomado en Pensamiento Crítico para la Educación Tecnológica del TecNM",
+      nombreCurso:
+        json.nombreCurso ||
+        "Diplomado en Pensamiento Crítico para la Educación Tecnológica del TecNM",
       fechaInicio: formatearFecha(json.fechaInicio),
       fechaFin: formatearFecha(json.fechaFin),
       // Firma
-      nombreJefeDDA
+      nombreJefeDDA,
     };
-
   } catch (err) {
     console.error("Error servicio Pensamiento Crítico:", err);
     throw err;
@@ -1230,7 +1564,9 @@ export const obtenerDatosOficioPensamientoCritico = async (idDocenteActividad: n
 
 // 1.2.2.4
 
-export const obtenerDatosConstanciaManual = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaManual = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -1238,7 +1574,7 @@ export const obtenerDatosConstanciaManual = async (idDocenteActividad: number) =
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         ai.periodo
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
@@ -1249,23 +1585,46 @@ export const obtenerDatosConstanciaManual = async (idDocenteActividad: number) =
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaHeader = `${f.getDate()}/${meses[f.getMonth()]}/${f.getFullYear()}`;
-    const fechaTexto = `${f.getDate()} días del mes de ${meses[f.getMonth()]} del año ${f.getFullYear()}`;
+    const fechaHeader = `${f.getDate()}/${
+      meses[f.getMonth()]
+    }/${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} días del mes de ${
+      meses[f.getMonth()]
+    } del año ${f.getFullYear()}`;
 
     // Firmas
     const nombreJefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
-    const nombrePdteAcademia = await obtenerNombreFuncionario(json.idPresidenteAcademia);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirectorAcademico);
+    const nombrePdteAcademia = await obtenerNombreFuncionario(
+      json.idPresidenteAcademia
+    );
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirectorAcademico
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       periodo: base.periodo,
       fechaHeader,
       fechaTexto,
@@ -1276,9 +1635,8 @@ export const obtenerDatosConstanciaManual = async (idDocenteActividad: number) =
       // Firmas
       firmaJefeDepto: nombreJefeDepto,
       firmaPdteAcademia: nombrePdteAcademia,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Manual:", err);
     throw err;
@@ -1287,14 +1645,16 @@ export const obtenerDatosConstanciaManual = async (idDocenteActividad: number) =
 
 // 1.2.2.5
 
-export const obtenerDatosOficioAmbientesVirtuales = async (idDocenteActividad: number) => {
+export const obtenerDatosOficioAmbientesVirtuales = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1305,34 +1665,52 @@ export const obtenerDatosOficioAmbientesVirtuales = async (idDocenteActividad: n
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Helper fechas
     const formatearFecha = (fechaStr: string) => {
-        if(!fechaStr) return "---";
-        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-        const f = new Date(fechaStr);
-        const fCorrecta = new Date(f.getTime() + f.getTimezoneOffset() * 60000);
-        return `${fCorrecta.getDate()} de ${meses[fCorrecta.getMonth()]} de ${fCorrecta.getFullYear()}`;
+      if (!fechaStr) return "---";
+      const meses = [
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
+      ];
+      const f = new Date(fechaStr);
+      const fCorrecta = new Date(f.getTime() + f.getTimezoneOffset() * 60000);
+      return `${fCorrecta.getDate()} de ${
+        meses[fCorrecta.getMonth()]
+      } de ${fCorrecta.getFullYear()}`;
     };
 
     const nombreJefeDDA = await obtenerNombreFuncionario(json.idJefeDDA);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
-      departamento: base.nombreDepartamento, 
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      departamento: base.nombreDepartamento,
       // Datos JSON
       oficio: json.oficio || "S/N",
       // Texto por defecto si no viene en el JSON
-      nombreCurso: json.nombreCurso || "Diplomado Recursos Educativos en Ambientes Virtuales para Profesores(as) del TecNM",
+      nombreCurso:
+        json.nombreCurso ||
+        "Diplomado Recursos Educativos en Ambientes Virtuales para Profesores(as) del TecNM",
       fechaInicio: formatearFecha(json.fechaInicio),
       fechaFin: formatearFecha(json.fechaFin),
       // Firma
-      nombreJefeDDA
+      nombreJefeDDA,
     };
-
   } catch (err) {
     console.error("Error servicio Ambientes Virtuales:", err);
     throw err;
@@ -1341,13 +1719,15 @@ export const obtenerDatosOficioAmbientesVirtuales = async (idDocenteActividad: n
 
 // En services/docenteactividadServices.ts
 
-export const obtenerDatosConstanciaDiplomado = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaDiplomado = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       WHERE da.idDocenteActividad = ?
@@ -1357,13 +1737,27 @@ export const obtenerDatosConstanciaDiplomado = async (idDocenteActividad: number
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Desglose de fecha para "Ciudad de México"
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-    
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
+
     // Usamos fechaExpedicion del JSON o la fecha actual si no existe
     const fechaStr = json.fechaExpedicion || new Date().toISOString();
     const f = new Date(fechaStr);
@@ -1378,18 +1772,20 @@ export const obtenerDatosConstanciaDiplomado = async (idDocenteActividad: number
     const nombreDirector = await obtenerNombreFuncionario(json.idDirectorDDIE);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       // Datos específicos
       folio: json.folioConstancia || "S/N",
       diplomado: json.nombreDiplomado || "---",
       duracion: json.duracion || "0",
       periodoImparticion: json.periodoImparticion || "---",
       // Fecha desglosada
-      dia, mes, anio,
+      dia,
+      mes,
+      anio,
       // Firma
-      nombreDirector
+      nombreDirector,
     };
-
   } catch (err) {
     console.error("Error servicio Diplomado:", err);
     throw err;
@@ -1403,14 +1799,14 @@ export const obtenerGruposActividades = async () => {
       SELECT 
         td.grupo as nombreGrupo,
         COUNT(da.idDocenteActividad) as cantidadDocumentos
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
       JOIN tipodocumento td ON ai.idTipoDocumento = td.idTipoDocumento
       WHERE td.grupo IS NOT NULL
       GROUP BY td.grupo
       ORDER BY td.grupo ASC
     `;
-    
+
     const [results] = await conexion.query(query);
     return results;
   } catch (err) {
@@ -1427,7 +1823,7 @@ export const obtenerDatosTalonPago = async (idDocenteActividad: number) => {
       da.datosCapturados,
       u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
       doc.filiacion as rfc, doc.idPlaza, p.descripcion as nombrePlaza, doc.filiacion as curp
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       LEFT JOIN plaza p ON doc.idPlaza = p.idPlaza
@@ -1438,48 +1834,67 @@ export const obtenerDatosTalonPago = async (idDocenteActividad: number) => {
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Helpers para formato de moneda
     const formatMoney = (amount: number) => {
-        return amount.toLocaleString('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 2 });
+      return amount.toLocaleString("es-MX", {
+        style: "currency",
+        currency: "MXN",
+        minimumFractionDigits: 2,
+      });
     };
 
     // Procesar Listas y Totales
-    const percepciones = Array.isArray(json.percepciones) ? json.percepciones : [];
+    const percepciones = Array.isArray(json.percepciones)
+      ? json.percepciones
+      : [];
     const deducciones = Array.isArray(json.deducciones) ? json.deducciones : [];
 
-    const totalPercepciones = percepciones.reduce((acc: number, item: any) => acc + (Number(item.importe) || 0), 0);
-    const totalDeducciones = deducciones.reduce((acc: number, item: any) => acc + (Number(item.importe) || 0), 0);
+    const totalPercepciones = percepciones.reduce(
+      (acc: number, item: any) => acc + (Number(item.importe) || 0),
+      0
+    );
+    const totalDeducciones = deducciones.reduce(
+      (acc: number, item: any) => acc + (Number(item.importe) || 0),
+      0
+    );
     const netoPagar = totalPercepciones - totalDeducciones;
 
     // Formatear importes individuales para visualización
-    const percepcionesFmt = percepciones.map((p: any) => ({...p, importe: formatMoney(p.importe)}));
-    const deduccionesFmt = deducciones.map((d: any) => ({...d, importe: formatMoney(d.importe)}));
+    const percepcionesFmt = percepciones.map((p: any) => ({
+      ...p,
+      importe: formatMoney(p.importe),
+    }));
+    const deduccionesFmt = deducciones.map((d: any) => ({
+      ...d,
+      importe: formatMoney(d.importe),
+    }));
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       rfc: base.rfc || "XAXX010101000",
       curp: base.curp || "XAXX010101HDF...",
       plaza: base.nombrePlaza || "E3817", // Usamos la descripción o un código por defecto
-      
+
       // Datos variables
       periodoPago: json.periodoPago || "--/--/----",
       numEmpleado: json.numEmpleado || "000000",
       fechaEmision: json.fechaEmision || "--/--/----",
-      
+
       // Tablas
       percepciones: percepcionesFmt,
       deducciones: deduccionesFmt,
-      
+
       // Totales calculados
       totalPercepciones: formatMoney(totalPercepciones),
       totalDeducciones: formatMoney(totalDeducciones),
-      netoPagar: formatMoney(netoPagar)
+      netoPagar: formatMoney(netoPagar),
     };
-
   } catch (err) {
     console.error("Error servicio Talón:", err);
     throw err;
@@ -1488,7 +1903,9 @@ export const obtenerDatosTalonPago = async (idDocenteActividad: number) => {
 
 // 1.4.8.3
 
-export const obtenerDatosPropuestaPrograma = async (idDocenteActividad: number) => {
+export const obtenerDatosPropuestaPrograma = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -1496,7 +1913,7 @@ export const obtenerDatosPropuestaPrograma = async (idDocenteActividad: number) 
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1507,38 +1924,58 @@ export const obtenerDatosPropuestaPrograma = async (idDocenteActividad: number) 
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fecha Header (Ej: Culiacán, Sinaloa, a 15 de enero de 2024)
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaHeader = `${f.getDate()} de ${meses[f.getMonth()]} de ${f.getFullYear()}`;
+    const fechaHeader = `${f.getDate()} de ${
+      meses[f.getMonth()]
+    } de ${f.getFullYear()}`;
 
     // Firmas
     const nombreJefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
-    const nombrePdteAcademia = await obtenerNombreFuncionario(json.idPresidenteAcademia);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirectorAcademico);
+    const nombrePdteAcademia = await obtenerNombreFuncionario(
+      json.idPresidenteAcademia
+    );
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirectorAcademico
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
       fechaHeader,
-      
+
       // Datos específicos
       oficio: json.oficio || "S/N",
       nombreProyecto: json.nombreProyecto || "---",
       fechaInicio: json.fechaInicio || "---",
       fechaFin: json.fechaFin || "---",
       actividades: json.actividades || "---",
-      
+
       // Firmas
       firmaJefeDepto: nombreJefeDepto,
       firmaPdteAcademia: nombrePdteAcademia,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Propuesta:", err);
     throw err;
@@ -1555,7 +1992,7 @@ export const obtenerDatosCedula = async (idDocenteActividad: number) => {
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         doc.filiacion as curp,
         ai.idTipoDocumento 
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional
@@ -1566,11 +2003,12 @@ export const obtenerDatosCedula = async (idDocenteActividad: number) => {
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
-    // Lógica de Nivel: 
+    // Lógica de Nivel:
     // Si es 195 -> Doctorado, 196 -> Maestría.
     // Si es 216 (Req 10) -> Leemos del JSON o default a "GRADO ACADÉMICO".
     let nivel = "GRADO ACADÉMICO";
@@ -1581,10 +2019,12 @@ export const obtenerDatosCedula = async (idDocenteActividad: number) => {
     return {
       nombre: base.nombreUsuario.toUpperCase(),
       primerApellido: base.apePatUsuario.toUpperCase(),
-      segundoApellido: base.apeMatUsuario ? base.apeMatUsuario.toUpperCase() : "",
+      segundoApellido: base.apeMatUsuario
+        ? base.apeMatUsuario.toUpperCase()
+        : "",
       curp: base.curp || "XXXX000000XXXXXX00",
-      nivel, 
-      
+      nivel,
+
       // Datos del JSON
       numeroCedula: json.numeroCedula || "00000000",
       nombrePrograma: json.nombrePrograma || "---",
@@ -1595,9 +2035,8 @@ export const obtenerDatosCedula = async (idDocenteActividad: number) => {
       horaExpedicion: json.horaExpedicion || "---",
       cadenaOriginal: json.cadenaOriginal || "||...||",
       selloDigital: json.selloDigital || "...",
-      firmaElectronica: json.firmaElectronica || "..."
+      firmaElectronica: json.firmaElectronica || "...",
     };
-
   } catch (err) {
     console.error("Error servicio Cédula:", err);
     throw err;
@@ -1606,7 +2045,9 @@ export const obtenerDatosCedula = async (idDocenteActividad: number) => {
 
 // 05 - Constancia de Investigación
 
-export const obtenerDatosConstanciaInvestigacion = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaInvestigacion = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -1614,7 +2055,7 @@ export const obtenerDatosConstanciaInvestigacion = async (idDocenteActividad: nu
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1625,38 +2066,58 @@ export const obtenerDatosConstanciaInvestigacion = async (idDocenteActividad: nu
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaHeader = `${f.getDate()}/${meses[f.getMonth()]}/${f.getFullYear()}`;
-    const fechaTexto = `${f.getDate()} días del mes de ${meses[f.getMonth()]} del año ${f.getFullYear()}`;
+    const fechaHeader = `${f.getDate()}/${
+      meses[f.getMonth()]
+    }/${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} días del mes de ${
+      meses[f.getMonth()]
+    } del año ${f.getFullYear()}`;
 
     // Firmas
     const nombreDirector = await obtenerNombreFuncionario(json.idDirector);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirector);
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirector
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
       fechaHeader,
       fechaTexto,
-      
+
       // Datos JSON
       oficio: json.numOficio || "S/N",
       tituloProyecto: json.tituloProyecto || "---",
       claveRegistro: json.claveRegistro || "---",
       vigenciaInicio: json.vigenciaInicio || "---",
       vigenciaFin: json.vigenciaFin || "---",
-      
+
       // Firmas
       firmaDirector: nombreDirector,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Investigación:", err);
     throw err;
@@ -1665,7 +2126,9 @@ export const obtenerDatosConstanciaInvestigacion = async (idDocenteActividad: nu
 
 // 08 Oficio Sabático
 
-export const obtenerDatosOficioSabatico = async (idDocenteActividad: number) => {
+export const obtenerDatosOficioSabatico = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -1673,7 +2136,7 @@ export const obtenerDatosOficioSabatico = async (idDocenteActividad: number) => 
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1684,31 +2147,51 @@ export const obtenerDatosOficioSabatico = async (idDocenteActividad: number) => 
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaHeader = `${f.getDate()} de ${meses[f.getMonth()]} de ${f.getFullYear()}`;
+    const fechaHeader = `${f.getDate()} de ${
+      meses[f.getMonth()]
+    } de ${f.getFullYear()}`;
 
     // Firmas
     const nombreJefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
-    const nombrePdteAcademia = await obtenerNombreFuncionario(json.idPresidenteAcademia);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirectorAcademico);
+    const nombrePdteAcademia = await obtenerNombreFuncionario(
+      json.idPresidenteAcademia
+    );
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirectorAcademico
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       fechaHeader,
       // Datos
       oficio: json.numOficio || "S/N",
       // Firmas
       firmaJefeDepto: nombreJefeDepto,
       firmaPdteAcademia: nombrePdteAcademia,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Sabático:", err);
     throw err;
@@ -1717,7 +2200,9 @@ export const obtenerDatosOficioSabatico = async (idDocenteActividad: number) => 
 
 // 09 - Licencia por Gravidez
 
-export const obtenerDatosLicenciaGravidez = async (idDocenteActividad: number) => {
+export const obtenerDatosLicenciaGravidez = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -1725,7 +2210,7 @@ export const obtenerDatosLicenciaGravidez = async (idDocenteActividad: number) =
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1736,34 +2221,50 @@ export const obtenerDatosLicenciaGravidez = async (idDocenteActividad: number) =
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaHeader = `${f.getDate()} de ${meses[f.getMonth()]} de ${f.getFullYear()}`;
+    const fechaHeader = `${f.getDate()} de ${
+      meses[f.getMonth()]
+    } de ${f.getFullYear()}`;
 
     // Firmas
     const nombreJefeRH = await obtenerNombreFuncionario(json.idJefeRH);
     const nombreDirector = await obtenerNombreFuncionario(json.idDirector);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
       fechaHeader,
-      
+
       // Datos JSON
       oficio: json.numOficio || "S/N",
       fechaInicio: json.fechaInicio || "---",
       fechaFin: json.fechaFin || "---",
-      
+
       // Firmas
       firmaJefeRH: nombreJefeRH,
-      firmaDirector: nombreDirector
+      firmaDirector: nombreDirector,
     };
-
   } catch (err) {
     console.error("Error servicio Gravidez:", err);
     throw err;
@@ -1772,14 +2273,16 @@ export const obtenerDatosLicenciaGravidez = async (idDocenteActividad: number) =
 
 // 11 - Liberación de Actividades
 
-export const obtenerDatosLiberacionActividades = async (idDocenteActividad: number) => {
+export const obtenerDatosLiberacionActividades = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1790,28 +2293,31 @@ export const obtenerDatosLiberacionActividades = async (idDocenteActividad: numb
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Firmas
     const nombreJefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirector);
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirector
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
-      
+
       // Datos del JSON
       semestre: json.semestre || "---",
       estado: json.estadoLiberacion || "LIBERADO", // "LIBERADO" o "NO LIBERADO"
       lugarFecha: json.lugarFecha || "---",
-      
+
       // Firmas
       firmaJefeDepto: nombreJefeDepto,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Liberación:", err);
     throw err;
@@ -1820,14 +2326,16 @@ export const obtenerDatosLiberacionActividades = async (idDocenteActividad: numb
 
 // 12 - Liberación Académica
 
-export const obtenerDatosLiberacionAcademica = async (idDocenteActividad: number) => {
+export const obtenerDatosLiberacionAcademica = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1838,28 +2346,31 @@ export const obtenerDatosLiberacionAcademica = async (idDocenteActividad: number
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Firmas
-    const nombrePresidente = await obtenerNombreFuncionario(json.idPresidenteAcademia);
+    const nombrePresidente = await obtenerNombreFuncionario(
+      json.idPresidenteAcademia
+    );
     const nombreJefe = await obtenerNombreFuncionario(json.idJefeDepto);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
-      
+
       // Datos JSON
       semestre: json.semestre || "---",
       lugarFecha: json.lugarFecha || "---",
       otrosActividad: json.otrosActividad || "", // Opcional
-      
+
       // Firmas
       firmaPresidente: nombrePresidente,
-      firmaJefe: nombreJefe
+      firmaJefe: nombreJefe,
     };
-
   } catch (err) {
     console.error("Error servicio Liberación Académica:", err);
     throw err;
@@ -1868,14 +2379,16 @@ export const obtenerDatosLiberacionAcademica = async (idDocenteActividad: number
 
 // 13 - Reporte de Investigación
 
-export const obtenerDatosReporteInvestigacion = async (idDocenteActividad: number) => {
+export const obtenerDatosReporteInvestigacion = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
         da.datosCapturados,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1886,29 +2399,32 @@ export const obtenerDatosReporteInvestigacion = async (idDocenteActividad: numbe
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Firma del coordinador
-    const nombreCoordinador = await obtenerNombreFuncionario(json.idCoordinadorInvestigacion);
+    const nombreCoordinador = await obtenerNombreFuncionario(
+      json.idCoordinadorInvestigacion
+    );
 
     // Procesar lista de proyectos (asegurar que sea un array)
     const listaProyectos = Array.isArray(json.proyectos) ? json.proyectos : [];
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
-      
+
       // Datos JSON
       semestre: json.semestre || "---",
       lugarFecha: json.lugarFecha || "---",
       proyectos: listaProyectos, // Array de objetos {titulo, estatus, claveRegistro}
-      
-      // Firmas
-      firmaCoordinador: nombreCoordinador
-    };
 
+      // Firmas
+      firmaCoordinador: nombreCoordinador,
+    };
   } catch (err) {
     console.error("Error servicio Reporte Investigación:", err);
     throw err;
@@ -1917,7 +2433,9 @@ export const obtenerDatosReporteInvestigacion = async (idDocenteActividad: numbe
 
 // 14 - Evaluación Docente
 
-export const obtenerDatosEvaluacionDocente = async (idDocenteActividad: number) => {
+export const obtenerDatosEvaluacionDocente = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -1925,7 +2443,7 @@ export const obtenerDatosEvaluacionDocente = async (idDocenteActividad: number) 
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         doc.idPlaza, p.descripcion as plaza
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1937,39 +2455,43 @@ export const obtenerDatosEvaluacionDocente = async (idDocenteActividad: number) 
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Firmas
     const nombreJefeDDA = await obtenerNombreFuncionario(json.idJefeDDA);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirector);
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirector
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
       plaza: base.plaza || "TIEMPO COMPLETO",
-      
+
       // Datos JSON
       periodo: json.periodoEvaluado || "---",
       calificacion: json.calificacionFinal || "0.0",
       desempeno: json.desempeno || "---",
       resultados: json.resultados || [], // Array de {rubro, puntaje}
-      
+
       // Firmas
       firmaJefeDDA: nombreJefeDDA,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Evaluación:", err);
     throw err;
   }
 };
 
-
 // Función genérica para Constancias de Proyectos (1.4.2.x)
-export const obtenerDatosConstanciaProyectos = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaProyectos = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -1978,7 +2500,7 @@ export const obtenerDatosConstanciaProyectos = async (idDocenteActividad: number
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         ai.idTipoDocumento -- Necesario para el título
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -1990,10 +2512,11 @@ export const obtenerDatosConstanciaProyectos = async (idDocenteActividad: number
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
-    
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
+
     const tipo = base.idTipoDocumento;
 
     // 1. Determinar Título dinámicamente
@@ -2002,32 +2525,49 @@ export const obtenerDatosConstanciaProyectos = async (idDocenteActividad: number
     if (tipo === 423) tituloSufijo = "(INTERNACIONAL)";
 
     // 2. Fechas
-    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    const meses = [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaTexto = `${f.getDate()} de ${meses[f.getMonth()]} de ${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} de ${
+      meses[f.getMonth()]
+    } de ${f.getFullYear()}`;
 
     // 3. Firmas (Son 3 específicas)
     const jefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
     const subdirector = await obtenerNombreFuncionario(json.idSubdirector);
-    const jefeInvestigacion = await obtenerNombreFuncionario(json.idJefeInvestigacion);
+    const jefeInvestigacion = await obtenerNombreFuncionario(
+      json.idJefeInvestigacion
+    );
 
     // 4. Asegurar que 'proyectos' sea un array
     const listaProyectos = Array.isArray(json.proyectos) ? json.proyectos : [];
 
     return {
       tituloDocumento: `CONSTANCIA DE PARTICIPACIÓN EN PROYECTO ${tituloSufijo}`,
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento,
       periodo: json.periodo || "---",
       fechaTexto,
       // La lista de proyectos para la tabla
-      proyectos: listaProyectos, 
+      proyectos: listaProyectos,
       // Firmas
       firmaJefeDepto: jefeDepto,
       firmaSubdirector: subdirector,
-      firmaJefeInvestigacion: jefeInvestigacion
+      firmaJefeInvestigacion: jefeInvestigacion,
     };
-
   } catch (err) {
     console.error("Error servicio Constancia Proyectos:", err);
     throw err;
@@ -2036,7 +2576,9 @@ export const obtenerDatosConstanciaProyectos = async (idDocenteActividad: number
 
 // 1.4.1
 
-export const obtenerDatosAsesoriaCienciasBasicas = async (idDocenteActividad: number) => {
+export const obtenerDatosAsesoriaCienciasBasicas = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -2044,7 +2586,7 @@ export const obtenerDatosAsesoriaCienciasBasicas = async (idDocenteActividad: nu
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -2055,46 +2597,69 @@ export const obtenerDatosAsesoriaCienciasBasicas = async (idDocenteActividad: nu
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' 
-      ? JSON.parse(base.datosCapturados) 
-      : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaHeader = `${f.getDate()}/${meses[f.getMonth()]}/${f.getFullYear()}`;
-    const fechaTexto = `${f.getDate()} días del mes de ${meses[f.getMonth()]} del año ${f.getFullYear()}`;
+    const fechaHeader = `${f.getDate()}/${
+      meses[f.getMonth()]
+    }/${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} días del mes de ${
+      meses[f.getMonth()]
+    } del año ${f.getFullYear()}`;
 
     // Firmas
-    const nombreJefeCB = await obtenerNombreFuncionario(json.idJefeCienciasBasicas);
-    const nombreSubdirector = await obtenerNombreFuncionario(json.idSubdirector);
+    const nombreJefeCB = await obtenerNombreFuncionario(
+      json.idJefeCienciasBasicas
+    );
+    const nombreSubdirector = await obtenerNombreFuncionario(
+      json.idSubdirector
+    );
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
       fechaHeader,
       fechaTexto,
-      
+
       // Datos JSON
       oficio: json.numOficio || "S/N",
       asignatura: json.asignatura || "---",
       totalAlumnos: json.totalAlumnos || "0",
       periodo: json.periodo || "---",
-      
+
       // Firmas
       firmaJefeCB: nombreJefeCB,
-      firmaSubdirector: nombreSubdirector
+      firmaSubdirector: nombreSubdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Asesoría CB:", err);
     throw err;
   }
 };
 
-
 // Función genérica para la familia 1.4.3.x (Asesorías)
-export const obtenerDatosAsesoriaGeneric = async (idDocenteActividad: number) => {
+export const obtenerDatosAsesoriaGeneric = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -2103,7 +2668,7 @@ export const obtenerDatosAsesoriaGeneric = async (idDocenteActividad: number) =>
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         ai.idTipoDocumento -- Necesario para saber el tipo exacto
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -2115,7 +2680,10 @@ export const obtenerDatosAsesoriaGeneric = async (idDocenteActividad: number) =>
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' ? JSON.parse(base.datosCapturados) : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
     const tipo = base.idTipoDocumento;
 
     // 1. Lógica para determinar el Texto de la Actividad y el Rubro
@@ -2123,43 +2691,61 @@ export const obtenerDatosAsesoriaGeneric = async (idDocenteActividad: number) =>
     let rubroTexto = "1.4.3.X";
 
     switch (tipo) {
-        case 431:
-            actividadTexto = "proyectos de creatividad, emprendedurismo e innovación";
-            rubroTexto = "1.4.3.1";
-            break;
-        case 432:
-            actividadTexto = "diseño de prototipos, modelos físicos o software";
-            rubroTexto = "1.4.3.2";
-            break;
-        case 433:
-            actividadTexto = "desarrollo de prototipos, modelos físicos o software";
-            rubroTexto = "1.4.3.3";
-            break;
-        case 434:
-            actividadTexto = "diseño y desarrollo de equipo";
-            rubroTexto = "1.4.3.4";
-            break;
-        case 435:
-            actividadTexto = "Servicio Social";
-            rubroTexto = "1.4.3.5";
-            break;
-        case 436:
-            actividadTexto = "Residencia Profesional";
-            rubroTexto = "1.4.3.6";
-            break;
+      case 431:
+        actividadTexto =
+          "proyectos de creatividad, emprendedurismo e innovación";
+        rubroTexto = "1.4.3.1";
+        break;
+      case 432:
+        actividadTexto = "diseño de prototipos, modelos físicos o software";
+        rubroTexto = "1.4.3.2";
+        break;
+      case 433:
+        actividadTexto = "desarrollo de prototipos, modelos físicos o software";
+        rubroTexto = "1.4.3.3";
+        break;
+      case 434:
+        actividadTexto = "diseño y desarrollo de equipo";
+        rubroTexto = "1.4.3.4";
+        break;
+      case 435:
+        actividadTexto = "Servicio Social";
+        rubroTexto = "1.4.3.5";
+        break;
+      case 436:
+        actividadTexto = "Residencia Profesional";
+        rubroTexto = "1.4.3.6";
+        break;
     }
 
     // 2. Formatear lista de estudiantes
     let listaEstudiantes = "---";
     if (Array.isArray(json.estudiantes) && json.estudiantes.length > 0) {
-        // Une los nombres con comas, y usa "y" para el último.
-        listaEstudiantes = json.estudiantes.join(", ").replace(/, ([^,]*)$/, ' y $1');
+      // Une los nombres con comas, y usa "y" para el último.
+      listaEstudiantes = json.estudiantes
+        .join(", ")
+        .replace(/, ([^,]*)$/, " y $1");
     }
 
     // 3. Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaTexto = `${f.getDate()} días del mes de ${meses[f.getMonth()]} del año ${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} días del mes de ${
+      meses[f.getMonth()]
+    } del año ${f.getFullYear()}`;
 
     // 4. Firmas
     const jefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
@@ -2167,34 +2753,35 @@ export const obtenerDatosAsesoriaGeneric = async (idDocenteActividad: number) =>
 
     return {
       // Datos calculados en el backend
-      actividadTexto, 
+      actividadTexto,
       rubroTexto,
       listaEstudiantes,
-      
+
       // Datos generales
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
       fechaTexto,
-      
+
       // Datos del JSON
       oficio: json.numOficio || "S/N",
       periodo: json.periodo || "---",
       nombreProyecto: json.nombreProyecto ? `"${json.nombreProyecto}"` : "", // Agrega comillas si existe
-      
+
       // Firmas
       firmaJefeDepto: jefeDepto,
-      firmaSubdirector: subdirector
+      firmaSubdirector: subdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Asesoría Genérica:", err);
     throw err;
   }
 };
 
-
 // Función para Concursos (1.4.4.x)
-export const obtenerDatosConstanciaConcurso = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaConcurso = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -2203,7 +2790,7 @@ export const obtenerDatosConstanciaConcurso = async (idDocenteActividad: number)
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         ai.idTipoDocumento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -2215,18 +2802,37 @@ export const obtenerDatosConstanciaConcurso = async (idDocenteActividad: number)
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' ? JSON.parse(base.datosCapturados) : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
     const tipo = base.idTipoDocumento;
 
     // Determinar Función y Alcance por ID (si no viene en JSON)
     let funcionDefault = "PARTICIPANTE";
-    if ([441, 442, 443].includes(tipo)) funcionDefault = "COORDINADOR(A) GENERAL";
+    if ([441, 442, 443].includes(tipo))
+      funcionDefault = "COORDINADOR(A) GENERAL";
     else if ([444, 445, 446].includes(tipo)) funcionDefault = "COLABORADOR(A)";
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaTexto = `${f.getDate()} de ${meses[f.getMonth()]} del año ${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} de ${
+      meses[f.getMonth()]
+    } del año ${f.getFullYear()}`;
 
     // Firmas
     const jefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
@@ -2234,23 +2840,23 @@ export const obtenerDatosConstanciaConcurso = async (idDocenteActividad: number)
     const jefeCentro = await obtenerNombreFuncionario(json.idJefeCentroInfo); // Puede ser Jefe de Depto Académico o Centro Info
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
       fechaTexto,
-      
+
       // Datos específicos
       oficio: json.numOficio || "S/N",
       periodo: json.periodo || "---",
       nombreConcurso: json.nombreConcurso || "---",
       funcion: json.funcion || funcionDefault,
       actividades: json.actividades || "---",
-      
+
       // Firmas (1 arriba, 2 abajo según la imagen 1.4.3.1 que es similar)
       firmaJefeDepto: jefeDepto,
       firmaSubdirector: subdirector,
-      firmaJefeCentro: jefeCentro
+      firmaJefeCentro: jefeCentro,
     };
-
   } catch (err) {
     console.error("Error servicio Concursos:", err);
     throw err;
@@ -2259,7 +2865,9 @@ export const obtenerDatosConstanciaConcurso = async (idDocenteActividad: number)
 
 // Función para Jurado (1.4.5.x)
 
-export const obtenerDatosConstanciaJurado = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaJurado = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -2268,7 +2876,7 @@ export const obtenerDatosConstanciaJurado = async (idDocenteActividad: number) =
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         ai.idTipoDocumento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -2280,20 +2888,45 @@ export const obtenerDatosConstanciaJurado = async (idDocenteActividad: number) =
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' ? JSON.parse(base.datosCapturados) : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
     const tipo = base.idTipoDocumento;
 
     // Lógica de Nivel
     let nivelTexto = "JURADO";
     let rubroTexto = "1.4.5.X";
 
-    if (tipo === 451) { nivelTexto = "Jurado Local"; rubroTexto = "1.4.5.1"; }
-    else if (tipo === 452) { nivelTexto = "Jurado Estatal/Regional"; rubroTexto = "1.4.5.2"; }
-    else if (tipo === 453) { nivelTexto = "Jurado Nacional"; rubroTexto = "1.4.5.3"; }
-    else if (tipo === 454) { nivelTexto = "Jurado Internacional"; rubroTexto = "1.4.5.4"; }
+    if (tipo === 451) {
+      nivelTexto = "Jurado Local";
+      rubroTexto = "1.4.5.1";
+    } else if (tipo === 452) {
+      nivelTexto = "Jurado Estatal/Regional";
+      rubroTexto = "1.4.5.2";
+    } else if (tipo === 453) {
+      nivelTexto = "Jurado Nacional";
+      rubroTexto = "1.4.5.3";
+    } else if (tipo === 454) {
+      nivelTexto = "Jurado Internacional";
+      rubroTexto = "1.4.5.4";
+    }
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
     const dia = f.getDate();
     const mes = meses[f.getMonth()];
@@ -2304,26 +2937,28 @@ export const obtenerDatosConstanciaJurado = async (idDocenteActividad: number) =
     const subdirector = await obtenerNombreFuncionario(json.idSubdirector);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
-      
+
       // Textos dinámicos
       nivelTexto,
       rubroTexto, // Para el asunto
-      
+
       // Datos JSON
       oficio: json.numOficio || "S/N",
       periodo: json.periodo || "---",
       evento: json.evento || "---",
-      
+
       // Fechas para el header
-      dia, mes, anio,
-      
+      dia,
+      mes,
+      anio,
+
       // Firmas
       firmaJefeDepto: jefeDepto,
-      firmaSubdirector: subdirector
+      firmaSubdirector: subdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Jurado:", err);
     throw err;
@@ -2332,7 +2967,9 @@ export const obtenerDatosConstanciaJurado = async (idDocenteActividad: number) =
 
 // 1.4.6 - Comité de Evaluación
 
-export const obtenerDatosConstanciaComite = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaComite = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -2341,7 +2978,7 @@ export const obtenerDatosConstanciaComite = async (idDocenteActividad: number) =
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         doc.idPlaza -- Para el grado (Dr., M.C., etc) si lo tienes
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -2352,32 +2989,52 @@ export const obtenerDatosConstanciaComite = async (idDocenteActividad: number) =
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' ? JSON.parse(base.datosCapturados) : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaTexto = `${f.getDate()} de ${meses[f.getMonth()]} de ${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} de ${
+      meses[f.getMonth()]
+    } de ${f.getFullYear()}`;
 
     // Firmas (En este caso firma el Director)
     const firmaDirector = await obtenerNombreFuncionario(json.idDirector);
 
     // Lista Evaluaciones
-    const listaEvaluaciones = Array.isArray(json.evaluaciones) ? json.evaluaciones : [];
+    const listaEvaluaciones = Array.isArray(json.evaluaciones)
+      ? json.evaluaciones
+      : [];
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento,
-      
+
       oficio: json.numOficio || "S/N",
       periodo: json.periodo || "---",
       fechaTexto,
-      
-      evaluaciones: listaEvaluaciones,
-      
-      firmaDirector
-    };
 
+      evaluaciones: listaEvaluaciones,
+
+      firmaDirector,
+    };
   } catch (err) {
     console.error("Error servicio Comite:", err);
     throw err;
@@ -2388,7 +3045,9 @@ export const obtenerDatosConstanciaComite = async (idDocenteActividad: number) =
 
 // services/docenteactividadServices.ts
 
-export const obtenerDatosConstanciaAuditoria = async (idDocenteActividad: number) => {
+export const obtenerDatosConstanciaAuditoria = async (
+  idDocenteActividad: number
+) => {
   try {
     const query = `
       SELECT 
@@ -2397,7 +3056,7 @@ export const obtenerDatosConstanciaAuditoria = async (idDocenteActividad: number
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         ai.idTipoDocumento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -2409,7 +3068,10 @@ export const obtenerDatosConstanciaAuditoria = async (idDocenteActividad: number
     if (rows.length === 0) return null;
 
     const base = rows[0];
-    const json = typeof base.datosCapturados === 'string' ? JSON.parse(base.datosCapturados) : base.datosCapturados;
+    const json =
+      typeof base.datosCapturados === "string"
+        ? JSON.parse(base.datosCapturados)
+        : base.datosCapturados;
     const tipo = base.idTipoDocumento;
 
     // Determinar Rol Automáticamente si no viene en JSON
@@ -2418,31 +3080,46 @@ export const obtenerDatosConstanciaAuditoria = async (idDocenteActividad: number
     if (tipo === 473 || tipo === 474) rolTexto = "AUDITOR LÍDER";
 
     // Fechas
-    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const meses = [
+      "enero",
+      "febrero",
+      "marzo",
+      "abril",
+      "mayo",
+      "junio",
+      "julio",
+      "agosto",
+      "septiembre",
+      "octubre",
+      "noviembre",
+      "diciembre",
+    ];
     const f = new Date(base.fechaRegistro);
-    const fechaTexto = `${f.getDate()} de ${meses[f.getMonth()]} del año ${f.getFullYear()}`;
+    const fechaTexto = `${f.getDate()} de ${
+      meses[f.getMonth()]
+    } del año ${f.getFullYear()}`;
 
     // Firmas
     const jefeDepto = await obtenerNombreFuncionario(json.idJefeDepto);
     const subdirector = await obtenerNombreFuncionario(json.idSubdirector);
 
     return {
-      nombreDocente: `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
+      nombreDocente:
+        `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
       departamento: base.nombreDepartamento.toUpperCase(),
       fechaTexto,
-      
+
       // Datos Específicos
       oficio: json.numOficio || "S/N",
       periodo: json.periodo || "---",
       tipoAuditoria: json.tipoAuditoria || "Sistema de Gestión",
       funcion: json.funcion || rolTexto,
       lugar: json.lugar || "Instituto Tecnológico de Culiacán",
-      
+
       // Firmas
       firmaJefeDepto: jefeDepto,
-      firmaSubdirector: subdirector
+      firmaSubdirector: subdirector,
     };
-
   } catch (err) {
     console.error("Error servicio Auditoría:", err);
     throw err;
@@ -2460,7 +3137,7 @@ export const obtenerDatosDesarrolloCurricular = async (idDocenteActividad: numbe
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         ai.idTipoDocumento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -2530,7 +3207,7 @@ export const obtenerDatosConstanciaModuloEspecialidad = async (idDocenteActivida
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN departamento d ON doc.idDepartamento = d.idDepartamento
@@ -2586,7 +3263,7 @@ export const obtenerDatosConstanciaSinodal = async (idDocenteActividad: number) 
         da.fechaRegistro,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         ai.idTipoDocumento
-      FROM docenteactividad da
+      FROM docenteActividad da
       JOIN docente doc ON da.idDocente = doc.idDocente
       JOIN usuario u ON doc.idUsuario = u.idUsuario
       JOIN actividadInstitucional ai ON da.idActividadInstitucional = ai.idActividadInstitucional

@@ -46,15 +46,29 @@
         </thead>
 
         <tbody>
+          <!-- Mensaje de carga -->
+          <tr v-if="loading">
+            <td colspan="9" class="sin-documentos">
+              <p class="empty-message">Cargando documentos...</p>
+            </td>
+          </tr>
+
+          <!-- Mensaje de error -->
+          <tr v-else-if="error">
+            <td colspan="9" class="sin-documentos">
+              <p class="empty-message" style="color: red">{{ error }}</p>
+            </td>
+          </tr>
+
           <!-- Si está vacía -->
-          <tr v-if="documentos.length === 0">
+          <tr v-else-if="documentos.length === 0">
             <td colspan="9" class="sin-documentos">
               <p class="empty-message">No hay documentos generados todavía.</p>
             </td>
           </tr>
 
           <!-- Documentos dinámicos -->
-          <tr v-for="doc in documentos" :key="doc.id">
+          <tr v-else v-for="doc in documentos" :key="doc.id">
             <td>{{ doc.id }}</td>
             <td>{{ doc.actividad }}</td>
             <td>{{ doc.plantilla }}</td>
@@ -86,29 +100,85 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { getUsuarioFromStorage } from "@/utils/auth";
 
 const documentos = ref([]);
+const loading = ref(true);
+const error = ref("");
 
-// Ejemplo para agregar documentos (puedes borrar esto si ya tienes backend)
-// documentos.value.push({
-//   id: "001",
-//   actividad: "Tutorías",
-//   plantilla: "001",
-//   docente: "Norma Godoy",
-//   estatus: "Generado",
-//   validador: "Subdirección",
-//   fechaEnvio: "01/12/25",
-//   fechaValidacion: "-"
-// });
+const formatearFecha = (fecha) => {
+  if (!fecha) return "-";
+  const date = new Date(fecha);
+  return date.toLocaleDateString("es-MX", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "2-digit",
+  });
+};
+
+const cargarDocumentos = async () => {
+  try {
+    loading.value = true;
+    error.value = "";
+
+    // Obtener usuario del localStorage
+    const usuario = getUsuarioFromStorage();
+    if (!usuario) {
+      error.value = "No se encontró información del usuario";
+      return;
+    }
+
+    console.log("Usuario logueado:", usuario);
+    console.log("idUsuario enviado:", usuario.idUsuario);
+
+    // Llamar al endpoint con el idUsuario
+    const response = await fetch(
+      `http://localhost:3000/documento/usuario/${usuario.idUsuario}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Error al cargar documentos");
+    }
+
+    const data = await response.json();
+    console.log("Documentos recibidos del backend:", data);
+
+    // Mapear los datos al formato esperado por la tabla
+    documentos.value = data.map((doc) => ({
+      id: doc.idDocumento,
+      actividad: doc.nombreActividad || "-",
+      plantilla: doc.nombreTipoDocumento || "-",
+      docente: doc.nombreDocente || "-",
+      estatus: doc.estatus || "Pendiente",
+      validador: doc.validadoPor ? `ID: ${doc.validadoPor}` : "-",
+      fechaEnvio: formatearFecha(doc.fechaRegistro),
+      fechaValidacion: formatearFecha(doc.fechaValidacion),
+      urlArchivo: doc.urlArchivo,
+      validadoPor: doc.validadoPor,
+    }));
+  } catch (err) {
+    console.error("Error al cargar documentos:", err);
+    error.value = "No se pudieron cargar los documentos";
+  } finally {
+    loading.value = false;
+  }
+};
 
 const descargar = (doc) => {
-  console.log("Descargar:", doc.id);
+  // Aquí implementarás la lógica de descarga
+  console.log("Descargar:", doc.id, doc.urlArchivo);
+  // window.open(doc.urlArchivo, '_blank');
 };
 
 const ver = (doc) => {
   console.log("Ver documento:", doc.id);
+  // Aquí puedes abrir un modal o navegar a vista previa
 };
+
+onMounted(() => {
+  cargarDocumentos();
+});
 </script>
 <style scoped>
 :global(:root) {
@@ -126,7 +196,6 @@ const ver = (doc) => {
   justify-content: center;
   align-items: center;
   position: relative;
-
 }
 
 /* contenedor central */
@@ -217,19 +286,19 @@ const ver = (doc) => {
   transition: 0.2s;
 }
 .exit-container {
-    position: absolute;
-    bottom: 25px;
-    left: 40px;
+  position: absolute;
+  bottom: 25px;
+  left: 40px;
 }
 
 .exit-icon {
-    width: 40px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
+  width: 40px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
 .exit-icon:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .icono:hover {

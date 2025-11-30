@@ -1,50 +1,60 @@
 <template>
   <div class="contenedor-principal">
     <div class="main-contenido">
-
       <!-- LOGO -->
-      <img src="../../../assets/sigedd-logo.png" alt="SigeddLogo" class="Logo" />
-          <img src="../../../assets/sigedd-icono.png" class="IconoSigedd" alt="SIGEDD">
-
-
+      <img
+        src="../../../assets/sigedd-logo.png"
+        alt="SigeddLogo"
+        class="Logo"
+      />
+      <img
+        src="../../../assets/sigedd-icono.png"
+        class="IconoSigedd"
+        alt="SIGEDD"
+      />
 
       <!-- TEXTO -->
       <p class="main-texto">
         ¡Olvida la guerra de papeles! <br />
-        Ahora puedes generar, validar y gestionar tus constancias oficiales <br />
+        Ahora puedes generar, validar y gestionar tus constancias oficiales
+        <br />
         de forma rápida y precisa, para participar en el programa EDD.
       </p>
 
       <!-- BOTÓN -->
-      <button class="main-boton">INICIAR</button>
-
+      <button class="main-boton" @click="irALogin">INICIAR</button>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "SIGEDD",
+<script setup lang="ts">
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const irALogin = () => {
+  router.push({ path: "/Login" });
 };
 </script>
 
 <style scoped>
-:global(:root){
-  --azul-oscuro: #0F3B75;
-  --azul-claro: #D9EAF7;
+:global(:root) {
+  --azul-oscuro: #0f3b75;
+  --azul-claro: #d9eaf7;
   --texto-oscuro: #1a1a1a;
-  --btn-texto: #0F3B75;
+  --btn-texto: #0f3b75;
 
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu,
+    Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-  .contenedor-principal {
+.contenedor-principal {
   min-height: 100vh;
   background-color: var(--azul-oscuro);
   position: relative;
   overflow: hidden;
   font-family: var(--font-family);
-  }
+}
 
 /* Triángulo en forma de V */
 .contenedor-principal::before {
@@ -96,28 +106,27 @@ export default {
   font-weight: bold;
   border-radius: 6px;
   cursor: pointer;
-  background-color: #EBEFF3;
-  color: #5A5A6A;  
+  background-color: #ebeff3;
+  color: #5a5a6a;
   transition: 0.3s;
   position: relative;
-  top: -20px;
+  top: -60px;
 }
 
 .main-boton:hover {
   opacity: 0.85;
 }
 
-.Logo{
-position: relative;
-top: -200px;
-right: 210px;
+.Logo {
+  position: relative;
+  top: -200px;
+  right: 210px;
 }
 
 .IconoSigedd {
-   position: absolute;
+  position: absolute;
   bottom: -200px; /* distancia desde abajo */
-  right: -450px;  /* distancia desde la derecha */
-  width: 150px;  /* tamaño */
-  }
+  right: -450px; /* distancia desde la derecha */
+  width: 150px; /* tamaño */
+}
 </style>
-
