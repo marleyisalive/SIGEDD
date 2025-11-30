@@ -55,25 +55,31 @@
       </div>
 
       <div class="seccion-firmas">
-        <p class="atentamente">ATENTAMENTE</p>
-        
-        <div class="contenedor-firmas">
-            <div class="firma-bloque">
-              <p class="vobo">Vo. Bo.</p>
-              <div class="espacio-firma"><img src="@/assets/firma-2.png" alt=""></div>
-              <div class="linea"></div>
-              <p class="nombre-firmante">{{ datos.firmaJefeDDA }}</p>
-              <p class="cargo">JEFA DEL DEPTO. DE DESARROLLO ACADÉMICO</p>
-            </div>
+  
+  <div class="firma-box">
+    <p v-if="datos.validadoPor" class="firma-digital">
+      {{ datos.firmaJefeDDA }}
+    </p>
+    
+    <div v-else style="height: 40px;"></div>
 
-            <div class="firma-bloque">
-              <div class="espacio-firma"><img src="@/assets/firma-2.png" alt=""></div>
-              <div class="linea"></div>
-              <p class="nombre-firmante">{{ datos.firmaSubdirector }}</p>
-              <p class="cargo">RESPONSABLE DEL DESPACHO DE LA SUBDIRECCIÓN ACADÉMICA</p>
-            </div>
-        </div>
-      </div>
+    <div class="linea"></div>
+    <p class="nombre"><strong>{{ datos.firmaJefeDDA }}</strong></p>
+    <p class="cargo">JEFE DEL DEPARTAMENTO DE DESARROLLO ACADÉMICO</p>
+  </div>
+
+  <div class="firma-box">
+    <p v-if="datos.validadoPor" class="firma-digital">
+      {{ datos.firmaSubdirector }}
+    </p>
+    <div v-else style="height: 40px;"></div>
+
+    <div class="linea"></div>
+    <p class="nombre"><strong>{{ datos.firmaSubdirector }}</strong></p>
+    <p class="cargo">SUBDIRECTOR ACADÉMICO</p>
+  </div>
+
+</div>
 
       <!-----<div class="sello-flotante">
         <img src="@/assets/sello-approved.png" alt="Sello" />
@@ -178,12 +184,10 @@ const mitadTutorados2 = computed(() => {
 .fila-total td { padding-top: 10px; }
 
 /* FIRMAS */
-.seccion-firmas { margin-top: auto; padding-bottom: 30px; }
 .atentamente { text-align: center; margin-bottom: 40px; font-weight: bold; font-size: 10px; }
 .contenedor-firmas { display: flex; justify-content: space-between; }
 .firma-bloque { width: 45%; text-align: center; position: relative; }
 .vobo { position: absolute; top: -20px; left: 0; font-size: 10px; }
-.linea { border-top: 1px solid black; margin-bottom: 5px; }
 .nombre-firmante { font-weight: bold; font-size: 9px; margin-bottom: 2px; }
 .cargo { font-size: 8px; }
 .espacio-firma img{ width: 200px;}
@@ -212,5 +216,46 @@ const mitadTutorados2 = computed(() => {
     .hoja-carta { font-size: 12pt; } /* Tamaño real si se ve en pantalla grande */
     .nombre-firmante { font-size: 10pt; }
     .cargo { font-size: 8pt; }
+}
+
+/* Estilo para la firma "a mano" */
+
+/* Ajustes existentes */
+.firma-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 45%; /* Para que quepan las dos */
+  position: relative;
+}
+
+.linea {
+  border-top: 1px solid black;
+  margin-bottom: 5px;
+  width: 100%; /* Que la línea ocupe todo el ancho de su caja */
+}
+.nombre {
+  font-weight: bold;
+  font-size: 10px;
+  margin: 0;
+  text-align: center;
+}
+.firma-digital {
+  font-family: 'MiFirmaChida', cursive; /* O la fuente que hayas elegido */
+  font-size: 2.2em; 
+  color: #1e3a6c; /* Azul oscuro tipo pluma */
+  margin: 0;
+  margin-bottom: -10px; /* Acercarlo a la línea */
+  z-index: 1;
+}
+.seccion-firmas {
+  margin-top: auto; 
+  padding-bottom: 30px; 
+  /* ESTO ES LO QUE FALTABA: Flex para ponerlas lado a lado */
+  display: flex;
+  justify-content: space-between; /* Espacio entre las dos firmas */
+  align-items: flex-end; /* Alinear al fondo */
+  padding: 0 40px; /* Margen lateral para que no se peguen a los bordes */
 }
 </style>

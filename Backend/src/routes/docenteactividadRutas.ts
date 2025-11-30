@@ -790,15 +790,14 @@ router.put("/aprobar/:id", async (req: Request, res: Response) => {
 router.put("/rechazar/:id", async (req: Request, res: Response) => {
   try {
     const idActividad = Number(req.params.id);
+    const { motivo } = req.body; // <--- Recibimos el motivo
     
-    // Llamamos al servicio de rechazo
-    const resultado = await docenteActividadServices.rechazarActividad(idActividad);
+    // Pasamos el motivo al servicio
+    const resultado = await docenteActividadServices.rechazarActividad(idActividad, motivo);
     
-    if (resultado && typeof resultado === 'object' && 'error' in resultado) {
-        return res.status(400).send(resultado);
-    }
+    // ... resto de validaciones igual ...
+    return res.send({ mensaje: "Documento rechazado", resultado });
 
-    return res.send({ mensaje: "Documento rechazado correctamente", resultado });
   } catch (err) {
     console.error("Error en ruta rechazar:", err);
     return res.status(500).send({ error: "Error interno." });

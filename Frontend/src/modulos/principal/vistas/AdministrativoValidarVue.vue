@@ -77,6 +77,15 @@
                 <span>✓</span>
               </button>
 
+                <button
+                v-if="doc.validadoPor === 0"
+                class="btn-icon rechazo-info"
+                @click.stop="verMotivo(doc.motivoRechazo)" 
+                title="Ver motivo de rechazo"
+              >
+                <strong>?</strong>
+              </button>
+
               <button
                 class="btn-icon rechazar"
                 @click="rechazarDocumento(doc)"
@@ -84,6 +93,7 @@
                 :class="{ 'btn-disabled': doc.validadoPor === 0 }"
                 title="Rechazar"
               >
+
             <span>✖</span>
           </button>
         </div>
@@ -266,19 +276,32 @@ const verDetalle = (doc) => {
 };
 
 const rechazarDocumento = async (doc) => {
-  if (!confirm("¿Seguro que deseas RECHAZAR este documento?")) return;
+  // Usamos prompt en lugar de confirm para pedir texto
+  const motivo = prompt("Describe el motivo del rechazo para el docente:");
+  
+  if (motivo === null) return; // Si le da Cancelar, no hace nada
+  if (motivo.trim() === "") {
+    alert("Debes escribir un motivo.");
+    return;
+  }
 
   try {
-    await axios.put(`http://localhost:3001/api/docenteactividad/rechazar/${doc.idDocenteActividad}`);
+    await axios.put(`http://localhost:3001/api/docenteactividad/rechazar/${doc.idDocenteActividad}`, {
+      motivo: motivo // Enviamos lo que escribió
+    });
     
-    // Actualizamos visualmente al instante
     doc.validadoPor = 0; 
-    alert("Documento marcado como RECHAZADO.");
+    alert("Documento rechazado y motivo enviado.");
   } catch (error) {
     console.error(error);
     alert("Error al rechazar.");
   }
 };
+
+const verMotivo = (motivo) => {
+  alert("MOTIVO DE RECHAZO:\n\n" + (motivo || "Sin especificaciones."));
+};
+
 </script>
 
 <style scoped>
@@ -292,8 +315,9 @@ const rechazarDocumento = async (doc) => {
 .admin-validar {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
+  /* CAMBIO CLAVE 1: Usar min-height en lugar de height */
+  min-height: 100vh; 
+  width: 100%; /* Asegurar ancho completo */
   background-color: var(--color-sigedd-bg);
   font-family: "Segoe UI", Arial, sans-serif;
   color: var(--color-text-osc);
@@ -305,6 +329,8 @@ const rechazarDocumento = async (doc) => {
   color: white;
   padding: 15px 30px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  /* Opcional: Si quieres que el header se quede fijo al scrollear */
+  /* position: sticky; top: 0; z-index: 100; */
 }
 .header-content {
   display: flex;
@@ -312,6 +338,7 @@ const rechazarDocumento = async (doc) => {
   justify-content: space-between;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 }
 .titulo-container h1 {
   margin: 0;
@@ -337,9 +364,13 @@ const rechazarDocumento = async (doc) => {
 .main-contenido {
   flex: 1;
   padding: 40px;
+  /* CAMBIO CLAVE 2: Quitamos overflow-y: auto para que scrollee toda la página */
+  /* overflow-y: auto; <--- ELIMINADO */
+  
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  width: 100%;
+  display: block;
 }
 
 .tabla-contenedor {
@@ -347,6 +378,7 @@ const rechazarDocumento = async (doc) => {
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   overflow: hidden;
+  width: 100%;
 }
 
 .fila {
@@ -367,23 +399,17 @@ const rechazarDocumento = async (doc) => {
 }
 
 /* COLUMNAS */
-.col-nombre {
-  flex: 4;
-}
-.col-fecha {
-  flex: 1;
-  text-align: center;
-}
-.col-estado {
-  flex: 1.5;
-  display: flex;
-  justify-content: center;
-}
-.col-acciones {
-  flex: 1.5;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
+.col-nombre { flex: 3; text-align: left; }
+.col-fecha { flex: 1; text-align: center; }
+.col-estado { flex: 1.5; display: flex; justify-content: center; }
+
+/* CAMBIO 3: Ajuste de acciones para que no se encimen */
+.col-acciones { 
+  flex: 2; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  gap: 10px; 
 }
 
 .texto-formato-oficial {
@@ -405,44 +431,33 @@ const rechazarDocumento = async (doc) => {
   align-items: center;
   gap: 5px;
 }
-.badge-aprobado {
-  background-color: #e6f4ea;
-  color: #1e7e34;
-}
-.badge-pendiente {
-  background-color: #fff3cd;
-  color: #856404;
-}
+.badge-aprobado { background-color: #e6f4ea; color: #1e7e34; }
+.badge-pendiente { background-color: #fff3cd; color: #856404; }
+.badge-rechazado { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
 
-/* BOTONES ACCION */
+/* BOTONES */
 .btn-icon {
   background: none;
   border: 1px solid #ddd;
   border-radius: 6px;
-  width: 40px;
-  height: 40px;
+  min-width: 38px;
+  width: 38px;
+  height: 38px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  padding: 0;
 }
-.btn-icon img {
-  width: 22px;
-}
+.btn-icon img { width: 20px; }
 
-/* Estilo Botón Aprobar */
-.btn-icon.aprobar {
-  border-color: var(--verde-ok);
-  color: var(--verde-ok);
-  font-size: 1.2em;
-}
-.btn-icon.aprobar:hover {
-  background-color: var(--verde-ok);
-  color: white;
-}
+.btn-icon.aprobar { border-color: var(--verde-ok); color: var(--verde-ok); font-size: 1.2em; }
+.btn-icon.aprobar:hover { background-color: var(--verde-ok); color: white; }
 
-/* Estilo Botón Deshabilitado (Ya aprobado) */
+.btn-icon.rechazar { border-color: #dc3545; color: #dc3545; font-size: 1.2em; }
+.btn-icon.rechazar:hover { background-color: #dc3545; color: white; }
+
 .btn-disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -451,9 +466,7 @@ const rechazarDocumento = async (doc) => {
   border-color: #ddd !important;
 }
 
-/* LOADING / EMPTY */
-.loading-box,
-.empty-state {
+.loading-box, .empty-state {
   padding: 40px;
   text-align: center;
   color: #777;
@@ -463,26 +476,7 @@ const rechazarDocumento = async (doc) => {
   background: var(--color-sigedd-osc);
   padding: 15px 30px;
   text-align: right;
+  margin-top: auto; /* Empuja el footer al fondo si hay poco contenido */
 }
-.icono-exit img {
-  width: 35px;
-}
-
-/* Badge Rojo */
-.badge-rechazado {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-/* Botón Rojo */
-.btn-icon.rechazar {
-  border-color: #dc3545;
-  color: #dc3545;
-  font-size: 1.2em;
-}
-.btn-icon.rechazar:hover {
-  background-color: #dc3545;
-  color: white;
-}
+.icono-exit img { width: 35px; cursor: pointer; filter: brightness(0) invert(1); }
 </style>

@@ -59,6 +59,7 @@ export const obtenerActividadesPorUsuario = async (idUsuario: number) => {
         da.idDocente,
         da.fechaRegistro,
         da.validadoPor,
+        da.motivoRechazo,
         ai.nombre AS nombreActividad,
         ai.idTipoDocumento,
         td.nombre as nombreTipo
@@ -3143,12 +3144,11 @@ export const aprobarActividad = async (idDocenteActividad: number, idAdmin: numb
 };
 
 // --- RECHAZAR ACTIVIDAD ---
-export const rechazarActividad = async (idDocenteActividad: number) => {
+export const rechazarActividad = async (idDocenteActividad: number, motivo: string) => {
   try {
-    // Ponemos validadoPor = 0 para indicar "Rechazado"
     const [result] = await conexion.query(
-      "UPDATE docenteactividad SET validadoPor = 0, fechaValidacion = NOW() WHERE idDocenteActividad = ?",
-      [idDocenteActividad]
+      "UPDATE docenteactividad SET validadoPor = 0, fechaValidacion = NOW(), motivoRechazo = ? WHERE idDocenteActividad = ?",
+      [motivo, idDocenteActividad] // <--- Guardamos el motivo
     );
     return result;
   } catch (err) {

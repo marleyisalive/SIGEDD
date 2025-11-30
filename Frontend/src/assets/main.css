@@ -34,3 +34,10 @@ a,
     padding: 0 2rem;
   } */
 }
+
+@font-face {
+  font-family: 'MiFirmaChida';
+  src: url('@/assets/fonts/GreatVibes-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}

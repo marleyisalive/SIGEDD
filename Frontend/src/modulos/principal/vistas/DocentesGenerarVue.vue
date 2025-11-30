@@ -76,24 +76,33 @@
           </div>
 
           <div class="col-acciones">
-            <button
-              class="btn-icon download"
-              @click="descargarUnicoPDF(doc)"
-              :disabled="!doc.validadoPor"
-              :title="doc.validadoPor ? 'Descargar PDF' : 'Documento en espera de aprobación'"
-              :class="{ 'btn-disabled': !doc.validadoPor }"
-            >
-              <img src="@/assets/icono-generar.png" alt="PDF" />
-            </button>
+          <button
+            class="btn-icon download"
+            @click="descargarUnicoPDF(doc)"
+            :disabled="!doc.validadoPor"
+            :title="doc.validadoPor ? 'Descargar PDF' : 'Documento en espera de aprobación'"
+            :class="{ 'btn-disabled': !doc.validadoPor }"
+          >
+            <img src="@/assets/icono-generar.png" alt="PDF" />
+          </button>
 
-            <button
-              class="btn-icon view"
-              @click="irADetalleUnico(doc.idDocenteActividad)"
-              title="Ver Detalle"
-            >
-              <img src="@/assets/icono-elegir.png" alt="Ver" />
-            </button>
-          </div>
+          <button
+            v-if="doc.validadoPor === 0"
+            class="btn-icon rechazo-info"
+            @click.stop="verMotivo(doc.motivoRechazo)" 
+            title="Ver motivo de rechazo"
+          >
+            <strong>?</strong>
+          </button>
+
+  <button
+    class="btn-icon view"
+    @click="irADetalleUnico(doc.idDocenteActividad)"
+    title="Ver Detalle"
+  >
+    <img src="@/assets/icono-elegir.png" alt="Ver" />
+  </button>
+</div>
         </div>
       </div>
 
@@ -608,6 +617,10 @@ const descargarExpedienteCompleto = async () => {
     progreso.value = 0;
   }
 };
+
+const verMotivo = (motivo) => {
+  alert("MOTIVO DE RECHAZO:\n\n" + (motivo || "Sin especificaciones. Contacte a su jefe."));
+};
 </script>
 
 <style scoped>
@@ -743,10 +756,13 @@ const descargarExpedienteCompleto = async () => {
 
 /* FLEX AJUSTADO: Col-nombre ahora ocupa más espacio */
 .col-nombre {
-  flex: 4;
+  flex: 3; /* Reducimos de 4 a 3 */
   text-align: left;
-  display: flex;
-  flex-direction: column;
+  /* Evitar que el texto empuje todo si es muy largo */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
 }
 /* .col-tipo ELIMINADO */
 .col-fecha {
@@ -756,10 +772,11 @@ const descargarExpedienteCompleto = async () => {
   color: #666;
 }
 .col-acciones {
-  flex: 1;
+  flex: 2; /* Aumentamos de 1 a 2 para que tenga más espacio horizontal */
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  justify-content: center; /* Centrados */
+  align-items: center;
+  gap: 12px; /* Espacio entre botones */
 }
 
 .texto-formato-oficial {
@@ -777,12 +794,22 @@ const descargarExpedienteCompleto = async () => {
   background: none;
   border: 1px solid #ddd;
   border-radius: 6px;
-  padding: 6px;
+  
+  /* Tamaño fijo para que no se aplasten */
+  min-width: 38px; 
+  width: 38px;
+  height: 38px;
+  
+  padding: 0; /* Quitamos padding interno variable */
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s;
 }
 .btn-icon img {
   width: 20px;
+  height: 20px;
 }
 .btn-icon.download:hover {
   background-color: #e8f5e9;
@@ -899,6 +926,15 @@ const descargarExpedienteCompleto = async () => {
 .btn-icon.rechazar:hover {
   background-color: #dc3545;
   color: white;
+}
+
+.btn-icon.rechazo-info {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+.btn-icon.rechazo-info:hover {
+  background-color: #f1b0b7;
 }
 </style>
 

@@ -122,7 +122,7 @@ const irAValidar = (docente) => {
   color: var(--color-text-osc);
 }
 
-/* HEADER CONSISTENTE */
+/* HEADER CONSISTENTE (1200px) */
 .header-azul {
   background-color: var(--color-sigedd-osc);
   color: white;
@@ -133,8 +133,9 @@ const irAValidar = (docente) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1000px;
+  max-width: 1200px; /* Igual que en validar documentos */
   margin: 0 auto;
+  width: 100%;
 }
 .header-content h1 {
   margin: 0;
@@ -147,14 +148,17 @@ const irAValidar = (docente) => {
 }
 .spacer { width: 30px; }
 
-/* CONTENIDO */
+/* CONTENIDO CENTRADO (1200px) */
 .main-contenido {
   flex: 1;
   padding: 40px;
   overflow-y: auto;
   width: 100%;
-  display: flex;
-  justify-content: center;
+  
+  /* Ajuste para centrado idéntico al otro módulo */
+  max-width: 1200px; 
+  margin: 0 auto;
+  display: block; /* Quitamos flex para que use el margin auto */
 }
 
 .tabla-contenedor {
@@ -163,8 +167,7 @@ const irAValidar = (docente) => {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   width: 100%;
-  max-width: 900px; /* Ancho máximo para que no se estire demasiado */
-  align-self: flex-start;
+  /* max-width removido para que llene el contenedor de 1200px */
 }
 
 /* FILAS Y COLUMNAS */
