@@ -12,152 +12,169 @@
     <!-- Navegación -->
     <nav class="sidebar-nav">
       <ul class="nav-list">
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/inicio">
-            <i class="fa fa-home"></i>
-            <span v-if="!isCollapsed">Inicio</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/docentesgenerar">
-            <i class="fa fa-file-text"></i>
-            <span v-if="!isCollapsed">Docentes-Generar</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/docenteselegir">
-            <i class="fa fa-check-square"></i>
-            <span v-if="!isCollapsed">Docentes-Elegir</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/administrativovalidar">
-            <i class="fa fa-check-circle"></i>
-            <span v-if="!isCollapsed">Administrativo-Validar</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/administrativovalidardocente">
-            <i class="fa fa-user-check"></i>
-            <span v-if="!isCollapsed">Administrativo-Validar-Docente</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink
-            class="nav-link"
-            to="/administrativovalidardocentedocumento"
-          >
-            <i class="fa fa-file-check"></i>
-            <span v-if="!isCollapsed">Admin-Validar-Docente-Docto.</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/Login">
-            <i class="fa fa-sign-in"></i>
-            <span v-if="!isCollapsed">Login</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/OlvidarContraseña">
-            <i class="fa fa-question-circle"></i>
-            <span v-if="!isCollapsed">Olvidar Contraseña</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/RestablecerContraseña">
-            <i class="fa fa-key"></i>
-            <span v-if="!isCollapsed">Restablecer Contraseña</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/DocentesP">
-            <i class="fa fa-chalkboard-teacher"></i>
-            <span v-if="!isCollapsed">Docentes Principal</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/DocumentosL">
-            <i class="fa fa-folder-open"></i>
-            <span v-if="!isCollapsed">Documentos Listos</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/AdministrativoP">
-            <i class="fa fa-user-shield"></i>
-            <span v-if="!isCollapsed">Administrativo Principal</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/aula">
-            <i class="fa fa-door-open"></i>
-            <span v-if="!isCollapsed">Aula</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/nivelEstudio">
-            <i class="fa fa-graduation-cap"></i>
-            <span v-if="!isCollapsed">Nivel de Estudio</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/carrera">
-            <i class="fa fa-book"></i>
-            <span v-if="!isCollapsed">Carrera</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/departamento">
-            <i class="fa fa-building"></i>
-            <span v-if="!isCollapsed">Departamento</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/materia">
-            <i class="fa fa-book-open"></i>
-            <span v-if="!isCollapsed">Materia</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/usuario">
-            <i class="fa fa-user"></i>
-            <span v-if="!isCollapsed">Usuario</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/rol">
-            <i class="fa fa-user-tag"></i>
-            <span v-if="!isCollapsed">Rol</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/plaza">
-            <i class="fa fa-briefcase"></i>
-            <span v-if="!isCollapsed">Plaza</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/docente">
-            <i class="fa fa-user-tie"></i>
-            <span v-if="!isCollapsed">Docente</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/tipoDocumento">
-            <i class="fa fa-file-alt"></i>
-            <span v-if="!isCollapsed">Tipo de Documento</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/actividadInstitucional">
-            <i class="fa fa-calendar-alt"></i>
-            <span v-if="!isCollapsed">Actividad Institucional</span>
-          </RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link" to="/docenteActividad">
-            <i class="fa fa-clipboard-list"></i>
-            <span v-if="!isCollapsed">Actividad de Docente</span>
-          </RouterLink>
+        <!-- Rutas para DOCENTE (rol 2) -->
+        <template v-if="isDocente">
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/DocentesP">
+              <i class="fa fa-tachometer"></i>
+              <span v-if="!isCollapsed">Panel Docente</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/docentesgenerar">
+              <i class="fa fa-file-text"></i>
+              <span v-if="!isCollapsed">Generar Documentos</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/docenteselegir">
+              <i class="fa fa-list-alt"></i>
+              <span v-if="!isCollapsed">Elegir Documento</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/DocumentosL">
+              <i class="fa fa-check-circle"></i>
+              <span v-if="!isCollapsed">Documentos Listos</span>
+            </RouterLink>
+          </li>
+        </template>
+
+        <!-- Rutas para VALIDADOR (rol 3) -->
+        <template v-if="isValidador">
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/AdministrativoP">
+              <i class="fa fa-tachometer"></i>
+              <span v-if="!isCollapsed">Panel Validador</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/administrativovalidar">
+              <i class="fa fa-file-text-o"></i>
+              <span v-if="!isCollapsed">Validar Documentos</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/administrativovalidardocente">
+              <i class="fa fa-user-circle"></i>
+              <span v-if="!isCollapsed">Validar Docente</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink
+              class="nav-link"
+              to="/administrativovalidardocentedocumento"
+            >
+              <i class="fa fa-clipboard"></i>
+              <span v-if="!isCollapsed">Validar Doc. Docente</span>
+            </RouterLink>
+          </li>
+        </template>
+
+        <!-- Rutas para ADMINISTRADOR (rol 1) -->
+        <template v-if="isAdmin">
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/AdministradorP">
+              <i class="fa fa-tachometer"></i>
+              <span v-if="!isCollapsed">Panel Administrador</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/usuario">
+              <i class="fa fa-users"></i>
+              <span v-if="!isCollapsed">Usuarios</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/rol">
+              <i class="fa fa-id-badge"></i>
+              <span v-if="!isCollapsed">Roles</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/docente">
+              <i class="fa fa-graduation-cap"></i>
+              <span v-if="!isCollapsed">Docentes</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/plaza">
+              <i class="fa fa-id-card"></i>
+              <span v-if="!isCollapsed">Plazas</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/carrera">
+              <i class="fa fa-university"></i>
+              <span v-if="!isCollapsed">Carreras</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/materia">
+              <i class="fa fa-book"></i>
+              <span v-if="!isCollapsed">Materias</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/aula">
+              <i class="fa fa-building"></i>
+              <span v-if="!isCollapsed">Aulas</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/nivelEstudio">
+              <i class="fa fa-level-up"></i>
+              <span v-if="!isCollapsed">Niveles de Estudio</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/departamento">
+              <i class="fa fa-sitemap"></i>
+              <span v-if="!isCollapsed">Departamentos</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/tipoDocumento">
+              <i class="fa fa-file-o"></i>
+              <span v-if="!isCollapsed">Tipos de Documento</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/actividadInstitucional">
+              <i class="fa fa-calendar"></i>
+              <span v-if="!isCollapsed">Actividades Institucionales</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/docenteActividad">
+              <i class="fa fa-tasks"></i>
+              <span v-if="!isCollapsed">Actividades de Docentes</span>
+            </RouterLink>
+          </li>
+        </template>
+
+        <!-- Opciones de autenticación (solo si no está autenticado) -->
+        <template v-if="!isAuthenticated">
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/Login">
+              <i class="fa fa-sign-in"></i>
+              <span v-if="!isCollapsed">Login</span>
+            </RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link" to="/OlvidarContraseña">
+              <i class="fa fa-question-circle"></i>
+              <span v-if="!isCollapsed">Olvidar Contraseña</span>
+            </RouterLink>
+          </li>
+        </template>
+
+        <!-- Cerrar sesión (solo si está autenticado) -->
+        <li class="nav-item" v-if="isAuthenticated">
+          <a class="nav-link" @click="cerrarSesion" style="cursor: pointer">
+            <i class="fa fa-sign-out"></i>
+            <span v-if="!isCollapsed">Cerrar Sesión</span>
+          </a>
         </li>
       </ul>
     </nav>
@@ -172,13 +189,68 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { ref, computed, onMounted, watch } from "vue";
+import { RouterLink, useRouter, useRoute } from "vue-router";
+import {
+  getUserRole,
+  isAuthenticated as checkAuth,
+  logout,
+} from "@/utils/auth";
 
+const router = useRouter();
+const route = useRoute();
 const isCollapsed = ref(false);
+const isLoading = ref(true);
+
+// Refs para forzar reactividad
+const userRole = ref<number | null>(null);
+const isAuthenticated = ref(false);
+
+// Computed properties para roles
+const isAdmin = computed(() => userRole.value === 1);
+const isDocente = computed(() => userRole.value === 2);
+const isValidador = computed(() => userRole.value === 3);
+
+// Función para actualizar valores
+const updateUserData = () => {
+  userRole.value = getUserRole();
+  isAuthenticated.value = checkAuth();
+  isLoading.value = false;
+};
+
+// Actualizar al montar y cuando cambie la ruta
+onMounted(() => {
+  // Pequeño delay para asegurar que localStorage esté disponible
+  setTimeout(() => {
+    updateUserData();
+  }, 50);
+
+  // Listener para evento personalizado de login
+  window.addEventListener("user-logged-in", updateUserData);
+});
+
+watch(
+  () => route.path,
+  () => {
+    updateUserData();
+  },
+  { immediate: true }
+);
 
 const toggleSidebar = () => {
   isCollapsed.value = !isCollapsed.value;
+  // Agregar/quitar clase al body para ajustar el contenido
+  if (isCollapsed.value) {
+    document.body.classList.add("sidebar-collapsed");
+  } else {
+    document.body.classList.remove("sidebar-collapsed");
+  }
+};
+
+const cerrarSesion = () => {
+  logout();
+  updateUserData();
+  router.push("/inicio");
 };
 </script>
 

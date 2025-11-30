@@ -11,6 +11,7 @@ import AdministrativoValidarDocenteDocumentoVue from "@/modulos/principal/vistas
 import DocentesPVue from "@/modulos/principal/vistas/DocentesPVue.vue";
 import DocumentosLVue from "@/modulos/principal/vistas/DocumentosLVue.vue";
 import AdministrativoPVue from "@/modulos/principal/vistas/AdministrativoPVue.vue";
+import AdministradorPVue from "@/modulos/principal/vistas/AdministradorPVue.vue";
 import ConstanciaTutoriaVue from "@/modulos/principal/vistas/plantillas/ConstanciaTutoriaVue.vue";
 import AulaVue from "@/modulos/Administrador/aula/vistas/AulaVue.vue";
 import AulaAgregarVue from "@/modulos/Administrador/aula/vistas/AulaAgregarVue.vue";
@@ -60,6 +61,7 @@ import DocenteActividadVue from "@/modulos/Administrador/docenteActividad/vistas
 import DocenteActividadAgregarVue from "@/modulos/Administrador/docenteActividad/vistas/DocenteActividadAgregarVue.vue";
 import DocenteActividadEditarVue from "@/modulos/Administrador/docenteActividad/vistas/DocenteActividadEditarVue.vue";
 import DocenteActividadBorrarVue from "@/modulos/Administrador/docenteActividad/vistas/DocenteActividadBorrarVue.vue";
+import DocentePVue from "@/modulos/principal/vistas/DocentePVue.vue";
 
 const router = createRouter({
   history: createWebHistory((import.meta as any).env.BASE_URL),
@@ -116,7 +118,7 @@ const router = createRouter({
     {
       path: "/DocentesP",
       name: "Docentes Principal",
-      component: DocentesPVue,
+      component: DocentePVue,
     },
     {
       path: "/DocumentosL",
@@ -127,7 +129,12 @@ const router = createRouter({
       path: "/AdministrativoP",
       name: "Administrativo Principal",
       component: AdministrativoPVue,
-    },   
+    },
+    {
+      path: "/AdministradorP",
+      name: "Administrador Principal",
+      component: AdministradorPVue,
+    },
 
     {
       path: "/aula",
@@ -372,72 +379,94 @@ const router = createRouter({
   ],
 });
 
-// ---- Guardas de ruta (DESACTIVADAS) ----
-// Nota: El siguiente bloque de guardas se ha comentado temporalmente para
-// facilitar pruebas. Si quieres volver a activarlas, descomenta el bloque
-// y asegúrate de que el `localStorage.usuario` contiene el objeto esperado.
-
-
+// ---- Guardas de ruta (Optimizadas) ----
 router.beforeEach((to, _from, next) => {
-  // Rutas abiertas
-  const open = ["/Login", "/OlvidarContraseña", "/RestablecerContraseña", "/", "/inicio"];
-  if (open.includes(to.path)) return next();
+  // Rutas públicas - accesibles sin autenticación
+  const publicRoutes = [
+    "/Login",
+    "/OlvidarContraseña",
+    "/RestablecerContraseña",
+    "/inicio",
+  ];
 
+  // Si la ruta es pública, permitir acceso
+  if (publicRoutes.includes(to.path)) {
+    return next();
+  }
+
+  // Verificar autenticación
   const raw = localStorage.getItem("usuario");
   if (!raw) {
-    // No autenticado
-    return next({ path: "/Login" });
+    // No autenticado - redirigir a inicio
+    return next({ path: "/inicio" });
   }
 
   let usuario: any = null;
   try {
     usuario = JSON.parse(raw);
   } catch (e) {
-    return next({ path: "/Login" });
+    // Error al parsear usuario - redirigir a inicio
+    return next({ path: "/inicio" });
   }
 
   const rol = usuario.idRol;
 
-  // Rutas que requieren rol Administrador (1)
-  const adminPaths = [
-    "/aula",
-    "/nivelEstudio",
-    "/carrera",
-    "/departamento",
-    "/usuario",
-    "/rol",
-    "/plaza",
-    "/docente",
-    "/tipoDocumento",
-    "/actividadInstitucional",
-    "/docenteActividad",
-    "/materia",
-  ];
+  // Definir rutas por rol
+  const roleRoutes = {
+    // Administrador (rol 1) - acceso a todo
+    1: [
+      "/AdministradorP",
+      "/aula",
+      "/nivelEstudio",
+      "/carrera",
+      "/departamento",
+      "/usuario",
+      "/rol",
+      "/plaza",
+      "/docente",
+      "/tipoDocumento",
+      "/actividadInstitucional",
+      "/docenteActividad",
+      "/materia",
+    ],
+    // Docente (rol 2)
+    2: ["/docentesgenerar", "/docenteselegir", "/DocentesP", "/DocumentosL"],
+    // Validador (rol 3)
+    3: [
+      "/AdministrativoP",
+      "/administrativovalidar",
+      "/administrativovalidardocente",
+      "/administrativovalidardocentedocumento",
+    ],
+  };
 
-  // Rutas para Docente (2)
-  const docentePaths = ["/docentesgenerar", "/docenteselegir", "/DocentesP", "/DocumentosL",];
+  // Obtener rutas permitidas para el rol actual
+  const allowedRoutes = roleRoutes[rol as keyof typeof roleRoutes] || [];
 
-  // Rutas para Validador (3)
-  const validadorPaths = [
-    "/AdministrativoP",
-    "/administrativovalidar",
-    "/administrativovalidardocente",
-    "/administrativovalidardocentedocumento",
-  ];
+  // Función para verificar si la ruta actual está permitida
+  const isRouteAllowed = (path: string): boolean => {
+    return allowedRoutes.some((route) => {
+      // Coincidencia exacta o subruta
+      return path === route || path.startsWith(route + "/");
+    });
+  };
 
-  // Comprueba si la ruta coincide exactamente con un prefijo o es una subruta.
-  // Evita colisiones donde "/docente" matchea "/docentesgenerar".
-  const startsWithAny = (list: string[]) =>
-    list.some((p) => to.path === p || to.path.startsWith(p + "/"));
+  // Verificar acceso
+  if (!isRouteAllowed(to.path)) {
+    // Ruta no permitida - redirigir a página principal según rol
+    if (rol === 1) {
+      return next({ path: "/AdministradorP" });
+    } else if (rol === 2) {
+      return next({ path: "/DocentesP" });
+    } else if (rol === 3) {
+      return next({ path: "/AdministrativoP" });
+    } else {
+      return next({ path: "/inicio" });
+    }
+  }
 
-  if (startsWithAny(adminPaths) && rol !== 1) return next({ path: "/Login" });
-  if (startsWithAny(docentePaths) && rol !== 2) return next({ path: "/Login" });
-  if (startsWithAny(validadorPaths) && rol !== 3) return next({ path: "/Login" });
-
-  // Si pasó todas las comprobaciones, permitir
+  // Acceso permitido
   return next();
 });
-
-
 
 export default router;
