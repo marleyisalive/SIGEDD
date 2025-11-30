@@ -136,3 +136,27 @@ export const eliminarUsuario = async (idUsuario: number) => {
   );
   return results;
 };
+
+// En src/services/usuarioServices.ts
+
+export const obtenerListaDocentes = async () => {
+  try {
+    const query = `
+      SELECT 
+        u.idUsuario, 
+        u.nombreUsuario, 
+        u.apePatUsuario, 
+        u.apeMatUsuario,
+        d.idDocente
+      FROM usuario u
+      JOIN docente d ON u.idUsuario = d.idUsuario
+      WHERE u.idRol = 2
+      ORDER BY u.apePatUsuario ASC
+    `;
+    const [rows] = await conexion.query(query);
+    return rows;
+  } catch (err) {
+    console.error("Error obteniendo lista de docentes:", err);
+    return []; // Retorna array vacío en caso de error
+  }
+};

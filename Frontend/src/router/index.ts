@@ -96,6 +96,12 @@ const router = createRouter({
       component: AdministrativoValidarDocenteVue,
     },
     {
+      path: "/administrativo/validar/:idUsuario",
+      name: "administrativo-validar",             
+      component: AdministrativoValidarVue,
+      props: true
+    },
+    {
       path: "/administrativovalidardocentedocumento",
       name: "administrativovalidardocentedocumento",
       component: AdministrativoValidarDocenteDocumentoVue,
@@ -437,6 +443,7 @@ router.beforeEach((to, _from, next) => {
       "/administrativovalidar",
       "/administrativovalidardocente",
       "/administrativovalidardocentedocumento",
+      "/administrativo/validar",
     ],
   };
 

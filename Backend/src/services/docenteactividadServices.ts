@@ -27,6 +27,7 @@ export const obtenerTodasDocenteActividad = async () => {
         da.idActividadInstitucional,
         da.idDocente,
         da.fechaRegistro,
+        da.validadoPor,
         ai.nombre AS nombreActividad,  -- NECESARIO para que salga el nombre en la tabla
         ai.idTipoDocumento,
         td.nombre as nombreTipo        -- NECESARIO para que salga el badge gris
@@ -57,6 +58,7 @@ export const obtenerActividadesPorUsuario = async (idUsuario: number) => {
         da.idActividadInstitucional,
         da.idDocente,
         da.fechaRegistro,
+        da.validadoPor,
         ai.nombre AS nombreActividad,
         ai.idTipoDocumento,
         td.nombre as nombreTipo
@@ -3125,6 +3127,36 @@ export const obtenerDatosConstanciaAuditoria = async (
     throw err;
   }
 };
+
+// --- APROBAR ACTIVIDAD (Pegar al final de docenteactividadServices.ts) ---
+export const aprobarActividad = async (idDocenteActividad: number, idAdmin: number) => {
+  try {
+    const [result] = await conexion.query(
+      "UPDATE docenteActividad SET validadoPor = ?, fechaValidacion = NOW() WHERE idDocenteActividad = ?",
+      [idAdmin, idDocenteActividad]
+    );
+    return result;
+  } catch (err) {
+    console.error("Error al aprobar actividad:", err);
+    return { error: "No se pudo aprobar la actividad" };
+  }
+};
+
+// --- RECHAZAR ACTIVIDAD ---
+export const rechazarActividad = async (idDocenteActividad: number) => {
+  try {
+    // Ponemos validadoPor = 0 para indicar "Rechazado"
+    const [result] = await conexion.query(
+      "UPDATE docenteactividad SET validadoPor = 0, fechaValidacion = NOW() WHERE idDocenteActividad = ?",
+      [idDocenteActividad]
+    );
+    return result;
+  } catch (err) {
+    console.error("Error al rechazar actividad:", err);
+    return { error: "No se pudo rechazar la actividad" };
+  }
+};
+
 
 // 1.4.8.1 - Desarrollo Curricular
 /*

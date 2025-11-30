@@ -30,6 +30,7 @@
         <div class="fila header-row">
           <div class="col-nombre">Formato / Actividad</div>
           <div class="col-fecha">Fecha Registro</div>
+          <div class="col-estado">Estado</div> 
           <div class="col-acciones">Acciones</div>
         </div>
 
@@ -60,13 +61,29 @@
             {{ formatearFecha(doc.fechaRegistro) }}
           </div>
 
+          <div class="col-estado">
+            <div v-if="doc.validadoPor > 0" class="badge badge-aprobado">
+              <span class="icono-estado">✓</span> Aprobado
+            </div>
+            
+            <div v-else-if="doc.validadoPor === 0" class="badge badge-rechazado">
+              <span class="icono-estado">✖</span> Rechazado
+            </div>
+
+            <div v-else class="badge badge-pendiente">
+              <span class="icono-estado">⏳</span> En Revisión
+            </div>
+          </div>
+
           <div class="col-acciones">
             <button
               class="btn-icon download"
               @click="descargarUnicoPDF(doc)"
-              title="Descargar PDF"
+              :disabled="!doc.validadoPor"
+              :title="doc.validadoPor ? 'Descargar PDF' : 'Documento en espera de aprobación'"
+              :class="{ 'btn-disabled': !doc.validadoPor }"
             >
-              <img src="@/assets/icono-generar.png" alt="ZIP" />
+              <img src="@/assets/icono-generar.png" alt="PDF" />
             </button>
 
             <button
@@ -532,33 +549,44 @@ const descargarUnicoPDF = async (doc) => {
 };
 
 const descargarExpedienteCompleto = async () => {
-  if (!confirm("¿Descargar todos los documentos en un ZIP?")) return;
+  // 1. FILTRADO: Solo tomamos los documentos que tienen 'validadoPor' (aprobados)
+  // Asegúrate de que tu backend esté enviando este campo en la lista (como vimos en el paso anterior)
+  const docsAprobados = listaDocumentos.value.filter(doc => doc.validadoPor);
+  const total = listaDocumentos.value.length;
+  const aprobados = docsAprobados.length;
+
+  // 2. VALIDACIONES
+  if (aprobados === 0) {
+    alert("No tienes documentos aprobados para descargar.");
+    return;
+  }
+
+  // 3. CONFIRMACIÓN AL USUARIO
+  // Le avisamos que no se bajarán todos, solo los listos.
+  let mensaje = `¿Descargar expediente?`;
+  if (aprobados < total) {
+    mensaje = `Se descargarán solo los ${aprobados} documentos aprobados (de un total de ${total}). Los pendientes se omitirán. ¿Continuar?`;
+  }
+  
+  if (!confirm(mensaje)) return;
+
   try {
     cargando.value = true;
-    const docs = listaDocumentos.value;
-    if (docs.length === 0) return alert("Sin documentos.");
-
     const zip = new JSZip();
-    const raiz = zip.folder("Expediente_SPD");
+    const raiz = zip.folder("Expediente_Aprobado_SPD");
 
     let i = 0;
-    for (const doc of docs) {
-      progreso.value = (i / docs.length) * 100;
-      // Mensaje de carga usando el nombre del formato
-      mensajeCarga.value = `Procesando: ${obtenerNombreFormato(
-        doc.idTipoDocumento
-      )}`;
+    // 4. ITERAMOS SOLO SOBRE LOS APROBADOS
+    for (const doc of docsAprobados) {
+      progreso.value = (i / aprobados) * 100;
+      mensajeCarga.value = `Procesando: ${obtenerNombreFormato(doc.idTipoDocumento)}`;
 
       const nombreGrupo = doc.grupo || "Varios";
       const carpeta = raiz.folder(nombreGrupo.replace(/[^a-z0-9]/gi, "_"));
 
       const pdfBlob = await generarBlobPDF(doc);
       if (pdfBlob) {
-        // Nombre del archivo usando el nombre del formato
-        const nombreArchivo = obtenerNombreFormato(doc.idTipoDocumento).replace(
-          /[^a-z0-9]/gi,
-          "_"
-        );
+        const nombreArchivo = obtenerNombreFormato(doc.idTipoDocumento).replace(/[^a-z0-9]/gi,"_");
         carpeta.file(`${nombreArchivo}.pdf`, pdfBlob);
       }
       i++;
@@ -568,10 +596,12 @@ const descargarExpedienteCompleto = async () => {
     const content = await zip.generateAsync({ type: "blob" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(content);
-    link.download = "Expediente_Completo.zip";
+    link.download = "Expediente_Aprobado.zip";
     link.click();
+
   } catch (e) {
     console.error(e);
+    alert("Ocurrió un error al generar el ZIP.");
   } finally {
     componenteActivo.value = null;
     cargando.value = false;
@@ -801,4 +831,74 @@ const descargarExpedienteCompleto = async () => {
   cursor: pointer;
   filter: brightness(0) invert(1);
 }
+
+/* NUEVA COLUMNA ESTADO */
+.col-estado {
+  flex: 1.5; /* Un poco más ancha que fecha/acciones */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* BADGES (ETIQUETAS) */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-aprobado {
+  background-color: #e6f4ea; /* Verde muy claro */
+  color: #1e7e34; /* Verde oscuro */
+  border: 1px solid #c3e6cb;
+}
+
+.badge-pendiente {
+  background-color: #fff3cd; /* Amarillo claro */
+  color: #856404; /* Amarillo oscuro/café */
+  border: 1px solid #ffeeba;
+}
+
+.icono-estado {
+  font-size: 1.1em;
+}
+
+/* BOTÓN DESHABILITADO */
+.btn-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+  background-color: #f0f0f0 !important; /* Forzar fondo gris */
+  border-color: #ddd !important;
+}
+
+/* Ajustar flex del resto para que quepa bien */
+.col-nombre { flex: 3.5; } /* Reducimos un poco el nombre */
+.col-fecha { flex: 1.2; }
+.col-acciones { flex: 1.2; }
+
+/* Badge Rojo */
+.badge-rechazado {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Botón Rojo */
+.btn-icon.rechazar {
+  border-color: #dc3545;
+  color: #dc3545;
+  font-size: 1.2em;
+}
+.btn-icon.rechazar:hover {
+  background-color: #dc3545;
+  color: white;
+}
 </style>
+
