@@ -16,6 +16,51 @@
     </header>
 
     <main class="main-contenido">
+      <div class="buscador-container">
+        <div class="input-wrapper">
+          <span class="icono-lupa">🔍</span>
+          <input 
+            v-model="textoBusqueda" 
+            type="text" 
+            placeholder="Buscar por nombre de actividad o tipo de formato..." 
+            class="input-buscador"
+          />
+          <button v-if="textoBusqueda" @click="textoBusqueda = ''" class="btn-limpiar">✕</button>
+        </div>
+      </div>
+      <div class="filtros-container">
+          <button 
+            class="btn-filtro" 
+            :class="{ activo: filtroEstado === 'todos' }"
+            @click="filtroEstado = 'todos'"
+          >
+            Todos <span class="contador">{{ contar('todos') }}</span>
+          </button>
+
+          <button 
+            class="btn-filtro" 
+            :class="{ activo: filtroEstado === 'pendientes' }"
+            @click="filtroEstado = 'pendientes'"
+          >
+            ⏳ Pendientes <span class="contador">{{ contar('pendientes') }}</span>
+          </button>
+
+          <button 
+            class="btn-filtro" 
+            :class="{ activo: filtroEstado === 'aprobados' }"
+            @click="filtroEstado = 'aprobados'"
+          >
+            ✅ Aprobados <span class="contador">{{ contar('aprobados') }}</span>
+          </button>
+
+          <button 
+            class="btn-filtro" 
+            :class="{ activo: filtroEstado === 'rechazados' }"
+            @click="filtroEstado = 'rechazados'"
+          >
+            ✖ Rechazados <span class="contador">{{ contar('rechazados') }}</span>
+          </button>
+        </div>
       <div class="tabla-contenedor">
         <div class="fila header-row">
           <div class="col-nombre">Formato / Actividad</div>
@@ -34,9 +79,14 @@
 
         <div
           class="fila"
-          v-for="doc in listaDocumentos"
+          v-for="doc in listaFiltrada" 
           :key="doc.idDocenteActividad"
         >
+
+        <div v-if="listaFiltrada.length === 0 && listaDocumentos.length > 0" class="empty-search">
+          <p>No se encontraron documentos que coincidan con "{{ textoBusqueda }}"</p>
+        </div>
+
           <div class="col-nombre">
             <strong class="texto-formato-oficial">{{
               obtenerNombreFormato(doc.idTipoDocumento)
@@ -49,18 +99,18 @@
           </div>
 
           <div class="col-estado">
-              <div v-if="doc.validadoPor > 0" class="badge badge-aprobado">
-                <span class="icono-estado">✓</span> Aprobado
-              </div>
-              
-              <div v-else-if="doc.validadoPor === 0" class="badge badge-rechazado">
-                <span class="icono-estado">✖</span> Rechazado
-              </div>
-
-              <div v-else class="badge badge-pendiente">
-                <span class="icono-estado">⏳</span> Pendiente
-              </div>
+            <div v-if="doc.validadoPor > 0" class="badge badge-aprobado">
+              <span class="icono-estado">✓</span> Aprobado
             </div>
+
+            <div v-else-if="!doc.validadoPor && doc.motivoRechazo" class="badge badge-rechazado">
+              <span class="icono-estado">✖</span> Rechazado
+            </div>
+
+            <div v-else class="badge badge-pendiente">
+              <span class="icono-estado">⏳</span> En Revisión
+            </div>
+          </div>
 
             <div class="col-acciones">
               <button class="btn-icon view" @click="verDetalle(doc)" title="Ver Documento">
@@ -110,7 +160,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, h, render } from "vue";
+import { ref, onMounted, h, render, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import html2pdf from "html2pdf.js";
@@ -166,6 +216,8 @@ const listaDocumentos = ref([]);
 const cargando = ref(false);
 const nombreDocente = ref(""); // Lo tomaremos de la query string
 const adminId = ref(null);
+const textoBusqueda = ref("");
+const filtroEstado = ref('todos');
 
 // MAPA DE COMPONENTES
 const mapaComponentes = {
@@ -438,6 +490,40 @@ const verMotivo = (motivo) => {
   alert("MOTIVO DE RECHAZO:\n\n" + (motivo || "Sin especificaciones."));
 };
 
+const listaFiltrada = computed(() => {
+  let resultado = listaDocumentos.value;
+
+  // A) Primero filtramos por ESTADO (si no es 'todos')
+  if (filtroEstado.value === 'aprobados') {
+    resultado = resultado.filter(doc => doc.validadoPor > 0);
+  } else if (filtroEstado.value === 'rechazados') {
+    // Rechazado: No tiene validador PERO sí tiene motivo
+    resultado = resultado.filter(doc => !doc.validadoPor && doc.motivoRechazo);
+  } else if (filtroEstado.value === 'pendientes') {
+    // Pendiente: No tiene validador Y no tiene motivo
+    resultado = resultado.filter(doc => !doc.validadoPor && !doc.motivoRechazo);
+  }
+
+  // B) Luego filtramos por TEXTO (Buscador) si hay algo escrito
+  if (textoBusqueda.value) {
+    const termino = textoBusqueda.value.toLowerCase();
+    resultado = resultado.filter(doc => {
+      const nombreActividad = (doc.nombreActividad || "").toLowerCase();
+      const nombreFormato = obtenerNombreFormato(doc.idTipoDocumento).toLowerCase();
+      return nombreActividad.includes(termino) || nombreFormato.includes(termino);
+    });
+  }
+
+  return resultado;
+});
+
+const contar = (estado) => {
+  if (estado === 'todos') return listaDocumentos.value.length;
+  if (estado === 'aprobados') return listaDocumentos.value.filter(d => d.validadoPor > 0).length;
+  if (estado === 'rechazados') return listaDocumentos.value.filter(d => !d.validadoPor && d.motivoRechazo).length;
+  if (estado === 'pendientes') return listaDocumentos.value.filter(d => !d.validadoPor && !d.motivoRechazo).length;
+  return 0;
+};
 </script>
 
 <style scoped>
@@ -615,4 +701,114 @@ const verMotivo = (motivo) => {
   margin-top: auto; /* Empuja el footer al fondo si hay poco contenido */
 }
 .icono-exit img { width: 35px; cursor: pointer; filter: brightness(0) invert(1); }
+
+/* ESTILOS DEL BUSCADOR */
+.buscador-container {
+  max-width: 1200px; /* Mismo ancho que la tabla */
+  margin: 0 auto 20px auto; /* Centrado y con margen abajo */
+  width: 100%;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-buscador {
+  width: 100%;
+  padding: 12px 15px 12px 45px; /* Espacio a la izq para la lupa */
+  font-size: 1em;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-buscador:focus {
+  border-color: var(--azul-btn); /* O el color azul de tu tema */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.icono-lupa {
+  position: absolute;
+  left: 15px;
+  font-size: 1.2em;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.btn-limpiar {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #999;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1em;
+}
+.btn-limpiar:hover {
+  color: #555;
+}
+
+.empty-search {
+  padding: 30px;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
+/* CONTENEDOR DE FILTROS */
+.filtros-container {
+  max-width: 1200px;
+  margin: 0 auto 15px auto;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* BOTÓN BASE */
+.btn-filtro {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.95em;
+  color: #555;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-filtro:hover {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+}
+
+/* CONTADOR (NUMERITO GRIS) */
+.contador {
+  background-color: #eee;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #666;
+}
+
+/* ESTADO ACTIVO (SELECCIONADO) */
+.btn-filtro.activo {
+  background-color: var(--color-sigedd-osc); /* Azul oscuro del tema */
+  color: white;
+  border-color: var(--color-sigedd-osc);
+}
+
+.btn-filtro.activo .contador {
+  background-color: rgba(255,255,255,0.3);
+  color: white;
+}
 </style>

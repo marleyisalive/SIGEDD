@@ -26,8 +26,56 @@
         </button>
       </div>
 
+      <div class="buscador-container">
+        <div class="input-wrapper">
+          <span class="icono-lupa">🔍</span>
+          <input 
+            v-model="textoBusqueda" 
+            type="text" 
+            placeholder="Buscar por nombre de actividad o tipo de formato..." 
+            class="input-buscador"
+          />
+          <button v-if="textoBusqueda" @click="textoBusqueda = ''" class="btn-limpiar">✕</button>
+        </div>
+      </div>
+
+      <div class="filtros-container">
+        <button 
+          class="btn-filtro" 
+          :class="{ activo: filtroEstado === 'todos' }"
+          @click="filtroEstado = 'todos'"
+        >
+          Todos <span class="contador">{{ contar('todos') }}</span>
+        </button>
+
+        <button 
+          class="btn-filtro" 
+          :class="{ activo: filtroEstado === 'pendientes' }"
+          @click="filtroEstado = 'pendientes'"
+        >
+          ⏳ Pendientes <span class="contador">{{ contar('pendientes') }}</span>
+        </button>
+
+        <button 
+          class="btn-filtro" 
+          :class="{ activo: filtroEstado === 'aprobados' }"
+          @click="filtroEstado = 'aprobados'"
+        >
+          ✅ Aprobados <span class="contador">{{ contar('aprobados') }}</span>
+        </button>
+
+        <button 
+          class="btn-filtro" 
+          :class="{ activo: filtroEstado === 'rechazados' }"
+          @click="filtroEstado = 'rechazados'"
+        >
+          ✖ Rechazados <span class="contador">{{ contar('rechazados') }}</span>
+        </button>
+      </div>
+
       <div class="tabla-contenedor">
         <div class="fila header-row">
+          <div class="col-id-bd">ID</div>
           <div class="col-nombre">Formato / Actividad</div>
           <div class="col-fecha">Fecha Registro</div>
           <div class="col-estado">Estado</div>
@@ -47,9 +95,15 @@
 
         <div
           class="fila"
-          v-for="doc in listaDocumentos"
+          v-for="doc in listaFiltrada" 
           :key="doc.idDocenteActividad"
         >
+        <div v-if="listaFiltrada.length === 0 && listaDocumentos.length > 0" class="empty-search">
+          <p>No se encontraron documentos que coincidan con "{{ textoBusqueda }}"</p>
+        </div>
+          <div class="col-id-bd">
+            <span class="badge-id">#{{ doc.idDocenteActividad }}</span>
+            </div>
           <div class="col-nombre">
             <strong class="texto-formato-oficial">{{
               obtenerNombreFormato(doc.idTipoDocumento)
@@ -66,10 +120,7 @@
               <span class="icono-estado">✓</span> Aprobado
             </div>
 
-            <div
-              v-else-if="doc.validadoPor === 0"
-              class="badge badge-rechazado"
-            >
+            <div v-else-if="!doc.validadoPor && doc.motivoRechazo" class="badge badge-rechazado">
               <span class="icono-estado">✖</span> Rechazado
             </div>
 
@@ -105,7 +156,9 @@
             <button
               class="btn-icon view"
               @click="irADetalleUnico(doc.idDocenteActividad)"
-              title="Ver Detalle"
+              :disabled="!doc.validadoPor"
+              :class="{ 'btn-disabled': !doc.validadoPor }"
+              :title="doc.validadoPor ? 'Ver Detalle' : 'Solo disponible en documentos aprobados'"
             >
               <img src="@/assets/icono-elegir.png" alt="Ver" />
             </button>
@@ -132,7 +185,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, shallowRef } from "vue";
+import { ref, onMounted, shallowRef, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import JSZip from "jszip";
@@ -187,9 +240,10 @@ const listaDocumentos = ref([]);
 const cargando = ref(false);
 const mensajeCarga = ref("Cargando...");
 const progreso = ref(0);
-
+const filtroEstado = ref('todos');
 const componenteActivo = shallowRef(null);
 const datosActivos = ref({});
+const textoBusqueda = ref("");
 
 // MAPA DE COMPONENTES (Para renderizar)
 const mapaComponentes = {
@@ -460,6 +514,8 @@ onMounted(async () => {
   }
 });
 
+
+
 // Helper fecha
 const formatearFecha = (fecha) => {
   if (!fecha) return "--/--/----";
@@ -478,6 +534,43 @@ const irAIndividual = () => {
 
 const irADetalleUnico = (idDocenteActividad) => {
   router.push({ name: "docenteselegir" });
+};
+
+ // opciones: 'todos', 'pendientes', 'aprobados', 'rechazados'
+const listaFiltrada = computed(() => {
+  let resultado = listaDocumentos.value;
+
+  // A) Primero filtramos por ESTADO (si no es 'todos')
+  if (filtroEstado.value === 'aprobados') {
+    resultado = resultado.filter(doc => doc.validadoPor > 0);
+  } else if (filtroEstado.value === 'rechazados') {
+    // Rechazado: No tiene validador PERO sí tiene motivo
+    resultado = resultado.filter(doc => !doc.validadoPor && doc.motivoRechazo);
+  } else if (filtroEstado.value === 'pendientes') {
+    // Pendiente: No tiene validador Y no tiene motivo
+    resultado = resultado.filter(doc => !doc.validadoPor && !doc.motivoRechazo);
+  }
+
+  // B) Luego filtramos por TEXTO (Buscador) si hay algo escrito
+  if (textoBusqueda.value) {
+    const termino = textoBusqueda.value.toLowerCase();
+    resultado = resultado.filter(doc => {
+      const nombreActividad = (doc.nombreActividad || "").toLowerCase();
+      const nombreFormato = obtenerNombreFormato(doc.idTipoDocumento).toLowerCase();
+      return nombreActividad.includes(termino) || nombreFormato.includes(termino);
+    });
+  }
+
+  return resultado;
+});
+
+
+const contar = (estado) => {
+  if (estado === 'todos') return listaDocumentos.value.length;
+  if (estado === 'aprobados') return listaDocumentos.value.filter(d => d.validadoPor > 0).length;
+  if (estado === 'rechazados') return listaDocumentos.value.filter(d => !d.validadoPor && d.motivoRechazo).length;
+  if (estado === 'pendientes') return listaDocumentos.value.filter(d => !d.validadoPor && !d.motivoRechazo).length;
+  return 0;
 };
 
 // --- FUNCIONES DE DESCARGA ---
@@ -682,10 +775,83 @@ const verMotivo = (motivo) => {
   margin: 0 auto;
 }
 
+.buscador-container {
+  max-width: 1200px; /* Mismo ancho que la tabla */
+  margin: 0 auto 20px auto; /* Centrado y con margen abajo */
+  width: 100%;
+}
+
+.col-id-bd {
+  flex: 0.5; /* Ocupa poco espacio */
+  text-align: center;
+  font-weight: bold;
+  color: #888;
+  font-size: 0.9em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-buscador {
+  width: 100%;
+  padding: 12px 15px 12px 45px; /* Espacio a la izq para la lupa */
+  font-size: 1em;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-buscador:focus {
+  border-color: var(--azul-btn); /* O el color azul de tu tema */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.icono-lupa {
+  position: absolute;
+  left: 15px;
+  font-size: 1.2em;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.btn-limpiar {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #999;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1em;
+}
+
+.empty-search {
+  padding: 30px;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  background: white;
+  border-bottom: 1px solid #eee;
+}
+
 .header-content h1 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+.badge-id {
+  background-color: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
 }
 
 .img-white {
@@ -779,9 +945,8 @@ const verMotivo = (motivo) => {
 
 /* FLEX AJUSTADO: Col-nombre ahora ocupa más espacio */
 .col-nombre {
-  flex: 3; /* Reducimos de 4 a 3 */
+  flex: 3; /* Bajamos de 3.5 a 3 para hacerle espacio al ID */
   text-align: left;
-  /* Evitar que el texto empuje todo si es muy largo */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -789,7 +954,7 @@ const verMotivo = (motivo) => {
 }
 /* .col-tipo ELIMINADO */
 .col-fecha {
-  flex: 1;
+  flex: 1.2;
   text-align: center;
   font-size: 0.9em;
   color: #666;
@@ -964,5 +1129,56 @@ const verMotivo = (motivo) => {
 }
 .btn-icon.rechazo-info:hover {
   background-color: #f1b0b7;
+}
+
+/* CONTENEDOR DE FILTROS */
+.filtros-container {
+  max-width: 1200px;
+  margin: 0 auto 15px auto;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* BOTÓN BASE */
+.btn-filtro {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.95em;
+  color: #555;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-filtro:hover {
+  background-color: #f8f9fa;
+  border-color: #ccc;
+}
+
+/* CONTADOR (NUMERITO GRIS) */
+.contador {
+  background-color: #eee;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #666;
+}
+
+/* ESTADO ACTIVO (SELECCIONADO) */
+.btn-filtro.activo {
+  background-color: var(--color-sigedd-osc); /* Azul oscuro del tema */
+  color: white;
+  border-color: var(--color-sigedd-osc);
+}
+
+.btn-filtro.activo .contador {
+  background-color: rgba(255,255,255,0.3);
+  color: white;
 }
 </style>

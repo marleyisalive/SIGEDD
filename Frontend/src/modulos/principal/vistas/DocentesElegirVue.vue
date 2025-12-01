@@ -131,6 +131,7 @@ const datosDocumento = ref(null);
 const cargando = ref(false);
 const errorCarga = ref(false);
 const componenteActivo = shallowRef(null);
+const textoBusqueda = ref("");
 
 // MAPA DE COMPONENTES (ID -> Componente Vue)
 const mapaComponentes = {
@@ -321,6 +322,21 @@ const descargarPDF = () => {
   };
   html2pdf().set(opt).from(element).save();
 };
+
+const listaFiltrada = computed(() => {
+  // Si no hay texto, regresamos la lista completa
+  if (!textoBusqueda.value) return listaDocumentos.value;
+  
+  const termino = textoBusqueda.value.toLowerCase();
+
+  return listaDocumentos.value.filter(doc => {
+    // Buscamos por: Nombre de Actividad O Nombre del Formato
+    const nombreActividad = (doc.nombreActividad || "").toLowerCase();
+    const nombreFormato = obtenerNombreFormato(doc.idTipoDocumento).toLowerCase();
+    
+    return nombreActividad.includes(termino) || nombreFormato.includes(termino);
+  });
+});
 </script>
 
 <style scoped>
