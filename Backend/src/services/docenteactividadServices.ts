@@ -115,16 +115,26 @@ export const agregarDocenteActividad = async (
   nuevaDocenteActividad: docenteactividad
 ) => {
   try {
+    // Asegurar que datosCapturados sea un string JSON
+    let datosCapturadosString: string;
+    if (typeof nuevaDocenteActividad.datosCapturados === "string") {
+      datosCapturadosString = nuevaDocenteActividad.datosCapturados;
+    } else {
+      datosCapturadosString = JSON.stringify(
+        nuevaDocenteActividad.datosCapturados
+      );
+    }
+
     const [results] = await conexion.query(
-      "INSERT INTO docenteActividad (idDocenteActividad,idActividadInstitucional, idDocente, datosCapturados, fechaRegistro, validadoPor, fechaValidacion) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO docenteActividad (idDocenteActividad, idActividadInstitucional, idDocente, datosCapturados, fechaRegistro, validadoPor, fechaValidacion) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
         nuevaDocenteActividad.idDocenteActividad,
         nuevaDocenteActividad.idActividadInstitucional,
         nuevaDocenteActividad.idDocente,
-        nuevaDocenteActividad.datosCapturados,
-        nuevaDocenteActividad.fechaRegistro,
-        nuevaDocenteActividad.validadoPor,
-        nuevaDocenteActividad.fechaValidacion,
+        datosCapturadosString,
+        nuevaDocenteActividad.fechaRegistro || null,
+        nuevaDocenteActividad.validadoPor || null,
+        nuevaDocenteActividad.fechaValidacion || null,
       ]
     );
     return results;

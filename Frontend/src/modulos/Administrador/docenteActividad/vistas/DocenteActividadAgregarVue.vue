@@ -68,13 +68,174 @@
               :key="index"
               class="mb-3"
             >
-              <label>{{ campo }}</label>
+              <label>{{ formatearNombreCampo(campo) }}</label>
+
+              <!-- Campo numérico -->
               <input
+                v-if="esNumerico(campo)"
+                type="number"
+                class="form-control"
+                v-model.number="valoresCampos[campo]"
+                :placeholder="`Ingrese ${formatearNombreCampo(campo)}`"
+              />
+
+              <!-- Campo de fecha -->
+              <input
+                v-else-if="esFecha(campo)"
+                type="date"
+                class="form-control"
+                v-model="valoresCampos[campo]"
+              />
+
+              <!-- Select para usuarios/docentes -->
+              <select
+                v-else-if="esReferencia(campo)"
+                class="form-control"
+                v-model.number="valoresCampos[campo]"
+              >
+                <option value="">Seleccione...</option>
+                <option
+                  v-for="doc in obtenerOpcionesReferencia(campo)"
+                  :key="doc.id"
+                  :value="doc.id"
+                >
+                  {{ doc.nombre }}
+                </option>
+              </select>
+
+              <!-- Campo de texto normal -->
+              <input
+                v-else
                 type="text"
                 class="form-control"
                 v-model="valoresCampos[campo]"
-                :placeholder="`Ingrese ${campo}`"
+                :placeholder="`Ingrese ${formatearNombreCampo(campo)}`"
               />
+            </div>
+
+            <!-- Sección especial para arrays (actividadesApoyo, actividadesAdmin, etc.) -->
+            <div v-if="tieneArrays()" class="mt-4">
+              <div v-if="requiereActividadesApoyo()" class="mb-4">
+                <h6>Actividades de Apoyo</h6>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-success mb-2"
+                  @click="agregarActividadApoyo"
+                >
+                  + Agregar Actividad
+                </button>
+                <div
+                  v-for="(act, idx) in actividadesApoyo"
+                  :key="idx"
+                  class="card mb-2 p-3"
+                >
+                  <div class="row">
+                    <div class="col-md-4">
+                      <label>Nombre</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        v-model="act.nombre"
+                      />
+                    </div>
+                    <div class="col-md-4">
+                      <label>Metas</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        v-model="act.metas"
+                      />
+                    </div>
+                    <div class="col-md-2">
+                      <label>Horario</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        v-model="act.horario"
+                        placeholder="ej: 10-11"
+                      />
+                    </div>
+                    <div class="col-md-1">
+                      <label>Horas</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        v-model.number="act.total"
+                      />
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-danger"
+                        @click="eliminarActividadApoyo(idx)"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="requiereActividadesAdmin()" class="mb-4">
+                <h6>Actividades Administrativas</h6>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-success mb-2"
+                  @click="agregarActividadAdmin"
+                >
+                  + Agregar Actividad
+                </button>
+                <div
+                  v-for="(act, idx) in actividadesAdmin"
+                  :key="idx"
+                  class="card mb-2 p-3"
+                >
+                  <div class="row">
+                    <div class="col-md-4">
+                      <label>Puesto</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        v-model="act.puesto"
+                      />
+                    </div>
+                    <div class="col-md-3">
+                      <label>Unidad</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        v-model="act.unidad"
+                      />
+                    </div>
+                    <div class="col-md-2">
+                      <label>Horario</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        v-model="act.horario"
+                        placeholder="ej: 10-12"
+                      />
+                    </div>
+                    <div class="col-md-2">
+                      <label>Horas</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        v-model.number="act.total"
+                      />
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-danger"
+                        @click="eliminarActividadAdmin(idx)"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -142,11 +303,143 @@ import { DocenteActividadSchema } from "../schemas/DocenteActividadSchema";
 
 const actividadSeleccionada = ref<number | null>(null);
 const camposDinamicos = ref<string[]>([]);
-const valoresCampos = ref<Record<string, string>>({});
+const valoresCampos = ref<Record<string, any>>({});
+const actividadesApoyo = ref<any[]>([]);
+const actividadesAdmin = ref<any[]>([]);
 
 const datosCapturadosJSON = computed(() => {
-  return JSON.stringify(valoresCampos.value);
+  const datos = { ...valoresCampos.value };
+
+  // Si el tipo de documento requiere arrays, agregarlos
+  if (requiereActividadesApoyo()) {
+    datos.actividadesApoyo = actividadesApoyo.value;
+  }
+  if (requiereActividadesAdmin()) {
+    datos.actividadesAdmin = actividadesAdmin.value;
+  }
+
+  return JSON.stringify(datos);
 });
+
+// Funciones para determinar el tipo de campo
+const esNumerico = (campo: string): boolean => {
+  const camposNumericos = [
+    "total",
+    "totalTutorados",
+    "numeroAlumnos",
+    "totalAlumnos",
+    "alumnosObtuvieronCredito",
+    "totalAlumnosAtendidos",
+    "horasPreparacion",
+    "duracion",
+    "numControl",
+    "creditos",
+    "calificacionFinal",
+  ];
+  return camposNumericos.some((c) =>
+    campo.toLowerCase().includes(c.toLowerCase())
+  );
+};
+
+const esFecha = (campo: string): boolean => {
+  const camposFecha = [
+    "fecha",
+    "vigencia",
+    "expedicion",
+    "inicio",
+    "fin",
+    "actualizacion",
+  ];
+  return camposFecha.some((c) => campo.toLowerCase().includes(c.toLowerCase()));
+};
+
+const esReferencia = (campo: string): boolean => {
+  const camposReferencia = [
+    "idJefeDDA",
+    "idSubdirector",
+    "idSubdirectorAcademico",
+    "idJefeDepto",
+    "idPresidenteAcademia",
+    "idJefeDepartamento",
+    "idJefeCentroInformacion",
+    "idDirectorDDIE",
+    "idJefeRH",
+    "idDirector",
+    "idJefeEscolares",
+    "idPresidente",
+    "idSecretario",
+    "idVocal",
+    "idCoordinadorInvestigacion",
+    "idJefeCienciasBasicas",
+    "idJefeInvestigacion",
+    "idJefeCentroInfo",
+    "idCodirector",
+  ];
+  return camposReferencia.includes(campo);
+};
+
+const formatearNombreCampo = (campo: string): string => {
+  // Convertir camelCase a texto legible
+  return campo
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim();
+};
+
+const obtenerOpcionesReferencia = (campo: string) => {
+  // Retornar lista de docentes para campos de referencia
+  return docentes.value.map((doc: any) => {
+    const usuario = usuarios.value.find(
+      (u: any) => u.idUsuario === doc.idUsuario
+    );
+    return {
+      id: doc.idDocente,
+      nombre: usuario
+        ? `${usuario.nombreUsuario} ${usuario.apePatUsuario || ""} ${
+            usuario.apeMatUsuario || ""
+          }`.trim()
+        : `Docente ${doc.idDocente}`,
+    };
+  });
+};
+
+const tieneArrays = (): boolean => {
+  return requiereActividadesApoyo() || requiereActividadesAdmin();
+};
+
+const requiereActividadesApoyo = (): boolean => {
+  return camposDinamicos.value.includes("actividadesApoyo");
+};
+
+const requiereActividadesAdmin = (): boolean => {
+  return camposDinamicos.value.includes("actividadesAdmin");
+};
+
+const agregarActividadApoyo = () => {
+  actividadesApoyo.value.push({
+    nombre: "",
+    metas: "",
+    horario: "",
+    total: 0,
+  });
+};
+
+const eliminarActividadApoyo = (index: number) => {
+  actividadesApoyo.value.splice(index, 1);
+};
+
+const agregarActividadAdmin = () => {
+  actividadesAdmin.value.push({
+    puesto: "",
+    unidad: "",
+    horario: "",
+    total: 0,
+  });
+};
+
+const eliminarActividadAdmin = (index: number) => {
+  actividadesAdmin.value.splice(index, 1);
+};
 
 const onActividadChange = (event: Event) => {
   const target = event.target as HTMLSelectElement;
@@ -157,12 +450,24 @@ const onActividadChange = (event: Event) => {
     camposDinamicos.value = obtenerCamposPlantilla(idActividad);
     // Reiniciar valores
     valoresCampos.value = {};
+    actividadesApoyo.value = [];
+    actividadesAdmin.value = [];
+
     camposDinamicos.value.forEach((campo) => {
-      valoresCampos.value[campo] = "";
+      // No inicializar arrays, se manejan por separado
+      if (campo !== "actividadesApoyo" && campo !== "actividadesAdmin") {
+        if (esNumerico(campo)) {
+          valoresCampos.value[campo] = 0;
+        } else {
+          valoresCampos.value[campo] = "";
+        }
+      }
     });
   } else {
     camposDinamicos.value = [];
     valoresCampos.value = {};
+    actividadesApoyo.value = [];
+    actividadesAdmin.value = [];
   }
 };
 

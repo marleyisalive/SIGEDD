@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-11-2025 a las 19:53:10
+-- Tiempo de generación: 01-12-2025 a las 03:08:11
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,10 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `actividadInstitucional`
+-- Estructura de tabla para la tabla `actividadinstitucional`
 --
 
-CREATE TABLE `actividadInstitucional` (
+CREATE TABLE `actividadinstitucional` (
   `idActividadInstitucional` int(11) NOT NULL,
   `idTipoDocumento` int(11) NOT NULL,
   `nombre` varchar(200) NOT NULL,
@@ -38,10 +38,10 @@ CREATE TABLE `actividadInstitucional` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `actividadInstitucional`
+-- Volcado de datos para la tabla `actividadinstitucional`
 --
 
-INSERT INTO `actividadInstitucional` (`idActividadInstitucional`, `idTipoDocumento`, `nombre`, `descripcion`, `periodo`, `fechaInicio`, `fechaFin`) VALUES
+INSERT INTO `actividadinstitucional` (`idActividadInstitucional`, `idTipoDocumento`, `nombre`, `descripcion`, `periodo`, `fechaInicio`, `fechaFin`) VALUES
 (111, 100, 'Comisión Instructor Diplomado 2024', 'Impartición de curso externo', 'ENE-JUN 2024', NULL, NULL),
 (112, 110, 'Comisión DDIE 2024', 'Instructor curso nacional', 'AGO-DIC 2024', NULL, NULL),
 (123, 120, 'Diplomado Pensamiento Crítico 2024', 'Instructor DDIE', 'AGO-DIC 2024', NULL, NULL),
@@ -158,8 +158,6 @@ INSERT INTO `aula` (`idAula`, `nombre`) VALUES
 (22, 'CC04'),
 (23, 'CC05');
 
--- (No hay FK para aula, es tabla independiente)
-
 -- --------------------------------------------------------
 
 --
@@ -254,10 +252,10 @@ INSERT INTO `docente` (`idDocente`, `idUsuario`, `filiacion`, `idNivelEstudio`, 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `docenteActividad`
+-- Estructura de tabla para la tabla `docenteactividad`
 --
 
-CREATE TABLE `docenteActividad` (
+CREATE TABLE `docenteactividad` (
   `idDocenteActividad` int(11) NOT NULL,
   `idActividadInstitucional` int(11) NOT NULL,
   `idDocente` int(11) NOT NULL,
@@ -269,13 +267,13 @@ CREATE TABLE `docenteActividad` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `docenteActividad`
+-- Volcado de datos para la tabla `docenteactividad`
 --
 
-INSERT INTO `docenteActividad` (`idDocenteActividad`, `idActividadInstitucional`, `idDocente`, `datosCapturados`, `fechaRegistro`, `validadoPor`, `fechaValidacion`, `motivoRechazo`) VALUES
+INSERT INTO `docenteactividad` (`idDocenteActividad`, `idActividadInstitucional`, `idDocente`, `datosCapturados`, `fechaRegistro`, `validadoPor`, `fechaValidacion`, `motivoRechazo`) VALUES
 (1, 999, 4, '{\"carrera\": \"Ing. Sistemas Computacionales\", \"totalTutorados\": 46, \"idJefeDDA\": 2, \"idSubdirectorAcademico\": 3}', '2025-11-22 15:41:59', 2, NULL, NULL),
 (2, 888, 4, '{\r\n        \"organismoAcreditador\": \"CONAIC\",\r\n        \"programaEducativo\": \"Ingeniería en Tecnologías de la Información y Comunicaciones\",\r\n        \"fechaInicioVigencia\": \"2022-11-30\",\r\n        \"fechaFinVigencia\": \"2027-11-29\",\r\n        \"numRegistro\": \"1700975\",\r\n        \"fechaExpedicion\": \"2022-11-30\"\r\n    }', '2025-11-25 15:34:42', 3, '2025-11-30 00:33:14', NULL),
-(3, 777, 4, '{\r\n        \"numOficio\": \"CI-30/2025\",\r\n        \"dictamen\": \"12345\",\r\n        \"totalAlumnosAtendidos\": 50,\r\n        \"alumnosObtuvieronCredito\": 48,\r\n        \"idJefeDepartamento\": 2,\r\n        \"idJefeCentroInformacion\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 16:00:45', NULL, '2025-11-30 00:33:14', NULL),
+(3, 777, 4, '{\r\n        \"numOficio\": \"CI-30/2025\",\r\n        \"dictamen\": \"12345\",\r\n        \"totalAlumnosAtendidos\": 50,\r\n        \"alumnosObtuvieronCredito\": 48,\r\n        \"idJefeDepartamento\": 2,\r\n        \"idJefeCentroInformacion\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 16:00:45', 0, '2025-11-30 18:34:08', 'CHALALA CHALALA'),
 (4, 666, 4, '{\r\n        \"numOficio\": \"DSyC-388/2025\",\r\n        \"asignatura\": \"Programación Orientada a Objetos\",\r\n        \"programaEducativo\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 16:33:25', 2, '2025-11-30 00:33:14', NULL),
 (5, 450, 4, '{\r\n        \"numOficio\": \"DSyC-388/2025\",\r\n        \"asignatura\": \"Administración de Bases de Datos\",\r\n        \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 18:41:55', 2, '2025-11-30 00:33:14', NULL),
 (6, 555, 4, '{\r\n        \"numOficio\": \"DSyC-391/2025\",\r\n        \"asignatura\": \"Estructura de Datos\",\r\n        \"estrategia\": \"Aprendizaje Basado en Problemas\",\r\n        \"programaEducativo\": \"Ing. Sist. Computacionales\",\r\n        \"productoObtenido\": \"Reporte de resolución de problemas\",\r\n        \"habilidades\": \"pensamiento crítico y trabajo en equipo\",\r\n        \"idJefeDepto\": 2,\r\n        \"idPresidenteAcademia\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 17:25:53', 2, '2025-11-30 00:33:14', NULL),
@@ -286,7 +284,7 @@ INSERT INTO `docenteActividad` (`idDocenteActividad`, `idActividadInstitucional`
 (11, 112, 4, '{\r\n        \"oficio\": \"DDA-110/2024\",\r\n        \"nombreCurso\": \"Diplomado en Recursos Educativos Abiertos\",\r\n        \"fechaInicio\": \"2024-09-01\",\r\n        \"fechaFin\": \"2024-11-30\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 20:02:18', 2, '2025-11-30 00:33:14', NULL),
 (12, 123, 4, '{\r\n        \"oficio\": \"DDA-120/2025\",\r\n        \"nombreCurso\": \"Diplomado en Pensamiento Crítico para la Educación Tecnológica del TecNM\",\r\n        \"fechaInicio\": \"2025-02-01\",\r\n        \"fechaFin\": \"2025-06-30\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 20:14:26', 2, '2025-11-30 00:33:14', NULL),
 (13, 133, 4, '{\r\n        \"oficio\": \"DDA-130/2025\",\r\n        \"nombreCurso\": \"Diplomado Recursos Educativos en Ambientes Virtuales para Profesores(as) del TecNM\",\r\n        \"fechaInicio\": \"2025-03-01\",\r\n        \"fechaFin\": \"2025-07-31\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-25 20:18:47', 2, '2025-11-30 00:33:14', NULL),
-(14, 134, 4, '{\r\n        \"oficio\": \"DDA-131/2025\",\r\n        \"nombreCurso\": \"Diplomado en Educación Inclusiva para Profesores(as) del TecNM\",\r\n        \"fechaInicio\": \"2025-02-15\",\r\n        \"fechaFin\": \"2025-06-15\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-27 19:43:45', NULL, '2025-11-30 11:39:46', 'asdzxcxzc'),
+(14, 134, 4, '{\r\n        \"oficio\": \"DDA-131/2025\",\r\n        \"nombreCurso\": \"Diplomado en Educación Inclusiva para Profesores(as) del TecNM\",\r\n        \"fechaInicio\": \"2025-02-15\",\r\n        \"fechaFin\": \"2025-06-15\",\r\n        \"idJefeDDA\": 2\r\n    }', '2025-11-27 19:43:45', 0, '2025-11-30 18:31:48', 'por puta'),
 (20, 999, 17, '{\"carrera\": \"Ing. Sistemas Computacionales\", \"totalTutorados\": 26, \"idJefeDDA\": 2, \"idSubdirectorAcademico\": 3}', '2025-11-22 15:41:59', 2, '2025-11-30 00:33:14', NULL),
 (21, 888, 17, '{\r\n        \"organismoAcreditador\": \"CONAIC\",\r\n        \"programaEducativo\": \"Ingeniería en Tecnologías de la Información y Comunicaciones\",\r\n        \"fechaInicioVigencia\": \"2022-11-30\",\r\n        \"fechaFinVigencia\": \"2027-11-29\",\r\n        \"numRegistro\": \"1700975\",\r\n        \"fechaExpedicion\": \"2022-11-30\"\r\n    }', '2025-11-25 15:34:42', 3, '2025-11-30 00:33:14', NULL),
 (22, 777, 17, '{\r\n        \"numOficio\": \"CI-30/2025\",\r\n        \"dictamen\": \"12345\",\r\n        \"totalAlumnosAtendidos\": 40,\r\n        \"alumnosObtuvieronCredito\": 38,\r\n        \"idJefeDepartamento\": 2,\r\n        \"idJefeCentroInformacion\": 4, \r\n        \"idSubdirectorAcademico\": 3\r\n    }', '2025-11-25 16:00:45', 2, '2025-11-30 00:33:14', NULL),
@@ -334,11 +332,6 @@ INSERT INTO `docenteActividad` (`idDocenteActividad`, `idActividadInstitucional`
 (3141, 3140, 1, '{\"nombreTesista\": \"Ana María Gómez\", \"tituloTesis\": \"Optimización de Redes Neuronales\", \"fechaExamen\": \"2024-12-05\", \"idDirector\": 2, \"idCodirector\": 1, \"numControl\": \"M23050123\"}', '2025-11-27 21:35:40', 2, '2025-11-30 00:33:14', NULL),
 (3151, 3150, 1, '{\"nombreEstudiante\": \"Pedro Ruiz\", \"numControl\": \"D54321\", \"carrera\": \"Doctorado en Ciencias\", \"opcionTitulacion\": \"Tesis: Computación Cuántica\", \"fechaActa\": \"2025-03-10\", \"idPresidente\": 3, \"idSecretario\": 2, \"idVocal\": 1}', '2025-11-27 21:16:13', 3, '2025-11-30 00:33:14', NULL),
 (3161, 3160, 1, '{\"nombreTesista\": \"Luis Torres\", \"tituloTesis\": \"Ciberseguridad en Cómputo Cuántico\", \"fechaExamen\": \"2024-11-20\", \"idDirector\": 3, \"idCodirector\": 1, \"numControl\": \"D21040567\"}', '2025-11-27 21:35:40', 3, '2025-11-30 00:33:14', NULL),
-(3211, 3210, 1, '{\r\n    \"numOficio\": \"SE-321/2024\",\r\n    \"folioActa\": \"TSU-001\",\r\n    \"fechaExamen\": \"20 de mayo de 2024\",\r\n    \"nombreEstudiante\": \"Pedro Picapiedra\",\r\n    \"carrera\": \"Técnico Superior Universitario en TIC\",\r\n    \"rol\": \"PRESIDENTE\",\r\n    \"idJefeEscolares\": 6\r\n}', '2025-11-28 21:56:27', NULL, '2025-11-30 03:14:05', 'asdasd'),
-(3221, 3220, 1, '{\r\n    \"numOficio\": \"SE-322/2024\",\r\n    \"folioActa\": \"12345\",\r\n    \"fechaExamen\": \"15 de junio de 2024\",\r\n    \"nombreEstudiante\": \"Roberto Gómez Bolaños\",\r\n    \"carrera\": \"Ingeniería en Sistemas Computacionales\",\r\n    \"rol\": \"SECRETARIO\",\r\n    \"idJefeEscolares\": 6\r\n}', '2025-11-28 21:48:26', 6, '2025-11-30 00:33:14', NULL),
-(3231, 3230, 1, '{\r\n    \"numOficio\": \"SE-323/2024\",\r\n    \"folioActa\": \"ESP-999\",\r\n    \"fechaExamen\": \"05 de septiembre de 2024\",\r\n    \"nombreEstudiante\": \"Marie Curie\",\r\n    \"carrera\": \"Especialización en Ciberseguridad\",\r\n    \"rol\": \"VOCAL\",\r\n    \"idJefeEscolares\": 6\r\n}', '2025-11-28 21:56:27', 6, '2025-11-30 00:33:14', NULL),
-(3241, 3240, 1, '{\r\n    \"numOficio\": \"SE-324/2024\",\r\n    \"folioActa\": \"M-9876\",\r\n    \"fechaExamen\": \"20 de noviembre de 2024\",\r\n    \"nombreEstudiante\": \"Ana María Polo\",\r\n    \"carrera\": \"Maestría en Ciencias de la Computación\",\r\n    \"rol\": \"VOCAL\",\r\n    \"idJefeEscolares\": 6\r\n}', '2025-11-28 21:48:26', 6, '2025-11-30 00:33:14', NULL),
-(3251, 3250, 1, '{\r\n    \"numOficio\": \"SE-325/2024\",\r\n    \"folioActa\": \"D-5555\",\r\n    \"fechaExamen\": \"10 de diciembre de 2024\",\r\n    \"nombreEstudiante\": \"Sheldon Cooper\",\r\n    \"carrera\": \"Doctorado en Ciencias de la Ingeniería\",\r\n    \"rol\": \"VOCAL\",\r\n    \"idJefeEscolares\": 6\r\n}', '2025-11-28 21:48:26', 6, '2025-11-30 00:33:14', NULL),
 (4000, 999, 4, '{\"carrera\": \"Ing. Sistemas Computacionales\", \"totalTutorados\": 40, \"idJefeDDA\": 2, \"idSubdirectorAcademico\": 3}', '2025-11-22 15:41:59', 2, '2025-11-30 00:33:14', NULL),
 (4101, 411, 1, '{\r\n        \"numOficio\": \"CB-141/2025\",\r\n        \"asignatura\": \"Cálculo Integral\",\r\n        \"totalAlumnos\": 15,\r\n        \"periodo\": \"Agosto-Diciembre 2024\",\r\n        \"idJefeCienciasBasicas\": 7, \r\n        \"idSubdirector\": 3\r\n    }', '2025-11-28 18:53:33', 7, '2025-11-30 00:33:14', NULL),
 (4211, 4210, 1, '{\r\n    \"periodo\": \"Enero-Junio 2024\",\r\n    \"idJefeDepto\": 2, \"idSubdirector\": 3, \"idJefeInvestigacion\": 4,\r\n    \"proyectos\": [\r\n        {\"nombre\": \"Sistema de Riego IoT Culiacán\", \"tipo\": \"Desarrollo Tecnológico\", \"nivel\": \"Responsable\", \"producto\": \"Prototipo Funcional\", \"alcance\": \"Local\"},\r\n        {\"nombre\": \"Análisis de Suelos Sinaloa\", \"tipo\": \"Investigación Aplicada\", \"nivel\": \"Colaborador\", \"producto\": \"Informe Técnico\", \"alcance\": \"Regional\"}\r\n    ]\r\n}', '2025-11-28 18:37:31', 2, '2025-11-30 00:33:14', NULL),
@@ -367,11 +360,8 @@ INSERT INTO `docenteActividad` (`idDocenteActividad`, `idActividadInstitucional`
 (4721, 4720, 1, '{\r\n    \"numOficio\": \"CAL-02/2024\",\r\n    \"periodo\": \"del 20 al 24 de mayo de 2024\",\r\n    \"tipoAuditoria\": \"Sistema de Gestión Ambiental (SGA)\",\r\n    \"funcion\": \"AUDITOR INTERNO (EXTERNO)\",\r\n    \"lugar\": \"Instituto Tecnológico de Mazatlán\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 21:16:28', 2, '2025-11-30 00:33:14', NULL),
 (4731, 4730, 1, '{\r\n    \"numOficio\": \"CAL-03/2024\",\r\n    \"periodo\": \"del 15 al 19 de octubre de 2024\",\r\n    \"tipoAuditoria\": \"Sistema de Gestión de Igualdad de Género\",\r\n    \"funcion\": \"AUDITOR LÍDER\",\r\n    \"lugar\": \"Instituto Tecnológico de Culiacán\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 21:16:28', 2, '2025-11-30 00:33:14', NULL),
 (4741, 4740, 1, '{\r\n    \"numOficio\": \"CAL-04/2024\",\r\n    \"periodo\": \"del 01 al 05 de diciembre de 2024\",\r\n    \"tipoAuditoria\": \"Sistema de Gestión Integral\",\r\n    \"funcion\": \"AUDITOR LÍDER (EXTERNO)\",\r\n    \"lugar\": \"Instituto Tecnológico de Guasave\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 21:16:28', 2, '2025-11-30 00:33:14', NULL),
-(4811, 4810, 1, '{\r\n    \"numOficio\": \"DDA-481/2024\",\r\n    \"periodo\": \"Enero - Junio 2024\",\r\n    \"nombrePrograma\": \"Ingeniería en Sistemas Computacionales\",\r\n    \"actividad\": \"Análisis y seguimiento de la retícula en la especialidad de Desarrollo Web\",\r\n    \"idDirector\": 5\r\n}', '2025-11-28 21:34:36', 5, '2025-11-30 00:33:14', NULL),
-(4821, 4820, 1, '{\r\n    \"numOficio\": \"DDA-482/2024\",\r\n    \"periodo\": \"Enero - Junio 2024\",\r\n    \"nombreModulo\": \"Ciberseguridad en Entornos Industriales\",\r\n    \"carrera\": \"Ingeniería Electrónica\",\r\n    \"idJefeDepto\": 2, \r\n    \"idSubdirector\": 3\r\n}', '2025-11-28 21:27:18', 2, '2025-11-30 00:33:14', NULL),
-(4831, 4830, 1, '{\r\n    \"numOficio\": \"DDIE-483/2024\",\r\n    \"periodo\": \"Agosto - Diciembre 2024\",\r\n    \"nombrePrograma\": \"Ingeniería en Inteligencia Artificial\",\r\n    \"actividad\": \"Diseño de planes y programas de estudio para la nueva carrera\",\r\n    \"idDirectorDDIE\": 2\r\n}', '2025-11-28 21:34:36', 2, '2025-11-30 00:33:14', NULL),
 (9501, 991, 1, '{\n        \"numeroCedula\": \"12345678\",\n        \"nombrePrograma\": \"DOCTORADO EN CIENCIAS COMPUTACIONALES\",\n        \"clavePrograma\": \"DCC-2023-001\",\n        \"institucion\": \"UNIVERSIDAD NACIONAL DE INNOVACIÓN TECNOLÓGICA\",\n        \"claveInstitucion\": \"UNIT-MX\",\n        \"fechaExpedicion\": \"26 de noviembre de 2024\",\n        \"horaExpedicion\": \"10:30:00 HRS\",\n        \"cadenaOriginal\": \"||1.0|12345|2024-11-26T10:30:00|SEP|...\",\n        \"selloDigital\": \"AbCdEfGhIjKlMnOpQrStUvWxYz1234567890...\",\n        \"firmaElectronica\": \"a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0...\"\n    }', '2025-11-26 20:51:26', 3, '2025-11-30 00:33:14', NULL),
-(9601, 992, 1, '{\n        "numeroCedula": "87654321",\n        "nombrePrograma": "MAESTRÍA EN SISTEMAS DISTRIBUIDOS",\n        "clavePrograma": "MSD-2019-005",\n        "institucion": "INSTITUTO TECNOLÓGICO DE CULIACÁN",\n        "claveInstitucion": "25DIT0021",\n        "fechaExpedicion": "15 de agosto de 2019",\n        "horaExpedicion": "14:00:00 HRS",\n        "cadenaOriginal": "||1.0|87654|2019-08-15T14:00:00|SEP|...",\n        "selloDigital": "ZyXwVuTsRqPoNmLkJiHgFeDcBa0987654321...",\n        "firmaElectronica": "z9y8x7w6v5u4t3s2r1q0p9o8n7m6l5k4j3i2h1..."\n    }', '2025-11-26 20:51:26', 3, '2025-11-30 00:33:14', NULL);
+(9601, 992, 1, '{\n        \"numeroCedula\": \"87654321\",\n        \"nombrePrograma\": \"MAESTRÍA EN SISTEMAS DISTRIBUIDOS\",\n        \"clavePrograma\": \"MSD-2019-005\",\n        \"institucion\": \"INSTITUTO TECNOLÓGICO DE CULIACÁN\",\n        \"claveInstitucion\": \"25DIT0021\",\n        \"fechaExpedicion\": \"15 de agosto de 2019\",\n        \"horaExpedicion\": \"14:00:00 HRS\",\n        \"cadenaOriginal\": \"||1.0|87654|2019-08-15T14:00:00|SEP|...\",\n        \"selloDigital\": \"ZyXwVuTsRqPoNmLkJiHgFeDcBa0987654321...\",\n        \"firmaElectronica\": \"z9y8x7w6v5u4t3s2r1q0p9o8n7m6l5k4j3i2h1...\"\n    }', '2025-11-26 20:51:26', 3, '2025-11-30 00:33:14', NULL);
 
 -- --------------------------------------------------------
 
@@ -502,26 +492,24 @@ INSERT INTO `materia` (`idMateria`, `nombre`, `idDepartamento`, `creditos`) VALU
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `nivelEstudio`
+-- Estructura de tabla para la tabla `nivelestudio`
 --
 
-CREATE TABLE `nivelEstudio` (
+CREATE TABLE `nivelestudio` (
   `idNivelEstudio` int(11) NOT NULL,
   `nombre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `nivelEstudio`
+-- Volcado de datos para la tabla `nivelestudio`
 --
 
-INSERT INTO `nivelEstudio` (`idNivelEstudio`, `nombre`) VALUES
+INSERT INTO `nivelestudio` (`idNivelEstudio`, `nombre`) VALUES
 (1, 'Técnico Superior'),
 (2, 'Licenciatura'),
 (3, 'Especialización'),
 (4, 'Maestría'),
 (5, 'Doctorado');
-
--- (No hay FK para nivelestudio, es tabla independiente)
 
 -- --------------------------------------------------------
 
@@ -544,8 +532,6 @@ INSERT INTO `plaza` (`idPlaza`, `descripcion`) VALUES
 (381900, 'Horas parciales'),
 (382000, 'Asignatura aislada');
 
--- (No hay FK para plaza, es tabla independiente)
-
 -- --------------------------------------------------------
 
 --
@@ -567,15 +553,13 @@ INSERT INTO `rol` (`idRol`, `descripcion`) VALUES
 (3, 'Jefe de Departamento'),
 (4, 'Director de Instituto');
 
--- (No hay FK para rol, es tabla independiente)
-
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tipoDocumento`
+-- Estructura de tabla para la tabla `tipodocumento`
 --
 
-CREATE TABLE `tipoDocumento` (
+CREATE TABLE `tipodocumento` (
   `idTipoDocumento` int(11) NOT NULL,
   `nombre` varchar(150) NOT NULL,
   `descripcion` text DEFAULT NULL,
@@ -583,10 +567,10 @@ CREATE TABLE `tipoDocumento` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `tipoDocumento`
+-- Volcado de datos para la tabla `tipodocumento`
 --
 
-INSERT INTO `tipoDocumento` (`idTipoDocumento`, `nombre`, `descripcion`, `plantillaJSON`) VALUES
+INSERT INTO `tipodocumento` (`idTipoDocumento`, `nombre`, `descripcion`, `plantillaJSON`) VALUES
 (10, 'Constancia Cumplimiento PIT', 'Documento que avala la acción tutorial, incluyendo número de tutorados y evaluación de impacto (1.1.5).', '{\"campos\": [\"totalTutorados\", \"idJefeDDA\", \"idSubdirectorAcademico\",\"carrera\"]}'),
 (20, 'Constancia Acreditación PE', 'Documento que avala que el PE está acreditado, con vigencia y registro (1.1.6).', '{\"campos\": [\"organismoAcreditador\", \"fechaInicioVigencia\", \"fechaFinVigencia\", \"numRegistro\"]}'),
 (30, 'Constancia Actividad Complementaria', 'Avala el cumplimiento como monitor de crédito complementario (1.1.7).', '{\"campos\": [\"numOficio\", \"dictamen\", \"totalAlumnosAtendidos\", \"alumnosObtuvieronCredito\", \"idJefeDepartamento\", \"idSubdirectorAcademico\"]}'),
@@ -661,9 +645,7 @@ INSERT INTO `tipoDocumento` (`idTipoDocumento`, `nombre`, `descripcion`, `planti
 (474, 'Auditor Líder Externo (1.4.7.4)', 'Participación como Auditor Líder fuera de la institución.', '{\"campos\": [\"numOficio\", \"periodo\", \"tipoAuditoria\", \"funcion\", \"lugar\", \"idJefeDepto\", \"idSubdirector\"]}'),
 (481, 'Desarrollo Curricular Local (1.4.8.1.1)', 'Diseño o seguimiento curricular nivel local.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombrePrograma\", \"actividad\", \"idDirector\"]}'),
 (482, 'Diseño Módulos Especialidad (1.4.8.2)', 'Constancia de diseño de módulos de especialidad.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombreModulo\", \"carrera\", \"idJefeDepto\", \"idSubdirector\"]}'),
-(483, 'Desarrollo Curricular Nacional (1.4.8.1.2)', 'Diseño o seguimiento curricular nivel nacional.', '{"campos": ["numOficio", "periodo", "nombrePrograma", "actividad", "idDirectorDDIE"]}');
-
--- (No hay FK para tipodocumento, es tabla independiente)
+(483, 'Desarrollo Curricular Nacional (1.4.8.1.2)', 'Diseño o seguimiento curricular nivel nacional.', '{\"campos\": [\"numOficio\", \"periodo\", \"nombrePrograma\", \"actividad\", \"idDirectorDDIE\"]}');
 
 -- --------------------------------------------------------
 
@@ -728,9 +710,9 @@ INSERT INTO `usuario` (`idUsuario`, `nombreUsuario`, `apePatUsuario`, `apeMatUsu
 --
 
 --
--- Indices de la tabla `actividadInstitucional`
+-- Indices de la tabla `actividadinstitucional`
 --
-ALTER TABLE `actividadInstitucional`
+ALTER TABLE `actividadinstitucional`
   ADD PRIMARY KEY (`idActividadInstitucional`),
   ADD KEY `idx_ai_tipodoc` (`idTipoDocumento`);
 
@@ -764,13 +746,12 @@ ALTER TABLE `docente`
   ADD KEY `idx_docente_plaza` (`idPlaza`);
 
 --
--- Indices de la tabla `docenteActividad`
+-- Indices de la tabla `docenteactividad`
 --
-ALTER TABLE `docenteActividad`
+ALTER TABLE `docenteactividad`
   ADD PRIMARY KEY (`idDocenteActividad`),
   ADD KEY `idx_da_act` (`idActividadInstitucional`),
-  ADD KEY `idx_da_doc` (`idDocente`),
-  ADD KEY `idx_da_validado` (`validadoPor`);
+  ADD KEY `idx_da_doc` (`idDocente`);
 
 --
 -- Indices de la tabla `documento`
@@ -796,9 +777,9 @@ ALTER TABLE `materia`
   ADD KEY `idx_materia_departamento` (`idDepartamento`);
 
 --
--- Indices de la tabla `nivelEstudio`
+-- Indices de la tabla `nivelestudio`
 --
-ALTER TABLE `nivelEstudio`
+ALTER TABLE `nivelestudio`
   ADD PRIMARY KEY (`idNivelEstudio`);
 
 --
@@ -814,9 +795,9 @@ ALTER TABLE `rol`
   ADD PRIMARY KEY (`idRol`);
 
 --
--- Indices de la tabla `tipoDocumento`
+-- Indices de la tabla `tipodocumento`
 --
-ALTER TABLE `tipoDocumento`
+ALTER TABLE `tipodocumento`
   ADD PRIMARY KEY (`idTipoDocumento`);
 
 --
@@ -828,124 +809,63 @@ ALTER TABLE `usuario`
   ADD KEY `idx_usuario_rol` (`idRol`);
 
 --
--- Restricciones de integridad referencial (Foreign Keys)
+-- Restricciones para tablas volcadas
 --
 
 --
--- Restricciones para la tabla `actividadInstitucional`
+-- Filtros para la tabla `actividadinstitucional`
 --
-ALTER TABLE `actividadInstitucional`
-  ADD CONSTRAINT `fk_actividadinst_tipodoc` 
-  FOREIGN KEY (`idTipoDocumento`) 
-  REFERENCES `tipoDocumento` (`idTipoDocumento`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE;
+ALTER TABLE `actividadinstitucional`
+  ADD CONSTRAINT `fk_actividadinst_tipodoc` FOREIGN KEY (`idTipoDocumento`) REFERENCES `tipodocumento` (`idTipoDocumento`) ON UPDATE CASCADE;
 
 --
--- Restricciones para la tabla `departamento`
+-- Filtros para la tabla `departamento`
 --
 ALTER TABLE `departamento`
-  ADD CONSTRAINT `fk_departamento_encargado` 
-  FOREIGN KEY (`encargadoDepartamento`) 
-  REFERENCES `docente` (`idDocente`) 
-  ON DELETE SET NULL 
-  ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_departamento_encargado` FOREIGN KEY (`encargadoDepartamento`) REFERENCES `docente` (`idDocente`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
--- Restricciones para la tabla `docente`
+-- Filtros para la tabla `docente`
 --
 ALTER TABLE `docente`
-  ADD CONSTRAINT `fk_docente_usuario` 
-  FOREIGN KEY (`idUsuario`) 
-  REFERENCES `usuario` (`idUsuario`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_docente_nivel` 
-  FOREIGN KEY (`idNivelEstudio`) 
-  REFERENCES `nivelEstudio` (`idNivelEstudio`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_docente_departamento` 
-  FOREIGN KEY (`idDepartamento`) 
-  REFERENCES `departamento` (`idDepartamento`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_docente_plaza` 
-  FOREIGN KEY (`idPlaza`) 
-  REFERENCES `plaza` (`idPlaza`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_docente_departamento` FOREIGN KEY (`idDepartamento`) REFERENCES `departamento` (`idDepartamento`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_docente_nivel` FOREIGN KEY (`idNivelEstudio`) REFERENCES `nivelestudio` (`idNivelEstudio`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_docente_plaza` FOREIGN KEY (`idPlaza`) REFERENCES `plaza` (`idPlaza`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_docente_usuario` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`) ON UPDATE CASCADE;
 
 --
--- Restricciones para la tabla `docenteActividad`
+-- Filtros para la tabla `docenteactividad`
 --
-ALTER TABLE `docenteActividad`
-  ADD CONSTRAINT `fk_docenteact_actividad` 
-  FOREIGN KEY (`idActividadInstitucional`) 
-  REFERENCES `actividadInstitucional` (`idActividadInstitucional`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_docenteact_docente` 
-  FOREIGN KEY (`idDocente`) 
-  REFERENCES `docente` (`idDocente`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_docenteact_validador` 
-  FOREIGN KEY (`validadoPor`) 
-  REFERENCES `docente` (`idDocente`) 
-  ON DELETE SET NULL 
-  ON UPDATE CASCADE;
+ALTER TABLE `docenteactividad`
+  ADD CONSTRAINT `fk_docenteact_actividad` FOREIGN KEY (`idActividadInstitucional`) REFERENCES `actividadinstitucional` (`idActividadInstitucional`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_docenteact_docente` FOREIGN KEY (`idDocente`) REFERENCES `docente` (`idDocente`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_docenteact_validador` FOREIGN KEY (`validadoPor`) REFERENCES `docente` (`idDocente`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
--- Restricciones para la tabla `documento`
+-- Filtros para la tabla `documento`
 --
 ALTER TABLE `documento`
-  ADD CONSTRAINT `fk_documento_docenteact` 
-  FOREIGN KEY (`idDocenteActividad`) 
-  REFERENCES `docenteActividad` (`idDocenteActividad`) 
-  ON DELETE CASCADE 
-  ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_documento_docenteact` FOREIGN KEY (`idDocenteActividad`) REFERENCES `docenteactividad` (`idDocenteActividad`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Restricciones para la tabla `grupo`
+-- Filtros para la tabla `grupo`
 --
 ALTER TABLE `grupo`
-  ADD CONSTRAINT `fk_grupo_docente` 
-  FOREIGN KEY (`idDocente`) 
-  REFERENCES `docente` (`idDocente`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_grupo_materia` 
-  FOREIGN KEY (`idMateria`) 
-  REFERENCES `materia` (`idMateria`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_grupo_aula` 
-  FOREIGN KEY (`idAula`) 
-  REFERENCES `aula` (`idAula`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_grupo_aula` FOREIGN KEY (`idAula`) REFERENCES `aula` (`idAula`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_grupo_docente` FOREIGN KEY (`idDocente`) REFERENCES `docente` (`idDocente`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_grupo_materia` FOREIGN KEY (`idMateria`) REFERENCES `materia` (`idMateria`) ON UPDATE CASCADE;
 
 --
--- Restricciones para la tabla `materia`
+-- Filtros para la tabla `materia`
 --
 ALTER TABLE `materia`
-  ADD CONSTRAINT `fk_materia_departamento` 
-  FOREIGN KEY (`idDepartamento`) 
-  REFERENCES `departamento` (`idDepartamento`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_materia_departamento` FOREIGN KEY (`idDepartamento`) REFERENCES `departamento` (`idDepartamento`) ON UPDATE CASCADE;
 
 --
--- Restricciones para la tabla `usuario`
+-- Filtros para la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  ADD CONSTRAINT `fk_usuario_rol` 
-  FOREIGN KEY (`idRol`) 
-  REFERENCES `rol` (`idRol`) 
-  ON DELETE RESTRICT 
-  ON UPDATE CASCADE;
-
+  ADD CONSTRAINT `fk_usuario_rol` FOREIGN KEY (`idRol`) REFERENCES `rol` (`idRol`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
