@@ -154,16 +154,28 @@
 
     <div class="firmas-container">
       <div class="firma-box">
+        <p v-if="datos.validadoPor" class="firma-digital">
+          {{ datos.encabezado?.nombreDocente }}
+        </p>
+        <div v-else style="height: 40px"></div>
         <div class="linea"></div>
         <p>{{ datos.encabezado?.nombreDocente }}</p>
         <p class="cargo">FIRMA DEL TRABAJADOR</p>
       </div>
       <div class="firma-box">
+        <p v-if="datos.validadoPor" class="firma-digital">
+          {{ datos.firmas?.jefeDDA }}
+        </p>
+        <div v-else style="height: 40px"></div>
         <div class="linea"></div>
         <p>{{ datos.firmas?.jefeDDA }}</p>
         <p class="cargo">JEFE DEPTO. DESARROLLO ACADÉMICO</p>
       </div>
       <div class="firma-box">
+        <p v-if="datos.validadoPor" class="firma-digital">
+          {{ datos.firmas?.subdirector }}
+        </p>
+        <div v-else style="height: 40px"></div>
         <div class="linea"></div>
         <p>{{ datos.firmas?.subdirector }}</p>
         <p class="cargo">SUBDIRECTOR ACADÉMICO</p>
@@ -408,6 +420,17 @@ th {
   font-size: 7pt;
   font-weight: bold;
   text-transform: uppercase;
+}
+
+/* FIRMA DIGITAL (simulada en cursiva) */
+.firma-digital {
+  font-family: "Brush Script MT", "Lucida Handwriting", cursive;
+  font-size: 14pt;
+  font-style: italic;
+  color: #1e3a6c;
+  margin: 0;
+  margin-bottom: -10px;
+  text-align: center;
 }
 
 /* FOOTER */

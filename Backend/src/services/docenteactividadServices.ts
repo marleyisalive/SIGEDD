@@ -626,7 +626,7 @@ export const obtenerDatosHorarioActividades = async (
     // 1. Datos Docente y JSON
     const queryBase = `
       SELECT 
-        da.idDocente, da.datosCapturados, da.fechaRegistro,
+        da.idDocente, da.datosCapturados, da.fechaRegistro, da.validadoPor,
         u.nombreUsuario, u.apePatUsuario, u.apeMatUsuario,
         d.nombreDepartamento,
         doc.filiacion as rfc, doc.idPlaza
@@ -707,6 +707,7 @@ export const obtenerDatosHorarioActividades = async (
     );
 
     return {
+      validadoPor: base.validadoPor,
       encabezado: {
         nombreDocente:
           `${base.nombreUsuario} ${base.apePatUsuario} ${base.apeMatUsuario}`.toUpperCase(),
