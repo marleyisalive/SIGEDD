@@ -239,11 +239,14 @@ const cargarListaActividades = async () => {
       `http://localhost:3001/api/docenteactividad/usuario/${usuario.idUsuario}`
     );
 
-    listaActividades.value = res.data.map((item) => ({
-      idDocenteActividad: item.idDocenteActividad,
-      nombre: item.nombreActividad || "Actividad sin nombre",
-      idTipoDocumento: item.idTipoDocumento,
-    }));
+    // Filtrar solo los documentos aprobados (validadoPor > 0)
+    listaActividades.value = res.data
+      .filter((item) => item.validadoPor > 0)
+      .map((item) => ({
+        idDocenteActividad: item.idDocenteActividad,
+        nombre: item.nombreActividad || "Actividad sin nombre",
+        idTipoDocumento: item.idTipoDocumento,
+      }));
 
     if (listaActividades.value.length > 0) {
       await cargarDetalleDocumento();
