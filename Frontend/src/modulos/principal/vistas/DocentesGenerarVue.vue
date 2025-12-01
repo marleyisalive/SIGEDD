@@ -30,7 +30,7 @@
         <div class="fila header-row">
           <div class="col-nombre">Formato / Actividad</div>
           <div class="col-fecha">Fecha Registro</div>
-          <div class="col-estado">Estado</div> 
+          <div class="col-estado">Estado</div>
           <div class="col-acciones">Acciones</div>
         </div>
 
@@ -65,8 +65,11 @@
             <div v-if="doc.validadoPor > 0" class="badge badge-aprobado">
               <span class="icono-estado">✓</span> Aprobado
             </div>
-            
-            <div v-else-if="doc.validadoPor === 0" class="badge badge-rechazado">
+
+            <div
+              v-else-if="doc.validadoPor === 0"
+              class="badge badge-rechazado"
+            >
               <span class="icono-estado">✖</span> Rechazado
             </div>
 
@@ -76,33 +79,37 @@
           </div>
 
           <div class="col-acciones">
-          <button
-            class="btn-icon download"
-            @click="descargarUnicoPDF(doc)"
-            :disabled="!doc.validadoPor"
-            :title="doc.validadoPor ? 'Descargar PDF' : 'Documento en espera de aprobación'"
-            :class="{ 'btn-disabled': !doc.validadoPor }"
-          >
-            <img src="@/assets/icono-generar.png" alt="PDF" />
-          </button>
+            <button
+              class="btn-icon download"
+              @click="descargarUnicoPDF(doc)"
+              :disabled="!doc.validadoPor"
+              :title="
+                doc.validadoPor
+                  ? 'Descargar PDF'
+                  : 'Documento en espera de aprobación'
+              "
+              :class="{ 'btn-disabled': !doc.validadoPor }"
+            >
+              <img src="@/assets/icono-generar.png" alt="PDF" />
+            </button>
 
-          <button
-            v-if="doc.validadoPor === 0"
-            class="btn-icon rechazo-info"
-            @click.stop="verMotivo(doc.motivoRechazo)" 
-            title="Ver motivo de rechazo"
-          >
-            <strong>?</strong>
-          </button>
+            <button
+              v-if="doc.validadoPor === 0"
+              class="btn-icon rechazo-info"
+              @click.stop="verMotivo(doc.motivoRechazo)"
+              title="Ver motivo de rechazo"
+            >
+              <strong>?</strong>
+            </button>
 
-  <button
-    class="btn-icon view"
-    @click="irADetalleUnico(doc.idDocenteActividad)"
-    title="Ver Detalle"
-  >
-    <img src="@/assets/icono-elegir.png" alt="Ver" />
-  </button>
-</div>
+            <button
+              class="btn-icon view"
+              @click="irADetalleUnico(doc.idDocenteActividad)"
+              title="Ver Detalle"
+            >
+              <img src="@/assets/icono-elegir.png" alt="Ver" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -514,12 +521,21 @@ const generarBlobPDF = async (doc) => {
       return null;
     }
 
-    // 4. Generar PDF
+    // 4. Generar PDF con configuración específica según tipo de documento
+    const windowWidth = doc.idTipoDocumento === 180 ? 1000 : 816; // Horario de Actividades necesita más ancho
+
     return await html2pdf()
       .set({
         margin: 0,
         image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 816 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          scrollY: 0,
+          windowWidth: windowWidth,
+          x: 0,
+          y: 0,
+        },
         jsPDF: { unit: "mm", format: "letter" },
       })
       .from(element)
@@ -560,7 +576,7 @@ const descargarUnicoPDF = async (doc) => {
 const descargarExpedienteCompleto = async () => {
   // 1. FILTRADO: Solo tomamos los documentos que tienen 'validadoPor' (aprobados)
   // Asegúrate de que tu backend esté enviando este campo en la lista (como vimos en el paso anterior)
-  const docsAprobados = listaDocumentos.value.filter(doc => doc.validadoPor);
+  const docsAprobados = listaDocumentos.value.filter((doc) => doc.validadoPor);
   const total = listaDocumentos.value.length;
   const aprobados = docsAprobados.length;
 
@@ -576,7 +592,7 @@ const descargarExpedienteCompleto = async () => {
   if (aprobados < total) {
     mensaje = `Se descargarán solo los ${aprobados} documentos aprobados (de un total de ${total}). Los pendientes se omitirán. ¿Continuar?`;
   }
-  
+
   if (!confirm(mensaje)) return;
 
   try {
@@ -588,14 +604,19 @@ const descargarExpedienteCompleto = async () => {
     // 4. ITERAMOS SOLO SOBRE LOS APROBADOS
     for (const doc of docsAprobados) {
       progreso.value = (i / aprobados) * 100;
-      mensajeCarga.value = `Procesando: ${obtenerNombreFormato(doc.idTipoDocumento)}`;
+      mensajeCarga.value = `Procesando: ${obtenerNombreFormato(
+        doc.idTipoDocumento
+      )}`;
 
       const nombreGrupo = doc.grupo || "Varios";
       const carpeta = raiz.folder(nombreGrupo.replace(/[^a-z0-9]/gi, "_"));
 
       const pdfBlob = await generarBlobPDF(doc);
       if (pdfBlob) {
-        const nombreArchivo = obtenerNombreFormato(doc.idTipoDocumento).replace(/[^a-z0-9]/gi,"_");
+        const nombreArchivo = obtenerNombreFormato(doc.idTipoDocumento).replace(
+          /[^a-z0-9]/gi,
+          "_"
+        );
         carpeta.file(`${nombreArchivo}.pdf`, pdfBlob);
       }
       i++;
@@ -607,7 +628,6 @@ const descargarExpedienteCompleto = async () => {
     link.href = URL.createObjectURL(content);
     link.download = "Expediente_Aprobado.zip";
     link.click();
-
   } catch (e) {
     console.error(e);
     alert("Ocurrió un error al generar el ZIP.");
@@ -619,7 +639,10 @@ const descargarExpedienteCompleto = async () => {
 };
 
 const verMotivo = (motivo) => {
-  alert("MOTIVO DE RECHAZO:\n\n" + (motivo || "Sin especificaciones. Contacte a su jefe."));
+  alert(
+    "MOTIVO DE RECHAZO:\n\n" +
+      (motivo || "Sin especificaciones. Contacte a su jefe.")
+  );
 };
 </script>
 
@@ -794,12 +817,12 @@ const verMotivo = (motivo) => {
   background: none;
   border: 1px solid #ddd;
   border-radius: 6px;
-  
+
   /* Tamaño fijo para que no se aplasten */
-  min-width: 38px; 
+  min-width: 38px;
   width: 38px;
   height: 38px;
-  
+
   padding: 0; /* Quitamos padding interno variable */
   cursor: pointer;
   display: flex;
@@ -906,9 +929,15 @@ const verMotivo = (motivo) => {
 }
 
 /* Ajustar flex del resto para que quepa bien */
-.col-nombre { flex: 3.5; } /* Reducimos un poco el nombre */
-.col-fecha { flex: 1.2; }
-.col-acciones { flex: 1.2; }
+.col-nombre {
+  flex: 3.5;
+} /* Reducimos un poco el nombre */
+.col-fecha {
+  flex: 1.2;
+}
+.col-acciones {
+  flex: 1.2;
+}
 
 /* Badge Rojo */
 .badge-rechazado {
@@ -937,4 +966,3 @@ const verMotivo = (motivo) => {
   background-color: #f1b0b7;
 }
 </style>
-

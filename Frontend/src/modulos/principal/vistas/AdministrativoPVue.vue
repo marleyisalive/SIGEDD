@@ -9,15 +9,15 @@
       />
     </div>
 
-    <!-- TARJETA DE PERFIL DEL ADMINISTRADOR -->
+    <!-- TARJETA DE PERFIL DEL VALIDADOR -->
     <div class="perfil-card">
       <div class="perfil-header">
         <div class="avatar">
-          <i class="fa fa-user-shield"></i>
+          <i class="fa fa-clipboard-check"></i>
         </div>
         <div class="perfil-info">
           <h2 class="nombre-usuario">{{ nombreCompleto }}</h2>
-          <p class="rol-badge">Administrador</p>
+          <p class="rol-badge">Validador</p>
           <p class="email">{{ email }}</p>
         </div>
       </div>
@@ -26,47 +26,65 @@
     <!-- DESCRIPCIÓN DEL ROL -->
     <div class="descripcion-container">
       <h3 class="titulo-seccion">
-        <i class="fa fa-info-circle"></i> Tu rol como Administrador
+        <i class="fa fa-info-circle"></i> Tu rol como Validador
       </h3>
       <div class="descripcion-content">
         <p class="descripcion-texto">
-          Como <strong>Administrador</strong> del sistema SIGEDD, tienes acceso
-          completo a todas las funcionalidades de gestión. Tus responsabilidades
-          incluyen:
+          Como <strong>Validador</strong> del sistema SIGEDD, eres responsable
+          de revisar y validar la documentación presentada por los docentes. Tus
+          responsabilidades incluyen:
         </p>
         <ul class="lista-responsabilidades">
           <li>
             <i class="fa fa-check-circle"></i>
             <span
-              >Gestionar usuarios del sistema y asignar roles apropiados</span
+              >Revisar documentos enviados por los docentes y verificar su
+              autenticidad</span
             >
           </li>
           <li>
             <i class="fa fa-check-circle"></i>
             <span
-              >Administrar catálogos: aulas, niveles de estudio, carreras y
-              departamentos</span
+              >Aprobar documentos que cumplan con los requisitos y estándares
+              establecidos</span
             >
           </li>
           <li>
             <i class="fa fa-check-circle"></i>
             <span
-              >Configurar plazas docentes y gestionar información de
-              profesores</span
+              >Rechazar documentos que no cumplan con los criterios de
+              validación con comentarios claros</span
             >
           </li>
           <li>
             <i class="fa fa-check-circle"></i>
             <span
-              >Mantener actualizados los tipos de documentos y actividades
-              institucionales</span
+              >Revisar constancias de tutoría, horarios de actividades y otros
+              documentos institucionales</span
             >
           </li>
           <li>
             <i class="fa fa-check-circle"></i>
-            <span>Supervisar materias y grupos académicos del instituto</span>
+            <span
+              >Mantener comunicación con los docentes sobre el estado de sus
+              documentos</span
+            >
           </li>
         </ul>
+      </div>
+    </div>
+
+    <!-- ACCESOS RÁPIDOS -->
+    <div class="accesos-rapidos">
+      <h3 class="titulo-seccion"><i class="fa fa-bolt"></i> Accesos Rápidos</h3>
+      <div class="accesos-grid">
+        <div class="acceso-card" @click="irAValidar">
+          <div class="acceso-icono validar">
+            <i class="fa fa-tasks"></i>
+          </div>
+          <h4>Validar Documentos</h4>
+          <p>Revisa y valida documentos pendientes de aprobación</p>
+        </div>
       </div>
     </div>
   </div>
@@ -74,11 +92,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { getNombreCompleto, getUsuarioFromStorage } from "@/utils/auth";
 
 // Datos del usuario
 const nombreCompleto = ref("Usuario");
 const email = ref("");
+
+const router = useRouter();
 
 onMounted(() => {
   nombreCompleto.value = getNombreCompleto();
@@ -88,6 +109,10 @@ onMounted(() => {
     email.value = usuario.correoUsuario;
   }
 });
+
+const irAValidar = () => {
+  router.push("/administrativovalidar");
+};
 </script>
 
 <style scoped>
@@ -238,6 +263,67 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
+/* ACCESOS RÁPIDOS */
+.accesos-rapidos {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.accesos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.acceso-card {
+  background: linear-gradient(135deg, #d9eaf7 0%, #c4dff0 100%);
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.acceso-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(15, 59, 117, 0.3);
+  border-color: #0f3b75;
+}
+
+.acceso-icono {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 15px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: white;
+}
+
+.acceso-icono.validar {
+  background: linear-gradient(135deg, #0f3b75 0%, #1a5fb4 100%);
+}
+
+.acceso-card h4 {
+  color: var(--azul-oscuro);
+  margin: 10px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.acceso-card p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .logo-sigedd {
@@ -258,6 +344,10 @@ onMounted(() => {
   .nombre-usuario {
     font-size: 1.5rem;
   }
+
+  .accesos-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Animaciones */
@@ -273,7 +363,8 @@ onMounted(() => {
 }
 
 .perfil-card,
-.descripcion-container {
+.descripcion-container,
+.accesos-rapidos {
   animation: fadeIn 0.5s ease forwards;
 }
 
@@ -283,5 +374,9 @@ onMounted(() => {
 
 .descripcion-container {
   animation-delay: 0.2s;
+}
+
+.accesos-rapidos {
+  animation-delay: 0.3s;
 }
 </style>
