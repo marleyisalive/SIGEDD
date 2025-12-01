@@ -6,7 +6,7 @@
         <img src="@/assets/tecnm-byn.png" alt="Logo" />
       </div>
       <div class="titulo-box">
-        <h2>Formato para el Horario de Actividades Hola</h2>
+        <h2>Formato para el Horario de Actividades</h2>
       </div>
       <div class="meta-box">
         <table class="tabla-meta">
@@ -65,7 +65,6 @@
           <th class="col-dia">M</th>
           <th class="col-dia">J</th>
           <th class="col-dia">V</th>
-          <th class="col-dia">S</th>
         </tr>
       </thead>
       <tbody>

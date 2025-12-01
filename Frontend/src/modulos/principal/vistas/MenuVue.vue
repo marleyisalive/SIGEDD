@@ -26,18 +26,18 @@
               <span v-if="!isCollapsed">Generar Documentos</span>
             </RouterLink>
           </li>
-          <li class="nav-item">
+          <!--<li class="nav-item">
             <RouterLink class="nav-link" to="/docenteselegir">
               <i class="fa fa-list-alt"></i>
               <span v-if="!isCollapsed">Elegir Documento</span>
             </RouterLink>
           </li>
-          <li class="nav-item">
+           <li class="nav-item">
             <RouterLink class="nav-link" to="/DocumentosL">
               <i class="fa fa-check-circle"></i>
               <span v-if="!isCollapsed">Documentos Listos</span>
             </RouterLink>
-          </li>
+          </li> -->
         </template>
 
         <!-- Rutas para VALIDADOR (rol 3) -->
@@ -46,21 +46,21 @@
             <RouterLink class="nav-link" to="/AdministrativoP">
               <i class="fa fa-tachometer"></i>
               <span v-if="!isCollapsed">Panel Validador</span>
-            </RouterLink>
-          </li>
-          <li class="nav-item">
+            </RouterLink> 
+          </li> 
+          <!--<li class="nav-item">
             <RouterLink class="nav-link" to="/administrativovalidar">
               <i class="fa fa-file-text-o"></i>
               <span v-if="!isCollapsed">Validar Documentos</span>
             </RouterLink>
-          </li>
+          </li> -->
           <li class="nav-item">
             <RouterLink class="nav-link" to="/administrativovalidardocente">
               <i class="fa fa-user-circle"></i>
               <span v-if="!isCollapsed">Validar Docente</span>
             </RouterLink>
-          </li>
-          <li class="nav-item">
+          </li> 
+          <!--<li class="nav-item">
             <RouterLink
               class="nav-link"
               to="/administrativovalidardocentedocumento"
@@ -68,7 +68,7 @@
               <i class="fa fa-clipboard"></i>
               <span v-if="!isCollapsed">Validar Doc. Docente</span>
             </RouterLink>
-          </li>
+          </li>-->
         </template>
 
         <!-- Rutas para ADMINISTRADOR (rol 1) -->

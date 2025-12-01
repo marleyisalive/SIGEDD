@@ -130,11 +130,11 @@ const router = createRouter({
       name: "Docentes Principal",
       component: DocentePVue,
     },
-    {
-      path: "/DocumentosL",
-      name: "Documentos Listos",
-      component: DocumentosLVue,
-    },
+    // {
+    //   path: "/DocumentosL",
+    //   name: "Documentos Listos",
+    //   component: DocumentosLVue,
+    // },
     {
       path: "/AdministrativoP",
       name: "Administrativo Principal",
