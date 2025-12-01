@@ -46,8 +46,8 @@
             <RouterLink class="nav-link" to="/AdministrativoP">
               <i class="fa fa-tachometer"></i>
               <span v-if="!isCollapsed">Panel Validador</span>
-            </RouterLink> 
-          </li> 
+            </RouterLink>
+          </li>
           <!--<li class="nav-item">
             <RouterLink class="nav-link" to="/administrativovalidar">
               <i class="fa fa-file-text-o"></i>
@@ -59,7 +59,7 @@
               <i class="fa fa-user-circle"></i>
               <span v-if="!isCollapsed">Validar Docente</span>
             </RouterLink>
-          </li> 
+          </li>
           <!--<li class="nav-item">
             <RouterLink
               class="nav-link"
@@ -101,12 +101,6 @@
             <RouterLink class="nav-link" to="/plaza">
               <i class="fa fa-id-card"></i>
               <span v-if="!isCollapsed">Plazas</span>
-            </RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link" to="/carrera">
-              <i class="fa fa-university"></i>
-              <span v-if="!isCollapsed">Carreras</span>
             </RouterLink>
           </li>
           <li class="nav-item">
