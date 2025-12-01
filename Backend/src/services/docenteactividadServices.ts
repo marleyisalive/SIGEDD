@@ -641,6 +641,7 @@ export const obtenerDatosHorarioActividades = async (
     // NOTA: Aquí estoy simulando el periodo "ENE-JUN 2024". En prod, deberías sacarlo de la actividad.
     const queryGrupos = `
       SELECT 
+        g.idGrupo,
         m.nombre as materia, 
         g.periodo, 
         g.horario, 
@@ -663,7 +664,7 @@ export const obtenerDatosHorarioActividades = async (
       totalHorasClase += horas;
       return {
         asignatura: g.materia,
-        grupo: "A", // Si tienes grupo en la BD, úsalo
+        grupo: g.idGrupo,
         estudiantes: g.numeroAlumnos,
         aula: g.aula,
         carrera: g.nombreCarrera || "Sistemas",
