@@ -30,6 +30,7 @@ export const GrupoSchema = toTypedSchema(
     numeroAlumnos: zod
       .number({ message: "El número de alumnos es obligatorio" })
       .int({ message: "El número de alumnos debe ser un número entero" })
-      .min(1, "El número de alumnos debe ser mayor a 0"),
+      .min(1, "El número de alumnos debe ser mayor a 0")
+      .max(45, "El número de alumnos no puede exceder los 45"),
   })
 );
